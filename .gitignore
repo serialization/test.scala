@@ -4,6 +4,52 @@ src/main/*
 *.class
 *.log
 
+
+# PDT-specific
+.buildpath
+
+*.acn
+*.acr
+*.alg
+*.aux
+*.bbl
+*.blg
+*.dvi
+*.fdb_latexmk
+*.glg
+*.glo
+*.gls
+*.idx
+*.ilg
+*.ind
+*.ist
+*.lof
+*.log
+*.lot
+*.maf
+*.mtc
+*.mtc0
+*.nav
+*.nlo
+*.out
+*.pdfsync
+*.ps
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
+*.xdy
+*.tdo
+.*
+!.gitignore
+*~
+
+# sbt project
+project/**
+!project/plugins.sbt
+target/**
+
+
 # sbt specific
 dist/*
 target/
@@ -14,3 +60,24 @@ project/plugins/project/
 
 # Scala-IDE specific
 .scala_dependencies
+
+
+# more gitignore stuff
+
+*.pydevproject
+.project
+.metadata
+bin/**
+tmp/**
+tmp/**/*
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.classpath
+.settings/
+.loadpath
+
+# Mac OS X
+.DS_Store

@@ -1,0 +1,2 @@
+This folder contains examples, which may fail during deserialization, but will not necesserily fail.
+The behavior is used by creating ill-formed data, which is not evaluated necessarily.

@@ -1,0 +1,5 @@
+node.sf sollte eine gültige skill datei mit string pool und zwei node objecten sein zu der definition:
+
+node { node node }
+
+Die Objekte sollten node{→node2} und node{→node1} sein.
