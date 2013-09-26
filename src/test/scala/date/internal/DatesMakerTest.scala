@@ -5,9 +5,9 @@ import org.junit.Assert
 import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
 import java.util.Random
+import common.CommonTest
 
-class DatesMakerTest extends AssertionsForJUnit {
-  private implicit def nameToPath(s: String) = new File("src/test/resources/"+s).toPath
+class DatesMakerTest extends CommonTest {
 
   def compareStates(σ: SerializableState, σ2: SerializableState) {
     var i1 = σ.getDates
