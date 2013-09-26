@@ -3,17 +3,17 @@ import org.junit.Assert
 import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
 import java.io.File
+import common.CommonTest
 
 /**
  * Tests the file reading capabilities.
  */
-class ParseTest extends AssertionsForJUnit {
-  private implicit def nameToPath(s: String) = new File("src/test/resources/"+s).toPath
+class ParseTest extends CommonTest {
 
   @Test def testTwoDates: Unit = {
     val σ = SerializableState.read("test.sf")
 
-    val it = σ getDates;
+    val it = σ.getDates;
     Assert.assertEquals(1L, it.next.getDate)
     Assert.assertEquals(-1L, it.next.getDate)
     assert(!it.hasNext, "there shouldn't be any more elemnets!")

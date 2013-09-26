@@ -2,6 +2,8 @@ package common
 
 import java.io.File
 
+import scala.language.implicitConversions
+
 import org.scalatest.junit.AssertionsForJUnit
 
 class CommonTest extends AssertionsForJUnit {
