@@ -1,3 +1,6 @@
+# ignore actual source code, because it is supplied by the generator test
+src/main/*
+
 *.class
 *.log
 
