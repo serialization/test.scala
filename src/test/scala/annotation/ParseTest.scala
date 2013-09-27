@@ -34,6 +34,14 @@ class ParseTest extends CommonTest {
   test("empty blocks") { Assert.assertNotNull(SkillState.read("emptyBlocks.sf")) }
   test("two types") { Assert.assertNotNull(SkillState.read("twoTypes.sf")) }
   test("trivial type definition") { Assert.assertNotNull(SkillState.read("trivialType.sf")) }
+  test("nullable restricted null pointer") { SkillState.read("nullableNode.sf").getTests }
+  test("null pointer in an annotation") { SkillState.read("nullAnnotation.sf").getTests }
+
+  test("null pointer in a nonnull field") {
+    intercept[SkillException] {
+      SkillState.read("illformed/nullNode.sf").getDates
+    }
+  }
 
   test("data chunk is too long") {
     intercept[SkillException] {
