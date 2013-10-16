@@ -34,13 +34,24 @@ class ParseTest extends CommonTest {
   test("empty blocks") { Assert.assertNotNull(SkillState.read("emptyBlocks.sf")) }
   test("two types") { Assert.assertNotNull(SkillState.read("twoTypes.sf")) }
   test("trivial type definition") { Assert.assertNotNull(SkillState.read("trivialType.sf")) }
+
+  /**
+   * null pointers are legal in regular fields if restricted to be nullable
+   *  (although the behavior is not visible here due to lazyness)
+   */
   test("nullable restricted null pointer") { SkillState.read("nullableNode.sf").getTests }
+  /**
+   * null pointers are legal in annotations
+   */
   test("null pointer in an annotation") { SkillState.read("nullAnnotation.sf").getTests }
 
-  test("null pointer in a nonnull field") {
-    intercept[SkillException] {
-      SkillState.read("illformed/nullNode.sf").getDates
-    }
+  /**
+   * null pointers are not legal in regular fields
+   *
+   * @note this is the lazy case, i.e. the node pointer is never evaluated
+   */
+  test("null pointer in a nonnull field; lazy case!") {
+    SkillState.read("illformed/nullNode.sf").getTests
   }
 
   test("data chunk is too long") {

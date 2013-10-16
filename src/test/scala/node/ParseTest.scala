@@ -1,10 +1,9 @@
-package date
+package node
 
 import org.junit.Assert
 import common.CommonTest
-import org.junit.runner.RunWith
-import date.api.SkillState
-import date.internal.SkillException
+import node.api.SkillState
+import node.internal.SkillException
 
 /**
  * Tests the file reading capabilities.
@@ -12,12 +11,7 @@ import date.internal.SkillException
 class ParseTest extends CommonTest {
 
   test("two dates") {
-    val σ = SkillState.read("test.sf")
-
-    val it = σ.getDates;
-    Assert.assertEquals(1L, it.next.getDate)
-    Assert.assertEquals(-1L, it.next.getDate)
-    assert(!it.hasNext, "there shouldn't be any more elemnets!")
+    SkillState.read("test.sf").getNodes
   }
 
   test("simple nodes") { Assert.assertNotNull(SkillState.read("node.sf")) }
@@ -39,11 +33,11 @@ class ParseTest extends CommonTest {
    * null pointers are legal in regular fields if restricted to be nullable
    *  (although the behavior is not visible here due to lazyness)
    */
-  test("nullable restricted null pointer") { SkillState.read("nullableNode.sf").getDates }
+  test("nullable restricted null pointer") { SkillState.read("nullableNode.sf").getNodes }
   /**
    * null pointers are legal in annotations
    */
-  test("null pointer in an annotation") { SkillState.read("nullAnnotation.sf").getDates }
+  test("null pointer in an annotation") { SkillState.read("nullAnnotation.sf").getNodes }
 
   /**
    * null pointers are not legal in regular fields
@@ -51,57 +45,57 @@ class ParseTest extends CommonTest {
    * @note this is the lazy case, i.e. the node pointer is never evaluated
    */
   test("null pointer in a nonnull field; lazy case!") {
-    SkillState.read("illformed/nullNode.sf").getDates
+    SkillState.read("illformed/nullNode.sf").getNodes
   }
-  
+
   test("data chunk is too long") {
     intercept[SkillException] {
-      SkillState.read("illformed/longerDataChunk.sf").getDates
+      SkillState.read("illformed/longerDataChunk.sf").getNodes
     }
   }
   test("data chunk is too short") {
     intercept[SkillException] {
-      SkillState.read("illformed/shorterDataChunk.sf").getDates
+      SkillState.read("illformed/shorterDataChunk.sf").getNodes
     }
   }
   test("incompatible field types") {
     intercept[SkillException] {
-      SkillState.read("illformed/incompatibleType.sf").getDates
+      SkillState.read("illformed/incompatibleType.sf").getNodes
     }
   }
   test("reserved type ID") {
     intercept[SkillException] {
-      SkillState.read("illformed/illegalTypeID.sf").getDates
+      SkillState.read("illformed/illegalTypeID.sf").getNodes
     }
   }
   test("missing user type") {
     intercept[SkillException] {
-      SkillState.read("illformed/missingUserType.sf").getDates
+      SkillState.read("illformed/missingUserType.sf").getNodes
     }
   }
   test("illegal string pool offset") {
     intercept[SkillException] {
-      SkillState.read("illformed/illegalStringPoolOffsets.sf").getDates
+      SkillState.read("illformed/illegalStringPoolOffsets.sf").getNodes
     }
   }
   test("missing field declarations in second block") {
     intercept[SkillException] {
-      SkillState.read("illformed/missingFieldInSecondBlock.sf").getDates
+      SkillState.read("illformed/missingFieldInSecondBlock.sf").getNodes
     }
   }
   test("duplicate type definition in the first block") {
     intercept[SkillException] {
-      SkillState.read("illformed/duplicateDefinition.sf").getDates
+      SkillState.read("illformed/duplicateDefinition.sf").getNodes
     }
   }
   test("append in the first block") {
     intercept[SkillException] {
-      SkillState.read("illformed/duplicateDefinitionMixed.sf").getDates
+      SkillState.read("illformed/duplicateDefinitionMixed.sf").getNodes
     }
   }
   test("duplicate append in the same block") {
     intercept[SkillException] {
-      SkillState.read("illformed/duplicateDefinitionSecondBlock.sf").getDates
+      SkillState.read("illformed/duplicateDefinitionSecondBlock.sf").getNodes
     }
   }
 }

@@ -11,9 +11,9 @@ class SimpleTest extends CommonTest {
   @Test def readAnnotation: Unit = SkillState.read("annotationTest.sf")
 
   @Test def checkAnnotation: Unit = {
-    val σ = SkillState.read("annotationTest.sf")
-    val t = σ.getTests.next
-    val d = σ.getDates.next
+    val state = SkillState.read("annotationTest.sf")
+    val t = state.getTests.next
+    val d = state.getDates.next
     assert(t.getF[Date] == d)
   }
 
