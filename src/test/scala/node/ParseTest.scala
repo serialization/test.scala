@@ -48,20 +48,14 @@ class ParseTest extends CommonTest {
     SkillState.read("illformed/nullNode.sf").getNodes
   }
 
-  test("data chunk is too long") {
-    intercept[SkillException] {
-      SkillState.read("illformed/longerDataChunk.sf").getNodes
-    }
+  test("data chunk is too long; lazy case!") {
+    SkillState.read("illformed/longerDataChunk.sf").getNodes
   }
-  test("data chunk is too short") {
-    intercept[SkillException] {
-      SkillState.read("illformed/shorterDataChunk.sf").getNodes
-    }
+  test("data chunk is too short; lazy case!") {
+    SkillState.read("illformed/shorterDataChunk.sf").getNodes
   }
-  test("incompatible field types") {
-    intercept[SkillException] {
-      SkillState.read("illformed/incompatibleType.sf").getNodes
-    }
+  test("incompatible field types; lazy case!") {
+    SkillState.read("illformed/incompatibleType.sf").getNodes
   }
   test("reserved type ID") {
     intercept[SkillException] {
