@@ -1,14 +1,14 @@
 package annotation
 
 import org.junit.Assert
+
 import annotation.api.SkillState
-import common.CommonTest
-import annotation.internal.SkillException
-import annotation.internal.SerializableState
+import annotation.internal.AnnotationTypeCastException
 import annotation.internal.ParseException
 import annotation.internal.PoolSizeMissmatchError
 import annotation.internal.TypeMissmatchError
 import annotation.internal.UnexpectedEOF
+import common.CommonTest
 
 /**
  * Tests the file reading capabilities.
@@ -19,8 +19,8 @@ class ParseTest extends CommonTest {
     val σ = SkillState.read("test.sf")
 
     val it = σ.getDates;
-    Assert.assertEquals(1L, it.next.getDate)
-    Assert.assertEquals(-1L, it.next.getDate)
+    Assert.assertEquals(1L, it.next.date)
+    Assert.assertEquals(-1L, it.next.date)
     assert(!it.hasNext, "there shouldn't be any more elemnets!")
   }
 
@@ -118,5 +118,34 @@ class ParseTest extends CommonTest {
       SkillState.read("illformed/duplicateDefinitionSecondBlock.sf").getDates
     }
     assert(thrown.getMessage === "In block 2 @20: Duplicate redefinition of type a")
+  }
+
+  // annotation related tests
+  test("read annotation") { SkillState.read("annotationTest.sf") }
+
+  test("check annotation") {
+    val state = SkillState.read("annotationTest.sf")
+    val t = state.getTests.next
+    val d = state.getDates.next
+    assert(t.getF[Date] === d)
+  }
+
+  test("change annotation field") {
+    val σ = SkillState.read("annotationTest.sf")
+    val t = σ.getTests.next
+    val d = σ.getDates.next
+    t.setF(t)
+    assert(t.getF[annotation.Test] === t)
+  }
+
+  test("annotation type-safety") {
+    intercept[AnnotationTypeCastException] {
+      val σ = SkillState.read("annotationTest.sf")
+      val t = σ.getTests.next
+      val d = σ.getDates.next
+      // no its not
+      if (t.getF[annotation.Test] == t)
+        fail;
+    }
   }
 }
