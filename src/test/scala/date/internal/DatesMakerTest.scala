@@ -17,7 +17,7 @@ class DatesMakerTest extends CommonTest {
   }
 
   test("write and read dates") {
-    val state = SerializableState.read("test.sf")
+    val state = SerializableState.read("date-example.sf")
 
     val out = File.createTempFile("test", ".sf").toPath()
     state.write(out)
@@ -28,7 +28,7 @@ class DatesMakerTest extends CommonTest {
   }
 
   test("add a date") {
-    val state = SerializableState.read("test.sf")
+    val state = SerializableState.read("date-example.sf")
 
     val out = File.createTempFile("test", ".sf").toPath()
 
@@ -38,7 +38,7 @@ class DatesMakerTest extends CommonTest {
   }
 
   test("read, add, modify and write some dates") {
-    val state = SerializableState.read(new File("testdata/test.sf").toPath)
+    val state = SerializableState.read(new File("testdata/date-example.sf").toPath)
     RandomDatesMaker.addLinearDates(state, 98)
     state.getDates.foreach(_.setDate(0))
 
@@ -52,7 +52,7 @@ class DatesMakerTest extends CommonTest {
   }
 
   test("write and read some linear dates"){
-    val σ = SerializableState.read(new File("testdata/test.sf").toPath)
+    val σ = SerializableState.read(new File("testdata/date-example.sf").toPath)
     Assert.assertNotNull(σ)
     RandomDatesMaker.addLinearDates(σ, 100)
     Assert.assertNotNull(σ)
@@ -66,7 +66,7 @@ class DatesMakerTest extends CommonTest {
   }
 
   test("write and read some random dates"){
-    val σ = SerializableState.read(new File("testdata/test.sf").toPath)
+    val σ = SerializableState.read(new File("testdata/date-example.sf").toPath)
     Assert.assertNotNull(σ)
     RandomDatesMaker.addDates(σ, 100)
     Assert.assertNotNull(σ)
@@ -78,7 +78,7 @@ class DatesMakerTest extends CommonTest {
   }
 
   test("write and read a million random dates"){
-    val σ = SerializableState.read(new File("testdata/test.sf").toPath)
+    val σ = SerializableState.read(new File("testdata/date-example.sf").toPath)
     Assert.assertNotNull(σ)
     RandomDatesMaker.addDates(σ, (1e6 - 2).toInt)
     Assert.assertNotNull(σ)
@@ -90,7 +90,7 @@ class DatesMakerTest extends CommonTest {
   }
 
   test("write and read a million small random dates"){
-    val σ = SerializableState.read(new File("testdata/test.sf").toPath)
+    val σ = SerializableState.read(new File("testdata/date-example.sf").toPath)
     Assert.assertNotNull(σ)
     RandomDatesMaker.addDatesGaussian(σ, (1e6 - 2).toInt)
     Assert.assertNotNull(σ)
