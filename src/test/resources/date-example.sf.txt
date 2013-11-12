@@ -1,4 +1,4 @@
-test.sf sollte eine gültige skill datei mit string pool und zwei date objecten sein zu der definition:
+date-example.sf sollte eine gültige skill datei mit string pool und zwei date objekten sein zu der definition:
 
 date { v64 date }
 

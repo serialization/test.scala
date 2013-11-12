@@ -10,16 +10,31 @@ import java.io.File
 @RunWith(classOf[JUnitRunner])
 class WriteTest extends CommonTest {
 
-  test("simple write date test") {
+  test("§6.6 date example") {
+    val file = File.createTempFile("writetest", ".sf")
+    val path = file.toPath
+
     val σ = SkillState.create
     σ.addDate(1)
     σ.addDate(-1)
-    σ.write(File.createTempFile("writetest", ".sf").toPath)
+    σ.write(path)
+
+    assert(sha256(path) === sha256("date-example.sf"))
+    assert(SkillState.read(path).getDates.map(_.date).toList.sameElements(List(1, -1)))
+
+    file.delete
   }
 
-  test("simple write test") {
+  test("write 1001 dates") {
+    val file = File.createTempFile("writetest", ".sf")
+    val path = file.toPath()
+
     val σ = SkillState.create
-    (1 to 100) foreach (σ.addDate(_))
-    σ.write(File.createTempFile("writetest", ".sf").toPath)
+    (-500 to 500) foreach (σ.addDate(_))
+    σ.write(path)
+
+    assert(SkillState.read(path).getDates.map(_.date).toList.sameElements((-500 to 500).toList))
+
+    file.delete
   }
 }
