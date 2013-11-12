@@ -6,10 +6,27 @@ import org.junit.Assert
 
 class V64Test extends AssertionsForJUnit {
 
-  import SerializableState.v64
+  def v64(v: Long): Array[Byte] = SerializationFunctions.v64(v)
+
+  def v64(next: Iterator[Byte]): Long = {
+    var count: Long = 0
+    var rval: Long = 0
+    var r: Long = next.next
+    while (count < 8 && 0 != (r & 0x80)) {
+      rval |= (r & 0x7f) << (7 * count);
+
+      count += 1;
+      r = next.next
+    }
+    rval = (rval | (count match {
+      case 8 ⇒ r
+      case _ ⇒ (r & 0x7f)
+    }) << (7 * count));
+    rval
+  }
 
   def check(v: Long) {
-    Assert.assertEquals("intermediate: "+v64(v).toList.mkString(","), v, v64(v64(v)))
+    Assert.assertEquals("intermediate: "+v64(v).toList.mkString(","), v, v64(v64(v).iterator))
   }
 
   @Test def someCoding1 = check(1)
