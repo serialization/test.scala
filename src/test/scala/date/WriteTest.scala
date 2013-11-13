@@ -25,15 +25,26 @@ class WriteTest extends CommonTest {
     file.delete
   }
 
-  test("write 1001 dates") {
+  test("write 10MB dates") {
+    val startTime = System.nanoTime
+
+    val limit: Int = 8e5.toInt
     val file = File.createTempFile("writetest", ".sf")
     val path = file.toPath()
 
     val σ = SkillState.create
-    (-500 to 500) foreach (σ.addDate(_))
+    for (i ← -limit until limit)
+      σ.addDate(i)
+
     σ.write(path)
 
-    assert(SkillState.read(path).getDates.map(_.date).toList.sameElements((-500 to 500).toList))
+    val d = SkillState.read(path).getDates
+    var cond = true
+    for (i ← -limit until limit)
+      cond &&= (i == d.next.getDate)
+    assert(cond, "match failed")
+
+    assert(System.nanoTime - startTime < 2e9, s"test should run faster: ${(System.nanoTime - startTime).toDouble * 2e-9}")
 
     file.delete
   }
