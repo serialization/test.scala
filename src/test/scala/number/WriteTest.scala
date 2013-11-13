@@ -9,16 +9,27 @@ import number.api.SkillState
 @RunWith(classOf[JUnitRunner])
 class WriteTest extends CommonTest {
 
-  test("write 10001 numbers") {
+  test("write 10MB numbers") {
+    val startTime = System.nanoTime
+
+    val limit: Int = 6e5.toInt
     val file = File.createTempFile("writetest", ".sf")
     val path = file.toPath()
 
     val σ = SkillState.create
-    (-5000 to 5000) foreach (σ.addNumber(_))
+    for (i ← -limit until limit)
+      σ.addNumber(i)
+
     σ.write(path)
 
-    assert(SkillState.read(path).getNumbers.map(_.number).toList.sameElements((-5000 to 5000).toList))
+    val d = SkillState.read(path).getNumbers
+    var cond = true
+    for (i ← -limit until limit)
+      cond &&= (i == d.next.getNumber)
+    assert(cond, "match failed")
 
-    file.delete
+    assert(System.nanoTime - startTime < 2e9, s"test should run faster: ${(System.nanoTime - startTime).toDouble * 1e-9}")
+
+//    file.delete
   }
 }
