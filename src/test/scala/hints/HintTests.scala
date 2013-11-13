@@ -9,7 +9,7 @@ import hints.ignore.api.SkillState
 class HintTests extends CommonTest {
 
   test("access ignored field") {
-    val state = SkillState.read("test.sf")
+    val state = SkillState.read("date-example.sf")
 
     val err = intercept[IllegalAccessError] {
       state.getDates.next.date

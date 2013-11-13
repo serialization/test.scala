@@ -16,7 +16,7 @@ import common.CommonTest
 class ParseTest extends CommonTest {
 
   test("two dates") {
-    val σ = SkillState.read("test.sf")
+    val σ = SkillState.read("date-example.sf")
 
     val it = σ.getDates;
     Assert.assertEquals(1L, it.next.date)
@@ -25,7 +25,7 @@ class ParseTest extends CommonTest {
   }
 
   test("simple nodes") { Assert.assertNotNull(SkillState.read("node.sf")) }
-  test("simple test") { Assert.assertNotNull(SkillState.read("test.sf")) }
+  test("simple test") { Assert.assertNotNull(SkillState.read("date-example.sf")) }
   /**
    * @see § 6.2.3.Fig.3
    */

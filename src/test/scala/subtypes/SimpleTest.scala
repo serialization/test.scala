@@ -18,6 +18,8 @@ class SimpleTest extends CommonTest {
   }
 
   test("subtypes write") {
+    fail("write in type order")
+
     val file = File.createTempFile("writetest", ".sf")
     val path = file.toPath
 
@@ -26,7 +28,5 @@ class SimpleTest extends CommonTest {
     state.write(path)
     val state2 = SkillState.read(path)
     assert(state.getAs.map(_.getClass.getSimpleName).sameElements(state2.getAs.map(_.getClass.getSimpleName)))
-
-    fail("write in type order")
   }
 }
