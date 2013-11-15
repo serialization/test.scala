@@ -92,4 +92,9 @@ class ParseTest extends CommonTest {
       SkillState.read("illformed/duplicateDefinitionSecondBlock.sf").getNodes
     }
   }
+  test("missing type block") {
+    intercept[SkillException] {
+      SkillState.read("illformed/missingTypeBlock.sf").getNodes
+    }
+  }
 }
