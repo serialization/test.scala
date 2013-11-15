@@ -44,7 +44,7 @@ class WriteTest extends CommonTest {
       cond &&= (i == d.next.getDate)
     assert(cond, "match failed")
 
-    assert(System.nanoTime - startTime < 2e9, s"test should run faster: ${(System.nanoTime - startTime).toDouble * 1e-9}")
+    assert(System.nanoTime - startTime < 10e9, s"test should run faster: ${(System.nanoTime - startTime).toDouble * 1e-9}")
 
     file.delete
   }
