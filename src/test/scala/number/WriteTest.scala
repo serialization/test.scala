@@ -9,7 +9,7 @@ import number.api.SkillState
 @RunWith(classOf[JUnitRunner])
 class WriteTest extends CommonTest {
 
-  test("write 10MB numbers") {
+  test("write 1.2M numbers") {
     val startTime = System.nanoTime
 
     val limit: Int = 6e5.toInt
@@ -27,8 +27,6 @@ class WriteTest extends CommonTest {
     for (i ← -limit until limit)
       cond &&= (i == d.next.getNumber)
     assert(cond, "match failed")
-
-    assert(System.nanoTime - startTime < 10e9, s"test should run faster: ${(System.nanoTime - startTime).toDouble * 1e-9}")
 
 //    file.delete
   }
