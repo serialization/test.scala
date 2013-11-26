@@ -6,6 +6,7 @@ import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
 import java.util.Random
 import common.CommonTest
+import java.nio.file.Files
 
 class DatesMakerTest extends CommonTest {
 
@@ -19,7 +20,7 @@ class DatesMakerTest extends CommonTest {
   test("write and read dates") {
     val state = SerializableState.read("date-example.sf")
 
-    val out = File.createTempFile("test", ".sf").toPath()
+    val out = tmpFile("test")
     state.write(out)
 
     val σ2 = SerializableState.read(out)
@@ -30,7 +31,7 @@ class DatesMakerTest extends CommonTest {
   test("add a date") {
     val state = SerializableState.read("date-example.sf")
 
-    val out = File.createTempFile("test", ".sf").toPath()
+    val out = tmpFile("test")
 
     state.addDate(-15)
 
@@ -42,7 +43,7 @@ class DatesMakerTest extends CommonTest {
     RandomDatesMaker.addLinearDates(state, 98)
     state.getDates.foreach(_.setDate(0))
 
-    val out = new File("oneHundredInts.sf").toPath()
+    val out = tmpFile("oneHundredInts.sf")
     state.write(out)
 
     val σ2 = SerializableState.read(out)
@@ -57,7 +58,7 @@ class DatesMakerTest extends CommonTest {
     RandomDatesMaker.addLinearDates(σ, 100)
     Assert.assertNotNull(σ)
 
-    val out = new File("someLinearDates.sf").toPath
+    val out = tmpFile("someLinearDates.sf")
     σ.write(out)
 
     val σ2 = SerializableState.read(out)
@@ -70,9 +71,10 @@ class DatesMakerTest extends CommonTest {
     Assert.assertNotNull(σ)
     RandomDatesMaker.addDates(σ, 100)
     Assert.assertNotNull(σ)
-    σ.write(new File("someDates.sf").toPath)
+    val out = tmpFile("someDates.sf")
+    σ.write(out)
 
-    val σ2 = SerializableState.read(new File("someDates.sf").toPath)
+    val σ2 = SerializableState.read(out)
 
     compareStates(σ, σ2);
   }
@@ -83,7 +85,7 @@ class DatesMakerTest extends CommonTest {
     RandomDatesMaker.addDates(σ, (1e6 - 2).toInt)
     Assert.assertNotNull(σ)
 
-    val out = new File("testOutWrite1MDatesNormal.sf").toPath()
+    val out = tmpFile("testOutWrite1MDatesNormal.sf")
     σ.write(out)
 
     compareStates(σ, SerializableState.read(out));
@@ -95,7 +97,7 @@ class DatesMakerTest extends CommonTest {
     RandomDatesMaker.addDatesGaussian(σ, (1e6 - 2).toInt)
     Assert.assertNotNull(σ)
 
-    val out = new File("testOutWrite1MDatesGaussian.sf").toPath()
+    val out = tmpFile("testOutWrite1MDatesGaussian.sf")
     σ.write(out)
 
     compareStates(σ, SerializableState.read(out));

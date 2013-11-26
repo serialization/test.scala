@@ -1,22 +1,14 @@
 package date
-
-import java.io.File
-
-import scala.collection.mutable.ArrayBuffer
-
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
-import org.scalatest.junit.JUnitRunner
-
 import common.CommonTest
 import date.api.SkillState
+import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class WriteTest extends CommonTest {
 
   test("§6.6 date example") {
-    val file = File.createTempFile("writetest", ".sf")
-    val path = file.toPath
+    val path = tmpFile("writetest")
 
     val σ = SkillState.create
     σ.addDate(1)
@@ -25,15 +17,12 @@ class WriteTest extends CommonTest {
 
     assert(sha256(path) === sha256("date-example.sf"))
     assert(SkillState.read(path).getDates.map(_.date).toList.sameElements(List(1, -1)))
-
-    file.delete
   }
 
   test("write 1.6M dates") {
     val low = -8e5.toInt
     val high = 8e5.toInt
-    val file = File.createTempFile("writetest", ".sf")
-    val path = file.toPath()
+    val path = tmpFile("writetest")
 
     val σ = SkillState.create
     for (i ← low until high)
@@ -46,8 +35,6 @@ class WriteTest extends CommonTest {
     for (i ← low until high)
       cond &&= (i == d.next.getDate)
     assert(cond, "match failed")
-
-    file.delete
   }
 
   test("normalize 10MB v64") {
@@ -60,7 +47,6 @@ class WriteTest extends CommonTest {
     for (d ← σ.getDates)
       d.date -= min
 
-    val file = File.createTempFile("normalized", ".sf")
-    σ.write(file.toPath);
+    σ.write(tmpFile("normalized"))
   }
 }
