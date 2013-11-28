@@ -19,8 +19,8 @@ class ParseTest extends CommonTest {
     val σ = SkillState.read("date-example.sf")
 
     val it = σ.getDates;
-    Assert.assertEquals(1L, it.next.date)
-    Assert.assertEquals(-1L, it.next.date)
+    Assert.assertEquals(1L, it.next.getDate)
+    Assert.assertEquals(-1L, it.next.getDate)
     assert(!it.hasNext, "there shouldn't be any more elemnets!")
   }
 
@@ -38,6 +38,16 @@ class ParseTest extends CommonTest {
   test("empty blocks") { Assert.assertNotNull(SkillState.read("emptyBlocks.sf")) }
   test("two types") { Assert.assertNotNull(SkillState.read("twoTypes.sf")) }
   test("trivial type definition") { Assert.assertNotNull(SkillState.read("trivialType.sf")) }
+
+  /**
+   * a regression test checking correct treatment of types without fields
+   */
+  test("append without fields")(SkillState.read("noFieldRegressionTest.sf").getDates)
+
+  /**
+   * a regression test checking correct treatment of types without fields
+   */
+  test("appended dates without fields")(assert(SkillState.read("noFieldRegressionDates.sf").getDates.size === 2))
 
   /**
    * null pointers are legal in regular fields if restricted to be nullable
@@ -105,19 +115,19 @@ class ParseTest extends CommonTest {
     val thrown = intercept[ParseException] {
       SkillState.read("illformed/duplicateDefinition.sf").getDates
     }
-    assert(thrown.getMessage === "In block 1 @17: Duplicate definition of type a")
+    assert(thrown.getMessage === "In block 1 @13: Duplicate definition of type a")
   }
   test("append in the first block") {
     val thrown = intercept[ParseException] {
       SkillState.read("illformed/duplicateDefinitionMixed.sf").getDates
     }
-    assert(thrown.getMessage === "In block 1 @15: Duplicate definition of type a")
+    assert(thrown.getMessage === "In block 1 @13: Duplicate definition of type a")
   }
   test("duplicate append in the same block") {
     val thrown = intercept[ParseException] {
       SkillState.read("illformed/duplicateDefinitionSecondBlock.sf").getDates
     }
-    assert(thrown.getMessage === "In block 2 @20: Duplicate redefinition of type a")
+    assert(thrown.getMessage === "In block 2 @18: Duplicate definition of type a")
   }
 
   // annotation related tests
