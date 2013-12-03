@@ -16,7 +16,7 @@ class WriteTest extends CommonTest {
     σ.write(path)
 
     assert(sha256(path) === sha256("date-example.sf"))
-    assert(SkillState.read(path).getDates.map(_.date).toList.sameElements(List(1, -1)))
+    assert(SkillState.read(path).getDates.map(_.getDate).toList.sameElements(List(1, -1)))
   }
 
   test("write 1.6M dates") {
