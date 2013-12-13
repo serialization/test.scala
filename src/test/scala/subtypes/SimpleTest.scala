@@ -17,22 +17,18 @@ class SimpleTest extends CommonTest {
     val types = "aabbbcbbddacd"
 
     // check types
-    val actualTypes = state.getAs.map(_.getClass.getSimpleName.toLowerCase).mkString("");
+    val actualTypes = state.A.all.map(_.getClass.getSimpleName.toLowerCase).mkString("");
     assert(actualTypes === types)
 
     // check fields (all fields are self-references)
-    state.getAs.foreach { instance ⇒
-      assert(instance.getA === instance)
-    }
-    state.getBs.foreach { instance ⇒
-      assert(instance.getB === instance)
-    }
-    state.getCs.foreach { instance ⇒
-      assert(instance.getC === instance)
-    }
-    state.getDs.foreach { instance ⇒
-      assert(instance.getD === instance)
-    }
+    for(a <- state.A.all)
+      assert(a.a === a)
+    for(b <- state.B.all)
+      assert(b.b === b)
+    for(c <- state.C.all)
+      assert(c.c === c)
+    for(d <- state.D.all)
+      assert(d.d === d)
   }
 
   test("subtypes write") {
@@ -41,22 +37,22 @@ class SimpleTest extends CommonTest {
     val state = SkillState.read("localBasePoolStartIndex.sf")
 
     // check self references
-    for ((instance, index) ← state.getAs.zipWithIndex) {
-      assert(instance.getA.getSkillID === index + 1L, "index missmatch")
-      assert(instance.getA === instance, "self reference corrupted")
+    for ((instance, index) ← state.A.all.zipWithIndex) {
+      assert(instance.a.getSkillID === index + 1L, "index missmatch")
+      assert(instance.a === instance, "self reference corrupted")
     }
 
     state.write(path)
 
     // check self references again (write might not have restored them)
-    for ((instance, index) ← state.getAs.zipWithIndex) {
-      assert(instance.getA.getSkillID === index + 1L, "index missmatch after write")
-      assert(instance.getA === instance, "self reference corrupted after write")
+    for ((instance, index) ← state.A.all.zipWithIndex) {
+      assert(instance.a.getSkillID === index + 1L, "index missmatch after write")
+      assert(instance.a === instance, "self reference corrupted after write")
     }
 
     val state2 = SkillState.read(path)
 
     // check type of deserialized instances
-    assert(state.getAsInTypeOrder.map(_.getClass.getSimpleName).sameElements(state2.getAsInTypeOrder.map(_.getClass.getSimpleName)))
+    assert(state.A.allInTypeOrder.map(_.getClass.getSimpleName).sameElements(state2.A.allInTypeOrder.map(_.getClass.getSimpleName)))
   }
 }

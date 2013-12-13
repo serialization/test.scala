@@ -11,7 +11,7 @@ import node.internal.SkillException
 class ParseTest extends CommonTest {
 
   test("two dates") {
-    SkillState.read("date-example.sf").getNodes
+    SkillState.read("date-example.sf").Node.all
   }
 
   test("simple nodes") { Assert.assertNotNull(SkillState.read("node.sf")) }
@@ -33,11 +33,11 @@ class ParseTest extends CommonTest {
    * null pointers are legal in regular fields if restricted to be nullable
    *  (although the behavior is not visible here due to lazyness)
    */
-  test("nullable restricted null pointer") { SkillState.read("nullableNode.sf").getNodes }
+  test("nullable restricted null pointer") { SkillState.read("nullableNode.sf").Node.all }
   /**
    * null pointers are legal in annotations
    */
-  test("null pointer in an annotation") { SkillState.read("nullAnnotation.sf").getNodes }
+  test("null pointer in an annotation") { SkillState.read("nullAnnotation.sf").Node.all }
 
   /**
    * null pointers are not legal in regular fields
@@ -45,56 +45,56 @@ class ParseTest extends CommonTest {
    * @note this is the lazy case, i.e. the node pointer is never evaluated
    */
   test("null pointer in a nonnull field; lazy case!") {
-    SkillState.read("illformed/nullNode.sf").getNodes
+    SkillState.read("illformed/nullNode.sf").Node.all
   }
 
   test("data chunk is too long; lazy case!") {
-    SkillState.read("illformed/longerDataChunk.sf").getNodes
+    SkillState.read("illformed/longerDataChunk.sf").Node.all
   }
   test("data chunk is too short; lazy case!") {
-    SkillState.read("illformed/shorterDataChunk.sf").getNodes
+    SkillState.read("illformed/shorterDataChunk.sf").Node.all
   }
   test("incompatible field types; lazy case!") {
-    SkillState.read("illformed/incompatibleType.sf").getNodes
+    SkillState.read("illformed/incompatibleType.sf").Node.all
   }
   test("reserved type ID") {
     intercept[SkillException] {
-      SkillState.read("illformed/illegalTypeID.sf").getNodes
+      SkillState.read("illformed/illegalTypeID.sf").Node.all
     }
   }
   test("missing user type") {
     intercept[SkillException] {
-      SkillState.read("illformed/missingUserType.sf").getNodes
+      SkillState.read("illformed/missingUserType.sf").Node.all
     }
   }
   test("illegal string pool offset") {
     intercept[SkillException] {
-      SkillState.read("illformed/illegalStringPoolOffsets.sf").getNodes
+      SkillState.read("illformed/illegalStringPoolOffsets.sf").Node.all
     }
   }
   test("missing field declarations in second block") {
     intercept[SkillException] {
-      SkillState.read("illformed/missingFieldInSecondBlock.sf").getNodes
+      SkillState.read("illformed/missingFieldInSecondBlock.sf").Node.all
     }
   }
   test("duplicate type definition in the first block") {
     intercept[SkillException] {
-      SkillState.read("illformed/duplicateDefinition.sf").getNodes
+      SkillState.read("illformed/duplicateDefinition.sf").Node.all
     }
   }
   test("append in the first block") {
     intercept[SkillException] {
-      SkillState.read("illformed/duplicateDefinitionMixed.sf").getNodes
+      SkillState.read("illformed/duplicateDefinitionMixed.sf").Node.all
     }
   }
   test("duplicate append in the same block") {
     intercept[SkillException] {
-      SkillState.read("illformed/duplicateDefinitionSecondBlock.sf").getNodes
+      SkillState.read("illformed/duplicateDefinitionSecondBlock.sf").Node.all
     }
   }
   test("missing type block") {
     intercept[SkillException] {
-      SkillState.read("illformed/missingTypeBlock.sf").getNodes
+      SkillState.read("illformed/missingTypeBlock.sf").Node.all
     }
   }
 }

@@ -18,14 +18,14 @@ class WriteTest extends CommonTest {
 
     val σ = SkillState.create
     for (i ← -limit until limit)
-      σ.addNumber(i)
+      σ.Number(i)
 
     σ.write(path)
 
-    val d = SkillState.read(path).getNumbers
+    val d = SkillState.read(path).Number.all
     var cond = true
     for (i ← -limit until limit)
-      cond &&= (i == d.next.getNumber)
+      cond &&= (i == d.next.number)
     assert(cond, "match failed")
 
 //    file.delete

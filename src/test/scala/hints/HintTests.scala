@@ -12,7 +12,7 @@ class HintTests extends CommonTest {
     val state = SkillState.read("date-example.sf")
 
     val err = intercept[IllegalAccessError] {
-      state.getDates.next.date
+      state.Date.all.next.date
     }
     assert(err.getMessage() === "date has an !ignore hint")
   }
@@ -21,7 +21,7 @@ class HintTests extends CommonTest {
     val state = SkillState.read("node.sf")
 
     val err = intercept[IllegalAccessError] {
-      state.getNodes.next.node
+      state.Node.all.next.node
     }
     assert(err.getMessage() === "node has a type with an !ignore hint")
   }
