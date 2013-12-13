@@ -11,10 +11,10 @@ import java.nio.file.Files
 class DatesMakerTest extends CommonTest {
 
   def compareStates(σ: SerializableState, σ2: SerializableState) {
-    var i1 = σ.getDates
-    var i2 = σ2.getDates
+    var i1 = σ.Date.all
+    var i2 = σ2.Date.all
 
-    assert(i1.map(_.getDate).sameElements(i2.map(_.getDate)), "the argument states differ somehow")
+    assert(i1.map(_.date).sameElements(i2.map(_.date)), "the argument states differ somehow")
   }
 
   test("write and read dates") {
@@ -33,15 +33,16 @@ class DatesMakerTest extends CommonTest {
 
     val out = tmpFile("test")
 
-    state.addDate(-15)
+    state.Date(-15L)
 
-    assert(!state.getDates.filter(_.getDate == -15L).isEmpty, "the added date does not exist!")
+    assert(!state.Date.filter(_.date == -15L).isEmpty, "the added date does not exist!")
   }
 
   test("read, add, modify and write some dates") {
     val state = SerializableState.read("date-example.sf")
     RandomDatesMaker.addLinearDates(state, 98)
-    state.getDates.foreach(_.setDate(0))
+    for (d ← state.Date)
+      d.date = 0
 
     val out = tmpFile("oneHundredInts.sf")
     state.write(out)
@@ -49,10 +50,10 @@ class DatesMakerTest extends CommonTest {
     val σ2 = SerializableState.read(out)
 
     compareStates(SerializableState.read(out), σ2)
-    σ2.getDates.foreach({ d ⇒ assert(d.getDate == 0) })
+    σ2.Date.foreach({ d ⇒ assert(d.date == 0) })
   }
 
-  test("write and read some linear dates"){
+  test("write and read some linear dates") {
     val σ = SerializableState.read("date-example.sf")
     Assert.assertNotNull(σ)
     RandomDatesMaker.addLinearDates(σ, 100)
@@ -66,7 +67,7 @@ class DatesMakerTest extends CommonTest {
     compareStates(SerializableState.read(out), σ2)
   }
 
-  test("write and read some random dates"){
+  test("write and read some random dates") {
     val σ = SerializableState.read("date-example.sf")
     Assert.assertNotNull(σ)
     RandomDatesMaker.addDates(σ, 100)
@@ -79,7 +80,7 @@ class DatesMakerTest extends CommonTest {
     compareStates(σ, σ2);
   }
 
-  test("write and read a million random dates"){
+  test("write and read a million random dates") {
     val σ = SerializableState.read("date-example.sf")
     Assert.assertNotNull(σ)
     RandomDatesMaker.addDates(σ, (1e6 - 2).toInt)
@@ -91,7 +92,7 @@ class DatesMakerTest extends CommonTest {
     compareStates(σ, SerializableState.read(out));
   }
 
-  test("write and read a million small random dates"){
+  test("write and read a million small random dates") {
     val σ = SerializableState.read("date-example.sf")
     Assert.assertNotNull(σ)
     RandomDatesMaker.addDatesGaussian(σ, (1e6 - 2).toInt)
@@ -113,9 +114,9 @@ object RandomDatesMaker {
   /**
    * adds count new dates with linear content to σ
    */
-  def addLinearDates(σ: SerializableState, count: Int) {
-    for (i ← 0 until count)
-      σ.addDate(i)
+  def addLinearDates(σ: SerializableState, count: Long) {
+    for (i ← 0L until count)
+      σ.Date(i)
   }
 
   /**
@@ -124,7 +125,7 @@ object RandomDatesMaker {
   def addDates(σ: SerializableState, count: Int) {
     var r = new Random()
     for (i ← 0 until count)
-      σ.addDate(r.nextLong())
+      σ.Date(r.nextLong())
   }
 
   /**
@@ -135,7 +136,7 @@ object RandomDatesMaker {
   def addDatesGaussian(σ: SerializableState, count: Int) {
     var r = new Random()
     for (i ← 0 until count)
-      σ.addDate((r.nextGaussian().abs * 100).toLong)
+      σ.Date((r.nextGaussian().abs * 100).toLong)
 
   }
 }

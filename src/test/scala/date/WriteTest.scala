@@ -11,12 +11,12 @@ class WriteTest extends CommonTest {
     val path = tmpFile("writetest")
 
     val σ = SkillState.create
-    σ.addDate(1)
-    σ.addDate(-1)
+    σ.Date(1)
+    σ.Date(-1)
     σ.write(path)
 
     assert(sha256(path) === sha256("date-example.sf"))
-    assert(SkillState.read(path).getDates.map(_.getDate).toList.sameElements(List(1, -1)))
+    assert(SkillState.read(path).Date.all.map(_.date).toList.sameElements(List(1, -1)))
   }
 
   test("write 1.6M dates") {
@@ -26,14 +26,14 @@ class WriteTest extends CommonTest {
 
     val σ = SkillState.create
     for (i ← low until high)
-      σ.addDate(i)
+      σ.Date(i)
 
     σ.write(path)
 
-    val d = SkillState.read(path).getDates
+    val d = SkillState.read(path).Date.all
     var cond = true
     for (i ← low until high)
-      cond &&= (i == d.next.getDate)
+      cond &&= (i == d.next.date)
     assert(cond, "match failed")
   }
 
@@ -41,10 +41,10 @@ class WriteTest extends CommonTest {
     val σ = SkillState.read("normalizedInput.sf")
 
     var min = Long.MaxValue
-    for (d ← σ.getDates)
-      min = Math.min(d.getDate, min)
+    for (d ← σ.Date.all)
+      min = Math.min(d.date, min)
 
-    for (d ← σ.getDates)
+    for (d ← σ.Date.all)
       d.date -= min
 
     σ.write(tmpFile("normalized"))
