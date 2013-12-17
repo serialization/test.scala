@@ -3,7 +3,6 @@ package annotation
 import org.junit.Assert
 
 import annotation.api.SkillState
-import annotation.internal.AnnotationTypeCastException
 import annotation.internal.ParseException
 import annotation.internal.PoolSizeMissmatchError
 import annotation.internal.TypeMissmatchError
@@ -84,7 +83,7 @@ class ParseTest extends CommonTest {
     val thrown = intercept[TypeMissmatchError] {
       SkillState.read("illformed/incompatibleType.sf").Date.all
     }
-    assert(thrown.getMessage === """During construction of DateStoragePool.date: Encountered incompatible type "date" (expected: v64)""")
+    assert(thrown.getMessage === """During construction of date.date: Encountered incompatible type "date" (expected: v64)""")
   }
   test("reserved type ID") {
     val thrown = intercept[ParseException] {
@@ -149,13 +148,11 @@ class ParseTest extends CommonTest {
   }
 
   test("annotation type-safety") {
-    intercept[AnnotationTypeCastException] {
-      val σ = SkillState.read("annotationTest.sf")
-      val t = σ.Test.all.next
-      val d = σ.Date.all.next
-      // no its not
-      if (t.f == t)
-        fail;
-    }
+    val σ = SkillState.read("annotationTest.sf")
+    val t = σ.Test.all.next
+    val d = σ.Date.all.next
+    // no its not
+    if (t.f == t)
+      fail;
   }
 }
