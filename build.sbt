@@ -6,7 +6,7 @@ scalaVersion := "2.10.3"
 
 javacOptions ++= Seq("-encoding", "UTF-8")
 
-scalacOptions ++= Opts.compile.encoding("UTF-8")
+scalacOptions ++= Opts.compile.encoding("UTF8")
 
 libraryDependencies ++= Seq(
 	"junit" % "junit" % "4.10" % "test",
