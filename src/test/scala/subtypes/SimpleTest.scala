@@ -12,6 +12,10 @@ class SimpleTest extends CommonTest {
     assert(null != state)
   }
 
+  test("simple read §6.3.2") {
+    assert(null != SkillState.read("localBasePoolStartIndex.sf"))
+  }
+
   test("subtypes read; see §6.3.2") {
     val state = SkillState.read("localBasePoolStartIndex.sf")
     val types = "aabbbcbbddacd"
@@ -21,13 +25,13 @@ class SimpleTest extends CommonTest {
     assert(actualTypes === types)
 
     // check fields (all fields are self-references)
-    for(a <- state.A.all)
+    for (a ← state.A.all)
       assert(a.a === a)
-    for(b <- state.B.all)
+    for (b ← state.B.all)
       assert(b.b === b)
-    for(c <- state.C.all)
+    for (c ← state.C.all)
       assert(c.c === c)
-    for(d <- state.D.all)
+    for (d ← state.D.all)
       assert(d.d === d)
   }
 
