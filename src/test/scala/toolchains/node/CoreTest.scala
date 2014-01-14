@@ -26,8 +26,6 @@ class CoreTest extends CommonTest {
     σ.Node(23)
     σ.Node(42)
     σ.write(tmpFile("nodeExample.create"))
-
-    for (n ← σ.Node.all) println(n.prettyString)
   }
 
   test("create and write nodes with tool 1, append colors and descriptions -- with manual string updates") {
@@ -112,7 +110,7 @@ class CoreTest extends CommonTest {
 
     locally {
       val σ = Viewer.read(path)
-      σ.Node.all.foreach(println(_))
+      σ.Node.all.foreach(_.prettyString)
     }
   }
 }
