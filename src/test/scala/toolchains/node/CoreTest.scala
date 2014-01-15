@@ -70,7 +70,7 @@ class CoreTest extends CommonTest {
 
     locally {
       val σ = Viewer.read(path)
-      for (n ← σ.Node.all) println(n.prettyString)
+      assert(σ.Node.all.size === 2)
     }
   }
 
@@ -127,7 +127,7 @@ class CoreTest extends CommonTest {
   }
 
   test("two toolchain cycles -- write") {
-    val path = tmpFile("nodeExample.with.strings")
+    var path = tmpFile("nodeExample.with.strings")
 
     locally {
       val σ = Creator.create
@@ -168,8 +168,9 @@ class CoreTest extends CommonTest {
 
     locally {
       val σ = Creator.read(path)
-      σ.Node(23)
-      σ.Node(42)
+      σ.Node(-1)
+      σ.Node(2)
+      path = tmpFile("projection")
       σ.write(path)
     }
 
@@ -217,7 +218,7 @@ class CoreTest extends CommonTest {
 
     locally {
       val σ = Viewer.read(path)
-      σ.Node.all.foreach(_.prettyString)
+      assert(σ.Node.all.size === 2)
     }
   }
 }
