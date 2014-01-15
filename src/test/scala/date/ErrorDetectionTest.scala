@@ -7,12 +7,27 @@ import date.internal.TypeMissmatchError
 import date.internal.PoolSizeMissmatchError
 import date.internal.UnexpectedEOF
 import date.internal.ParseException
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
+import java.io.File
+import java.nio.file.Path
+import java.nio.file.FileSystems
+import java.io.IOException
 
 /**
  * TODO improve checks
  * @author Timm Felden
  */
+@RunWith(classOf[JUnitRunner])
 class ErrorDetectionTest extends CommonTest {
+
+  test("read inexistent file") {
+    val p = FileSystems.getDefault().getPath("☢☢☢inexistent☢☢☢.sf")
+    val thrown = intercept[IOException] {
+      for (d ← SkillState.read(p).Date.all) println(d.prettyString)
+    }
+    assert(thrown.getMessage === s"The file $p does not exist.")
+  }
 
   test("data chunk is too long") {
     val thrown = intercept[PoolSizeMissmatchError] {
