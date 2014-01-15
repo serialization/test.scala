@@ -1,13 +1,12 @@
 package toolchains.node
 
 import scala.reflect.Manifest
-
 import org.junit.runner.RunWith
 import org.scalatest.Engine
 import org.scalatest.events.Formatter
 import org.scalatest.junit.JUnitRunner
-
 import common.CommonTest
+import java.nio.file.Path
 
 /**
  * The desired test makes use of core functionality, but it is not a unit test, but checks several features at once.
@@ -21,52 +20,51 @@ class CoreTest extends CommonTest {
   import tool3.api.{ SkillState ⇒ DescriptionTool }
   import viewer.api.{ SkillState ⇒ Viewer }
 
-  test("create and write nodes with tool 1") {
+  def invokeCreator(path: Path) {
     val σ = Creator.create
     σ.Node(23)
     σ.Node(42)
     σ.write(tmpFile("nodeExample.create"))
   }
 
+  def invokeColorTool(path: Path) {
+    import tool2.Node
+
+    val σ = ColorTool.read(path)
+    σ.String.add("red")
+    σ.String.add("black")
+    σ.String.add("grey")
+    σ.Node.all.foreach {
+      case n @ Node(23, _) ⇒ n.color = "red"
+      case n @ Node(42, _) ⇒ n.color = "black"
+      case n               ⇒ n.color = "grey"
+    }
+    σ.append
+  }
+
+  def invokeDescriptionTool(path: Path) {
+    import tool3.Node
+
+    val σ = DescriptionTool.read(path)
+    σ.String.add("Some odd number.")
+    σ.String.add("The answer.")
+    σ.String.add("Boring!")
+    σ.Node.all.foreach {
+      case n @ Node(23, _) ⇒ n.description = "Some odd number."
+      case n @ Node(42, _) ⇒ n.description = "The answer."
+      case n               ⇒ n.description = "Boring!"
+    }
+    σ.append
+  }
+
+  test("create and write nodes with tool 1")(invokeCreator(tmpFile("nodeExample.create")))
+
   test("create and write nodes with tool 1, append colors and descriptions -- with manual string updates") {
     val path = tmpFile("nodeExample.with.strings")
 
-    locally {
-      val σ = Creator.create
-      σ.Node(23)
-      σ.Node(42)
-      σ.write(path)
-    }
-
-    locally {
-      import tool2.Node
-
-      val σ = ColorTool.read(path)
-      σ.String.add("red")
-      σ.String.add("black")
-      σ.String.add("grey")
-      σ.Node.all.foreach {
-        case n @ Node(23, _) ⇒ n.color = "red"
-        case n @ Node(42, _) ⇒ n.color = "black"
-        case n               ⇒ n.color = "grey"
-      }
-      σ.append
-    }
-
-    locally {
-      import tool3.Node
-
-      val σ = DescriptionTool.read(path)
-      σ.String.add("Some odd number.")
-      σ.String.add("The answer.")
-      σ.String.add("Boring!")
-      σ.Node.all.foreach {
-        case n @ Node(23, _) ⇒ n.description = "Some odd number."
-        case n @ Node(42, _) ⇒ n.description = "The answer."
-        case n               ⇒ n.description = "Boring!"
-      }
-      σ.append
-    }
+    invokeCreator(path)
+    invokeColorTool(path)
+    invokeDescriptionTool(path)
 
     locally {
       val σ = Viewer.read(path)
@@ -77,42 +75,9 @@ class CoreTest extends CommonTest {
   test("two toolchain cycles -- append") {
     val path = tmpFile("nodeExample.with.strings")
 
-    locally {
-      val σ = Creator.create
-      σ.Node(23)
-      σ.Node(42)
-      σ.write(path)
-    }
-
-    locally {
-      import tool2.Node
-
-      val σ = ColorTool.read(path)
-      σ.String.add("red")
-      σ.String.add("black")
-      σ.String.add("grey")
-      σ.Node.all.foreach {
-        case n @ Node(23, _) ⇒ n.color = "red"
-        case n @ Node(42, _) ⇒ n.color = "black"
-        case n               ⇒ n.color = "grey"
-      }
-      σ.append
-    }
-
-    locally {
-      import tool3.Node
-
-      val σ = DescriptionTool.read(path)
-      σ.String.add("Some odd number.")
-      σ.String.add("The answer.")
-      σ.String.add("Boring!")
-      σ.Node.all.foreach {
-        case n @ Node(23, _) ⇒ n.description = "Some odd number."
-        case n @ Node(42, _) ⇒ n.description = "The answer."
-        case n               ⇒ n.description = "Boring!"
-      }
-      σ.append
-    }
+    invokeCreator(path)
+    invokeColorTool(path)
+    invokeDescriptionTool(path)
 
     locally {
       val σ = Creator.read(path)
@@ -126,45 +91,41 @@ class CoreTest extends CommonTest {
     }
   }
 
-  test("two toolchain cycles -- write") {
-    var path = tmpFile("nodeExample.with.strings")
+  test("toolchain commutativity -- append") {
+    val path1 = tmpFile("commutativity.path1.")
+    val path2 = tmpFile("commutativity.path2.")
 
     locally {
       val σ = Creator.create
       σ.Node(23)
       σ.Node(42)
-      σ.write(path)
+      σ.write(path1)
+      σ.write(path2)
     }
 
+    // path1
+    invokeColorTool(path1)
+    invokeDescriptionTool(path1)
+
+    // path2
+    invokeDescriptionTool(path2)
+    invokeColorTool(path2)
+
+    // check: files are unequal, contents is equal
+    assert(sha256(path1) != sha256(path2), "files should not be equal, as appends happened in a different order")
     locally {
-      import tool2.Node
-
-      val σ = ColorTool.read(path)
-      σ.String.add("red")
-      σ.String.add("black")
-      σ.String.add("grey")
-      σ.Node.all.foreach {
-        case n @ Node(23, _) ⇒ n.color = "red"
-        case n @ Node(42, _) ⇒ n.color = "black"
-        case n               ⇒ n.color = "grey"
-      }
-      σ.append
+      val σ1 = Viewer.read(path1)
+      val σ2 = Viewer.read(path2)
+      assert(σ1.Node.all.size === 2)
     }
+  }
 
-    locally {
-      import tool3.Node
+  test("two toolchain cycles -- write") {
+    var path = tmpFile("nodeExample.with.strings")
 
-      val σ = DescriptionTool.read(path)
-      σ.String.add("Some odd number.")
-      σ.String.add("The answer.")
-      σ.String.add("Boring!")
-      σ.Node.all.foreach {
-        case n @ Node(23, _) ⇒ n.description = "Some odd number."
-        case n @ Node(42, _) ⇒ n.description = "The answer."
-        case n               ⇒ n.description = "Boring!"
-      }
-      σ.append
-    }
+    invokeCreator(path)
+    invokeColorTool(path)
+    invokeDescriptionTool(path)
 
     locally {
       val σ = Creator.read(path)
@@ -182,15 +143,13 @@ class CoreTest extends CommonTest {
     }
   }
 
+  /**
+   * ignoder, because it assumes that strings are collected automagically
+   */
   ignore("create and write nodes with tool 1, append colors and descriptions") {
     val path = tmpFile("nodeExample.create.write.append")
 
-    locally {
-      val σ = Creator.create
-      σ.Node(23)
-      σ.Node(42)
-      σ.write(path)
-    }
+    invokeCreator(path)
 
     locally {
       import tool2.Node
