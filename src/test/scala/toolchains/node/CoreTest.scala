@@ -1,12 +1,15 @@
 package toolchains.node
 
+import java.nio.file.Path
+
 import scala.reflect.Manifest
+
 import org.junit.runner.RunWith
 import org.scalatest.Engine
 import org.scalatest.events.Formatter
 import org.scalatest.junit.JUnitRunner
+
 import common.CommonTest
-import java.nio.file.Path
 
 /**
  * The desired test makes use of core functionality, but it is not a unit test, but checks several features at once.
@@ -128,6 +131,29 @@ class CoreTest extends CommonTest {
     invokeDescriptionTool(path)
 
     locally {
+      val σ = Creator.read(path)
+      σ.Node(-1)
+      σ.Node(2)
+      σ.write(path)
+    }
+
+    // the last write projected colors and descriptions away
+    locally {
+      val σ = Viewer.read(path)
+      assert(σ.Node.all.forall(_.color == null))
+      assert(σ.Node.all.forall(_.description == null))
+    }
+  }
+
+  test("append field to an empty pool -- toolchain two cycles, drop first create") {
+    val path = tmpFile("nodeExample.no.create")
+
+    // no create here
+    invokeColorTool(path)
+    invokeDescriptionTool(path)
+
+    locally {
+      // this might cause a problem
       val σ = Creator.read(path)
       σ.Node(-1)
       σ.Node(2)
