@@ -22,7 +22,7 @@ import java.io.IOException
 class ErrorDetectionTest extends CommonTest {
 
   test("read inexistent file") {
-    val p = FileSystems.getDefault().getPath("☢☢☢inexistent☢☢☢.sf")
+    val p = FileSystems.getDefault().getPath("IKillYouIfYouCreateThisFile.sf")
     val thrown = intercept[IOException] {
       for (d ← SkillState.read(p).Date.all) println(d.prettyString)
     }
