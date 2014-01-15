@@ -168,6 +168,34 @@ class CoreTest extends CommonTest {
     }
   }
 
+  test("append field to an empty pool -- no instances, all append") {
+    val path = tmpFile("nodeExample.no.create")
+
+    // no instances -- no harm
+    locally {
+      // this might cause a problem
+      val σ = Creator.read(path)
+      σ.write(path)
+    }
+    invokeColorTool(path)
+    invokeDescriptionTool(path)
+
+    locally {
+      // this might cause a problem
+      val σ = Creator.read(path)
+      σ.Node(-1)
+      σ.Node(2)
+      σ.append(path)
+    }
+
+    // the last write projected colors and descriptions away
+    locally {
+      val σ = Viewer.read(path)
+      assert(σ.Node.all.forall(_.color == null))
+      assert(σ.Node.all.forall(_.description == null))
+    }
+  }
+
   /**
    * ignoder, because it assumes that strings are collected automagically
    */
