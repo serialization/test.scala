@@ -24,7 +24,7 @@ class CoreTest extends CommonTest {
     val σ = Creator.create
     σ.Node(23)
     σ.Node(42)
-    σ.write(tmpFile("nodeExample.create"))
+    σ.write(path)
   }
 
   def invokeColorTool(path: Path) {
@@ -121,7 +121,7 @@ class CoreTest extends CommonTest {
   }
 
   test("two toolchain cycles -- write") {
-    var path = tmpFile("nodeExample.with.strings")
+    val path = tmpFile("nodeExample.with.strings")
 
     invokeCreator(path)
     invokeColorTool(path)
@@ -131,7 +131,6 @@ class CoreTest extends CommonTest {
       val σ = Creator.read(path)
       σ.Node(-1)
       σ.Node(2)
-      path = tmpFile("projection")
       σ.write(path)
     }
 
