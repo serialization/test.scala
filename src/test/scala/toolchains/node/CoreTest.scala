@@ -119,7 +119,11 @@ class CoreTest extends CommonTest {
     locally {
       val σ1 = Viewer.read(path1)
       val σ2 = Viewer.read(path2)
-      assert(σ1.Node.all.size === 2)
+      assert(σ1.Node.all.size === σ2.Node.all.size, "no node was lost")
+      assert(σ1.Node.all.size === 2, "no node was lost")
+      assert(σ1.Node.all.map(_.ID).sameElements(σ2.Node.all.map(_.ID)), "same ID")
+      assert(σ1.Node.all.map(_.color).sameElements(σ2.Node.all.map(_.color)), "same colors")
+      assert(σ1.Node.all.map(_.description).sameElements(σ2.Node.all.map(_.description)), "same description")
     }
   }
 
