@@ -1,3 +1,6 @@
+import de.johoop.jacoco4sbt._
+import JacocoPlugin._
+
 name := "skillScalaTestsuite"
 
 version := "0.1"
@@ -18,3 +21,5 @@ testOptions in Test <+= (target in Test) map {
 }
 
 org.scalastyle.sbt.ScalastylePlugin.Settings
+
+jacoco.settings
