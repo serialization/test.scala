@@ -34,9 +34,6 @@ class CoreTest extends CommonTest {
     import tool2.Node
 
     val σ = ColorTool.read(path)
-    σ.String.add("red")
-    σ.String.add("black")
-    σ.String.add("grey")
     σ.Node.all.foreach {
       case n @ Node(23, _) ⇒ n.color = "red"
       case n @ Node(42, _) ⇒ n.color = "black"
@@ -49,9 +46,6 @@ class CoreTest extends CommonTest {
     import tool3.Node
 
     val σ = DescriptionTool.read(path)
-    σ.String.add("Some odd number.")
-    σ.String.add("The answer.")
-    σ.String.add("Boring!")
     σ.Node.all.foreach {
       case n @ Node(23, _) ⇒ n.description = "Some odd number."
       case n @ Node(42, _) ⇒ n.description = "The answer."
@@ -201,9 +195,9 @@ class CoreTest extends CommonTest {
   }
 
   /**
-   * ignoder, because it assumes that strings are collected automagically
+   * ensure that strings, which are not used, are not added
    */
-  ignore("create and write nodes with tool 1, append colors and descriptions") {
+  test("create and write nodes with tool 1, append colors and descriptions") {
     val path = tmpFile("nodeExample.create.write.append")
 
     invokeCreator(path)
@@ -234,7 +228,11 @@ class CoreTest extends CommonTest {
 
     locally {
       val σ = Viewer.read(path)
-      assert(σ.Node.all.size === 2)
+      for (s ← σ.String.all) s match {
+        case "grey"    ⇒ fail(s"$s should not be in here")
+        case "Boring!" ⇒ fail(s"$s should not be in here")
+        case _         ⇒ //fine
+      }
     }
   }
 }
