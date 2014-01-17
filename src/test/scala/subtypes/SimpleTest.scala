@@ -4,7 +4,13 @@ import common.CommonTest
 import subtypes.api.SkillState
 import subtypes.internal.SerializableState
 import java.io.File
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
+/**
+ * @author Timm Felden
+ */
+@RunWith(classOf[JUnitRunner])
 class SimpleTest extends CommonTest {
 
   test("subtypes read foreign") {
@@ -36,7 +42,7 @@ class SimpleTest extends CommonTest {
   }
 
   test("subtypes write") {
-    val path = tmpFile("writetest")
+    val path = tmpFile("lbpsi.write")
 
     val state = SkillState.read("localBasePoolStartIndex.sf")
 
