@@ -9,7 +9,7 @@ scalaVersion := "2.10.3"
 
 javacOptions ++= Seq("-encoding", "UTF-8")
 
-javaOptions ++= Seq("-Xmx4G","-Xms4G","-XX:MaxHeapFreeRatio=99")
+javaOptions ++= Seq("-Xmx4G","-Xms4G","-XX:MaxHeapFreeRatio=99","-XX:MaxPermSize=512M")
 
 scalacOptions ++= Opts.compile.encoding("UTF8")
 
