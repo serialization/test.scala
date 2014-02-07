@@ -17,12 +17,16 @@ class WSR14Test extends CommonTest {
 
   val counts = Array(10, 1000, 100000)
 
+  // set to 1000 for wsr results; reduced for tests
+  // @note: running all tests with 1000 repetitions will cause funny errors:)
+  val repetitions = 100;
+
   def averageOut(test: ⇒ Unit) {
     val t = System.nanoTime
-    for (count ← 0 until 100)
+    for (count ← 0 until repetitions)
       test
 
-    print((System.nanoTime - t).toDouble * 1e-8)
+    print((System.nanoTime - t).toDouble * 1e-6 / repetitions)
   }
 
   test("linear") {
