@@ -5,28 +5,38 @@ import number.api.SkillState
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import scala.util.Random
+import java.nio.file.Path
 
 /**
  * This test is used to produce results for the WSR'14 paper.
  *
- * run with: -XX:MaxHeapFreeRatio=70 -Xmx4G -Xms4G
+ * run with: -XX:MaxHeapFreeRatio=99 -Xmx4G -Xms4G
  * @author Timm Felden
  */
 @RunWith(classOf[JUnitRunner])
 class WSR14Test extends CommonTest {
 
-  val counts = Array(10, 1000, 100000)
+  val counts = Array(1, 100, 10000, 1000000)
 
-  // set to 1000 for wsr results; reduced for tests
-  // @note: running all tests with 1000 repetitions will cause funny errors:)
-  val repetitions = 100;
+  // set to 500 for wsr results; reduced for tests
+  // @note: running all tests with 500 repetitions will cause funny errors:)
+  val repetitions = 500;
 
-  def averageOut(test: ⇒ Unit) {
-    val t = System.nanoTime
-    for (count ← 0 until repetitions)
-      test
+  @inline def averageOut(test: ⇒ Unit) {
+    System.gc
+    System.runFinalization
+    // @note: we use a different thread to escape from a very wired memory leak produced by scala's parser combinators
+    val t = new Thread(new Runnable {
+      def run {
+        val t = System.nanoTime
+        for (count ← 0 until repetitions)
+          test
 
-    print((System.nanoTime - t).toDouble * 1e-6 / repetitions)
+        print((System.nanoTime - t).toDouble * 1e-6 / repetitions)
+      }
+    })
+    t.start
+    t.join
   }
 
   test("linear") {
@@ -54,14 +64,14 @@ class WSR14Test extends CommonTest {
   test("randomize") {
     val f = tmpFile("wsr");
 
-    def make(n: Int) {
+    @inline def make(n: Int) {
       val σ = SkillState.create;
       for (i ← 0 to n)
         σ.Number(0)
       σ.write(f)
     }
 
-    def t(n: Int) {
+    @inline def t(f: Path, n: Int) {
       val σ = SkillState.read(f);
       for (n ← σ.Number.all)
         n.number = Random.nextLong
@@ -75,7 +85,7 @@ class WSR14Test extends CommonTest {
       for (n ← counts) {
         print(" & ")
         make(n)
-        averageOut(t(n))
+        averageOut(t(f, n))
       }
       print("\\\\\n")
     }
