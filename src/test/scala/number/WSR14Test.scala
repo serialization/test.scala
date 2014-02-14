@@ -20,7 +20,7 @@ class WSR14Test extends CommonTest {
 
   // set to 500 for wsr results; reduced for tests
   // @note: running all tests with 500 repetitions will cause funny errors:)
-  val repetitions = 500;
+  val repetitions = 50;
 
   @inline def averageOut(test: ⇒ Unit) {
     System.gc
