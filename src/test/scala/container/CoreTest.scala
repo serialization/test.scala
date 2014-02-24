@@ -39,7 +39,14 @@ class CoreTest extends CommonTest {
 
     locally {
       val state = SkillState.create
-      state.Container(ArrayBuffer(0, 0, 0), ArrayBuffer(1, 2, 3), ListBuffer(), Set().to, HashMap("f" -> HashMap(0L -> 0L)))
+      state.Container(
+        Arr = ArrayBuffer(0, 0, 0),
+        Varr = ArrayBuffer(1, 2, 3),
+        L = ListBuffer(),
+        S = Set().to,
+        F = HashMap("f" -> HashMap(0L -> 0L)),
+        SomeSet = Set().to
+      )
       for (c ← state.Container.all)
         c.s = c.arr.toSet.to
 
