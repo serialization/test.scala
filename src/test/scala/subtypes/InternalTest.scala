@@ -14,18 +14,19 @@ package internal {
    */
   @RunWith(classOf[JUnitRunner])
   class InternalTest extends CommonTest {
+  @inline def read(s: String) = SkillState.read("src/test/resources/"+s)
 
     test("subtypes read foreign") {
-      val state = SkillState.read("annotationTest.sf")
+      val state = read("annotationTest.sf")
       assert(null != state)
     }
 
     test("simple read §6.3.2") {
-      assert(null != SkillState.read("localBasePoolStartIndex.sf"))
+      assert(null != read("localBasePoolStartIndex.sf"))
     }
 
     test("subtypes read; see §6.3.2") {
-      val state = SkillState.read("localBasePoolStartIndex.sf")
+      val state = read("localBasePoolStartIndex.sf")
       val types = "aabbbcbbddacd"
 
       // check types
@@ -46,7 +47,7 @@ package internal {
     test("subtypes write") {
       val path = tmpFile("lbpsi.write")
 
-      val state = SkillState.read("localBasePoolStartIndex.sf")
+      val state = read("localBasePoolStartIndex.sf")
 
       // check self references
       for ((instance, index) ← state.A.all.zipWithIndex) {

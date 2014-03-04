@@ -12,14 +12,13 @@ import java.nio.file.Files
 
 @RunWith(classOf[JUnitRunner])
 class CommonTest extends FunSuite {
-  protected implicit def nameToPath(s: String) = new File("src/test/resources/"+s).toPath
-
   @inline final def tmpFile(s: String) = {
     val r = File.createTempFile(s, ".sf")
     r.deleteOnExit
     r.toPath
   }
 
+  final def sha256(name: String): String = sha256(new File("src/test/resources/"+name).toPath) 
   @inline final def sha256(path: Path): String = {
     val bytes = Files.readAllBytes(path)
     MessageDigest.getInstance("SHA-256").digest(bytes).map("%02X".format(_)).mkString
