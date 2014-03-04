@@ -6,7 +6,7 @@ import org.junit.Assert
 
 class V64Test extends AssertionsForJUnit {
 
-  def v64(v: Long): Array[Byte] = SerializationFunctions.v64(v)
+  def v64(v: Long): Array[Byte] = ???//SerializationFunctions.v64(v)
 
   def v64(next: Iterator[Byte]): Long = {
     var count: Long = 0
