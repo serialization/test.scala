@@ -3,6 +3,7 @@ import org.junit.runner.RunWith
 import common.CommonTest
 import date.api.SkillState
 import org.scalatest.junit.JUnitRunner
+import java.io.File
 
 @RunWith(classOf[JUnitRunner])
 class AppendTest extends CommonTest {
@@ -16,8 +17,8 @@ class AppendTest extends CommonTest {
     σ.Date(-1)
     σ.write(path)
 
-    assert(sha256(path) === sha256("date-example.sf"))
-    assert(read(path).Date.all.map(_.date).toList.sameElements(List(1, -1)))
+    assert(sha256(path) === sha256(new File("src/test/resources/date-example.sf").toPath))
+    assert(SkillState.read(path).Date.all.map(_.date).toList.sameElements(List(1, -1)))
   }
 
   test("write 100k dates; append 9x100k; write 1m dates and check them all -- multiple states") {
@@ -45,7 +46,7 @@ class AppendTest extends CommonTest {
     // read & check & write
     val writePath = tmpFile("write")
     locally {
-      val state = read(path)
+      val state = SkillState.read(path)
       val d = state.Date.all
       assert(state.Date.size === 10 * limit, s"we somehow lost ${10 * limit - state.Date.size} dates")
 
@@ -59,8 +60,8 @@ class AppendTest extends CommonTest {
 
     // check append against write
     locally {
-      val s1 = read(path)
-      val s2 = read(writePath)
+      val s1 = SkillState.read(path)
+      val s2 = SkillState.read(writePath)
 
       val i1 = s1.Date.all
       val i2 = s2.Date.all

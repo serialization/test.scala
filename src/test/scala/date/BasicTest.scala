@@ -3,19 +3,21 @@ package date
 import common.CommonTest
 import date.api.SkillState
 import junit.framework.Assert
+import java.io.File
 
 /**
  * @author Timm Felden
  */
 class BasicTest extends CommonTest {
+  def read(s: String) = SkillState.read(new File("src/test/resources/"+s).toPath)
 
   // read exact files
   test("read date example") {
-    assert(null != SkillState.read("date-example.sf"))
+    assert(null != read("date-example.sf"))
   }
 
   test("check contents of date example") {
-    val state = SkillState.read("date-example.sf")
+    val state = read("date-example.sf")
 
     val iterator = state.Date.all;
     Assert.assertEquals(1L, iterator.next.date)
@@ -23,7 +25,7 @@ class BasicTest extends CommonTest {
     assert(!iterator.hasNext, "there shouldn't be any more elemnets!")
   }
 
-  test("read empty blocks") { Assert.assertNotNull(SkillState.read("emptyBlocks.sf")) }
+  test("read empty blocks") { Assert.assertNotNull(read("emptyBlocks.sf")) }
 
   // create state
   test("create state") {
@@ -53,9 +55,9 @@ class BasicTest extends CommonTest {
   test("read and write date example") {
     val p = tmpFile("dateExample")
 
-    SkillState.read("date-example.sf").write(p)
+    read("date-example.sf").write(p)
 
-    assert(sha256(p) === sha256("date-example.sf"), "the file did not match the expected output")
+    assert(sha256(p) === sha256(new File("src/test/resources/date-example.sf").toPath), "the file did not match the expected output")
   }
 
   test("create state, write and check against example") {
@@ -67,6 +69,6 @@ class BasicTest extends CommonTest {
 
     state.write(p)
 
-    assert(sha256(p) === sha256("date-example.sf"), "the file did not match the expected output")
+    assert(sha256(p) === sha256(new File("src/test/resources/date-example.sf").toPath), "the file did not match the expected output")
   }
 }

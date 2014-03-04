@@ -3,6 +3,7 @@ import org.junit.runner.RunWith
 import common.CommonTest
 import date.api.SkillState
 import org.scalatest.junit.JUnitRunner
+import java.io.File
 
 @RunWith(classOf[JUnitRunner])
 class WriteTest extends CommonTest {
@@ -15,7 +16,7 @@ class WriteTest extends CommonTest {
     σ.Date(-1)
     σ.write(path)
 
-    assert(sha256(path) === sha256("date-example.sf"))
+    assert(sha256(path) === sha256(new File("src/test/resources/date-example.sf").toPath))
     assert(SkillState.read(path).Date.all.map(_.date).toList.sameElements(List(1, -1)))
   }
 
