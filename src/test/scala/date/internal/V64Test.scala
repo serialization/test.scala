@@ -1,22 +1,31 @@
 package date.internal
 
-import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Test
 import org.junit.Assert
+import org.junit.Test
+import org.scalatest.junit.AssertionsForJUnit
+
+import date.internal.streams.OutBuffer
 
 class V64Test extends AssertionsForJUnit {
 
-  def v64(v: Long): Array[Byte] = ???//SerializationFunctions.v64(v)
+  def v64(v: Long): Array[Byte] = {
+    //@note use both v64 implementations, just in case
+    val out = new OutBuffer()
+    SerializationFunctions.v64(v, out)
+    val r = new Array[Byte](out.size.toInt)
+    SerializationFunctions.v64(v, r, 0)
+    r
+  }
 
-  def v64(next: Iterator[Byte]): Long = {
+  def v64(it: Iterator[Byte]): Long = {
     var count: Long = 0
     var rval: Long = 0
-    var r: Long = next.next
+    var r: Long = it.next
     while (count < 8 && 0 != (r & 0x80)) {
       rval |= (r & 0x7f) << (7 * count);
 
       count += 1;
-      r = next.next
+      r = it.next
     }
     rval = (rval | (count match {
       case 8 ⇒ r

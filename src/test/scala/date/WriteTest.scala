@@ -1,12 +1,24 @@
 package date
+
+import java.io.File
+
 import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
+
 import common.CommonTest
 import date.api.SkillState
-import org.scalatest.junit.JUnitRunner
-import java.io.File
 
 @RunWith(classOf[JUnitRunner])
 class WriteTest extends CommonTest {
+
+  test("copy of §6.6 example") {
+    val path = tmpFile("writetest")
+
+    SkillState.read("src/test/resources/date-example.sf").write(path)
+
+    assert(sha256(path) === sha256(new File("src/test/resources/date-example.sf").toPath))
+    assert(SkillState.read(path).Date.all.map(_.date).toList.sameElements(List(1, -1)))
+  }
 
   test("§6.6 date example") {
     val path = tmpFile("writetest")
@@ -39,7 +51,7 @@ class WriteTest extends CommonTest {
   }
 
   test("normalize 10MB v64") {
-    val σ = SkillState.read("normalizedInput.sf")
+    val σ = SkillState.read("src/test/resources/normalizedInput.sf")
 
     var min = Long.MaxValue
     for (d ← σ.Date.all)
