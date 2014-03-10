@@ -12,7 +12,7 @@ import date.api.SkillState
 class WriteTest extends CommonTest {
 
   test("copy of §6.6 example") {
-    val path = tmpFile("writetest")
+    val path = tmpFile("write.copy")
 
     SkillState.read("src/test/resources/date-example.sf").write(path)
 
@@ -21,7 +21,7 @@ class WriteTest extends CommonTest {
   }
 
   test("§6.6 date example") {
-    val path = tmpFile("writetest")
+    val path = tmpFile("write.make")
 
     val σ = SkillState.create
     σ.Date(1)
@@ -35,7 +35,7 @@ class WriteTest extends CommonTest {
   test("write 1.6M dates") {
     val low = -8e5.toInt
     val high = 8e5.toInt
-    val path = tmpFile("writetest")
+    val path = tmpFile("write.10m")
 
     val σ = SkillState.create
     for (i ← low until high)
