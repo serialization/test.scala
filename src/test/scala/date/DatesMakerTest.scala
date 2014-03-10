@@ -7,6 +7,8 @@ import org.junit.runner.RunWith
 
 class DatesMakerTest extends CommonTest {
 
+  def read(s: String) = SkillState.read("src/test/resources/"+s)
+
   def compareStates(σ: SkillState, σ2: SkillState) {
     var i1 = σ.Date.all
     var i2 = σ2.Date.all
@@ -15,7 +17,7 @@ class DatesMakerTest extends CommonTest {
   }
 
   test("write and read dates") {
-    val state = SkillState.read("date-example.sf")
+    val state = read("date-example.sf")
 
     val out = tmpFile("test")
     state.write(out)
@@ -26,7 +28,7 @@ class DatesMakerTest extends CommonTest {
   }
 
   test("add a date") {
-    val state = SkillState.read("date-example.sf")
+    val state = read("date-example.sf")
 
     val out = tmpFile("test")
 
@@ -36,7 +38,7 @@ class DatesMakerTest extends CommonTest {
   }
 
   test("read, add, modify and write some dates") {
-    val state = SkillState.read("date-example.sf")
+    val state = read("date-example.sf")
     RandomDatesMaker.addLinearDates(state, 98)
     for (d ← state.Date.all)
       d.date = 0
@@ -51,7 +53,7 @@ class DatesMakerTest extends CommonTest {
   }
 
   test("write and read some linear dates") {
-    val σ = SkillState.read("date-example.sf")
+    val σ = read("date-example.sf")
     Assert.assertNotNull(σ)
     RandomDatesMaker.addLinearDates(σ, 100)
     Assert.assertNotNull(σ)
@@ -65,7 +67,7 @@ class DatesMakerTest extends CommonTest {
   }
 
   test("write and read some random dates") {
-    val σ = SkillState.read("date-example.sf")
+    val σ = read("date-example.sf")
     Assert.assertNotNull(σ)
     RandomDatesMaker.addDates(σ, 100)
     Assert.assertNotNull(σ)
@@ -78,7 +80,7 @@ class DatesMakerTest extends CommonTest {
   }
 
   test("write and read a million random dates") {
-    val σ = SkillState.read("date-example.sf")
+    val σ = read("date-example.sf")
     Assert.assertNotNull(σ)
     RandomDatesMaker.addDates(σ, (1e6 - 2).toInt)
     Assert.assertNotNull(σ)
@@ -90,7 +92,7 @@ class DatesMakerTest extends CommonTest {
   }
 
   test("write and read a million small random dates") {
-    val σ = SkillState.read("date-example.sf")
+    val σ = read("date-example.sf")
     Assert.assertNotNull(σ)
     RandomDatesMaker.addDatesGaussian(σ, (1e6 - 2).toInt)
     Assert.assertNotNull(σ)

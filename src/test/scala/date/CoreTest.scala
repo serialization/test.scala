@@ -5,8 +5,8 @@ import junit.framework.Assert
 import date.api.SkillState
 
 class CoreTest extends CommonTest {
-  
-  def read(s:String) = SkillState.read("src/test/resources/"+s)
+
+  def read(s: String) = SkillState.read("src/test/resources/"+s)
 
   // read unknown types
   test("read unknown: nodes") { assert(null != read("node.sf")) }
