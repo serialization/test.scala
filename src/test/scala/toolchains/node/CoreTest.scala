@@ -56,6 +56,21 @@ class CoreTest extends CommonTest {
 
   test("create and write nodes with tool 1")(invokeCreator(tmpFile("nodeExample.create")))
 
+  test("colorize nodes") {
+    val path = tmpFile("toolchain.core.colorize.nodes")
+    import tool2.Node
+
+    invokeCreator(path)
+    invokeColorTool(path)
+
+    val σ = ColorTool.read(path)
+    assert(σ.Node.all.forall {
+      case n @ Node(23, "red")   ⇒ true
+      case n @ Node(42, "black") ⇒ true
+      case n                     ⇒ false
+    })
+  }
+
   test("create and write nodes with tool 1, append colors and descriptions -- with manual string updates") {
     val path = tmpFile("nodeExample.with.strings")
 
