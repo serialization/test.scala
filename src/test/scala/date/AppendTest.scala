@@ -21,6 +21,18 @@ class AppendTest extends CommonTest {
     assert(SkillState.read(path).Date.all.map(_.date).toList.sameElements(List(1, -1)))
   }
 
+  test("Tr13 §6.2.3 append example") {
+    val path = tmpFile("append.test")
+
+    val σ = SkillState.read("src/test/resources/date-example.sf")
+    σ.Date(2)
+    σ.Date(3)
+    σ.append(path)
+
+    assert(sha256(path) === sha256(new File("src/test/resources/date-example-append.sf").toPath))
+    assert(SkillState.read(path).Date.all.map(_.date).toList.sameElements(List(1, -1, 2, 3)))
+  }
+
   test("write 100k dates; append 9x100k; write 1m dates and check them all -- multiple states") {
     val limit = 1e5.toInt
     val path = tmpFile("append")
