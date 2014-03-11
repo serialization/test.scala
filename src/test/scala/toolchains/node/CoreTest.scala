@@ -1,15 +1,13 @@
 package toolchains.node
 
 import java.nio.file.Path
-
 import scala.reflect.Manifest
-
 import org.junit.runner.RunWith
 import org.scalatest.Engine
 import org.scalatest.events.Formatter
 import org.scalatest.junit.JUnitRunner
-
 import common.CommonTest
+import java.nio.file.Files
 
 /**
  * The desired test makes use of core functionality, but it is not a unit test, but checks several features at once.
@@ -85,7 +83,7 @@ class CoreTest extends CommonTest {
   }
 
   test("two toolchain cycles -- append") {
-    val path = tmpFile("nodeExample.with.strings")
+    val path = tmpFile("toolchain.two.cycles.append")
 
     invokeCreator(path)
     invokeColorTool(path)
@@ -137,7 +135,7 @@ class CoreTest extends CommonTest {
   }
 
   test("two toolchain cycles -- write") {
-    val path = tmpFile("nodeExample.with.strings")
+    val path = tmpFile("nodeExample.write.projection")
 
     invokeCreator(path)
     invokeColorTool(path)
@@ -153,13 +151,14 @@ class CoreTest extends CommonTest {
     // the last write projected colors and descriptions away
     locally {
       val σ = Viewer.read(path)
+      assert(σ.Node.size === 4)
       assert(σ.Node.all.forall(_.color == null))
       assert(σ.Node.all.forall(_.description == null))
     }
   }
 
   test("append field to an empty pool -- toolchain two cycles, drop first create") {
-    val path = tmpFile("nodeExample.no.create")
+    val path = tmpFile("nodeExample.no.create.write")
 
     // no create here
     invokeColorTool(path)
@@ -176,13 +175,14 @@ class CoreTest extends CommonTest {
     // the last write projected colors and descriptions away
     locally {
       val σ = Viewer.read(path)
+      assert(σ.Node.size === 2)
       assert(σ.Node.all.forall(_.color == null))
       assert(σ.Node.all.forall(_.description == null))
     }
   }
 
   test("append field to an empty pool -- no instances, all append") {
-    val path = tmpFile("nodeExample.no.create")
+    val path = tmpFile("nodeExample.no.create.append")
 
     // no instances -- no harm
     locally {
@@ -198,14 +198,17 @@ class CoreTest extends CommonTest {
       val σ = Creator.read(path)
       σ.Node(-1)
       σ.Node(2)
-      σ.append(path)
+
+      val e = intercept[AssertionError] {
+        σ.append(path)
+      }
+      assert(e.getMessage() === "assertion failed: adding instances with an unknown field is currently not supported")
     }
 
     // the last write projected colors and descriptions away
     locally {
       val σ = Viewer.read(path)
-      assert(σ.Node.all.forall(_.color == null))
-      assert(σ.Node.all.forall(_.description == null))
+      assert(σ.Node.size === 0)
     }
   }
 
@@ -221,6 +224,7 @@ class CoreTest extends CommonTest {
       import tool2.Node
 
       val σ = ColorTool.read(path)
+      assert(σ.Node.size === 2)
       σ.Node.all.foreach {
         case n @ Node(23, _) ⇒ n.color = "red"
         case n @ Node(42, _) ⇒ n.color = "black"
@@ -233,6 +237,7 @@ class CoreTest extends CommonTest {
       import tool3.Node
 
       val σ = DescriptionTool.read(path)
+      assert(σ.Node.size === 2)
       σ.Node.all.foreach {
         case n @ Node(23, _) ⇒ n.description = "Some odd number."
         case n @ Node(42, _) ⇒ n.description = "The answer."
@@ -243,6 +248,7 @@ class CoreTest extends CommonTest {
 
     locally {
       val σ = Viewer.read(path)
+      assert(σ.Node.size === 2)
       for (s ← σ.String.all) s match {
         case "grey"    ⇒ fail(s"$s should not be in here")
         case "Boring!" ⇒ fail(s"$s should not be in here")
