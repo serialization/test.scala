@@ -1,15 +1,18 @@
 package graph
 
 import java.io.File
-import java.io.PrintWriter
+import java.lang.Thread.UncaughtExceptionHandler
 import java.nio.file.Files
+
 import scala.Array.canBuildFrom
 import scala.collection.mutable.HashSet
 import scala.util.Random
+
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
-import graph.api.SkillState
 import org.scalatest.junit.JUnitRunner
+
+import graph.api.SkillState
 
 /**
  * This test is used to produce results for the WSR'14 paper.
@@ -19,7 +22,6 @@ import org.scalatest.junit.JUnitRunner
  */
 @RunWith(classOf[JUnitRunner])
 class WSR14Test extends FunSuite {
-  protected implicit def nameToPath(s: String) = new File("src/test/resources/"+s).toPath
 
   @inline final def tmpFile(s: String) = {
     val r = File.createTempFile(s, ".sf")
@@ -27,13 +29,10 @@ class WSR14Test extends FunSuite {
     r.toPath
   }
 
-  val writer = new PrintWriter(new File("raw.txt"))
-
   // we use a deterministic random number generator, in order to get reproducible results over several runs
   val Random = new Random
 
-  // @note: increase to get larger test sets; we have to keep heap size below 1GB for the CI to work as expected
-  val counts = (0 to 6).map(1000 * 1 << _).toArray
+  val counts = (0 to 8).map(1000 * 1 << _).toArray
 
   // set to 10 for wsr results; reduced for tests
   val repetitions = 1;
@@ -56,14 +55,18 @@ class WSR14Test extends FunSuite {
           total += (System.nanoTime - t)
         }
       })
+      var exception: Throwable = null
+      t.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+        override def uncaughtException(t: Thread, e: Throwable) = exception = e
+      })
       t.start
       t.join
+      if (null != exception)
+        fail(exception)
     }
 
     total *= 1e-9 / repetitions.toDouble
     println(f"$total%4.4f")
-    writer.write(f"$total%4.4f\n")
-    writer.flush
     total
   }
 
@@ -81,8 +84,6 @@ class WSR14Test extends FunSuite {
     t.join
 
     println(size+" Bytes")
-    writer.write(f"$size\n")
-    writer.flush
     size
   }
 
@@ -94,8 +95,7 @@ class WSR14Test extends FunSuite {
     (averageSize(test), averageTime(test))
   }
 
-  test("main") {
-    writer.write(counts.mkString("", "\n", "\n"))
+  test("make wsr14 results") {
     val cr = create
     System.gc
     System.runFinalization
@@ -106,8 +106,6 @@ class WSR14Test extends FunSuite {
     System.gc
     System.runFinalization
     val ap = append
-
-    writer.close
 
     // first plot: time for append against IO-time
     locally {
