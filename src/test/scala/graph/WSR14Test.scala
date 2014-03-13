@@ -1,18 +1,14 @@
 package graph
 
 import java.io.File
-import java.lang.Thread.UncaughtExceptionHandler
 import java.nio.file.Files
-
 import scala.Array.canBuildFrom
-import scala.collection.mutable.HashSet
 import scala.util.Random
-
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-
 import graph.api.SkillState
+import scala.collection.mutable.HashSet
 
 /**
  * This test is used to produce results for the WSR'14 paper.
@@ -32,10 +28,10 @@ class WSR14Test extends FunSuite {
   // we use a deterministic random number generator, in order to get reproducible results over several runs
   val Random = new Random
 
-  val counts = (0 to 8).map(1000 * 1 << _).toArray
+  val counts = (0 to 9).map(1000 * 1 << _).toArray
 
   // set to 10 for wsr results; reduced for tests
-  val repetitions = 1;
+  val repetitions = 3;
 
   @inline def averageTime(test: Int ⇒ Long) = counts.map { n ⇒
     Random.setSeed(31337)
@@ -45,24 +41,12 @@ class WSR14Test extends FunSuite {
       System.runFinalization
       // yield to the gc
       Thread.sleep(1);
-      // @note: we use a different thread to escape from a very wired memory leak produced by scala's parser combinators
-      val t = new Thread(new Runnable {
-        def run {
-          val t = System.nanoTime
 
-          test(n)
+      val t = System.nanoTime
 
-          total += (System.nanoTime - t)
-        }
-      })
-      var exception: Throwable = null
-      t.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-        override def uncaughtException(t: Thread, e: Throwable) = exception = e
-      })
-      t.start
-      t.join
-      if (null != exception)
-        fail(exception)
+      test(n)
+
+      total += (System.nanoTime - t)
     }
 
     total *= 1e-9 / repetitions.toDouble
@@ -107,26 +91,30 @@ class WSR14Test extends FunSuite {
     System.runFinalization
     val ap = append
 
-    // first plot: time for append against IO-time
+    // first plot: absolute time spend for each phase
     locally {
-      val size = ap._1
-      val time = ap._2
-
-      println("""\begin{figure}
-\begin{tikzpicture}
- \begin{semilogxaxis}
-  \addplot coordinates""")
-      //@note change the constant in the following expression to match raw IOspeed in s/B for read+write of the executing
-      // machine
-      println(counts.zip(wr._1).map({ case (c, s) ⇒ f"($c,${s / c})" }).mkString("{", " ", "};"))
-      println("""  \addplot coordinates""")
-      println(counts.zip(ap._1).map({ case (c, s) ⇒ f"($c,${0.5 * s / c})" }).mkString("{", " ", "};"))
       println("""
-  \end{semilogxaxis}
-\end{tikzpicture} 
-\caption{size}
-\end{figure}
-""")
+\begin{figure}
+ \begin{tikzpicture}
+  \begin{loglogaxis}""")
+
+      val results = Array(cr._2, wr._2, re._2, ap._2)
+
+      for (r ← results)
+        println(
+          (
+            for (i ← 0 until r.length)
+              yield s"(${counts(i)},${r(i)})"
+          ).mkString("""
+    \addplot+[smooth] coordinates
+     {""", " ", "};")
+        )
+
+      println("""
+  \end{loglogaxis}
+ \end{tikzpicture}
+ \caption{time taken}
+\end{figure}""")
     }
 
     // second plot: time spend for each phase divided by base count
@@ -162,7 +150,7 @@ class WSR14Test extends FunSuite {
     @inline def t(n: Int): Long = {
       val σ = SkillState.create;
       for (i ← 0 until n)
-        σ.Node("black", HashSet())
+        σ.Node("black", new HashSet[Node])
 
       // create random colors
       for (n ← σ.Node.all)
@@ -190,7 +178,7 @@ class WSR14Test extends FunSuite {
     @inline def t(n: Int): Long = {
       val σ = SkillState.create;
       for (i ← 0 until n)
-        σ.Node("black", HashSet())
+        σ.Node("black", new HashSet[Node])
 
       // create random colors
       for (n ← σ.Node.all)
@@ -220,7 +208,7 @@ class WSR14Test extends FunSuite {
       locally {
         val σ = SkillState.create;
         for (i ← 0 until n)
-          σ.Node("black", HashSet())
+          σ.Node("black", new HashSet[Node])
 
         // create random colors
         for (n ← σ.Node.all)
@@ -255,7 +243,7 @@ class WSR14Test extends FunSuite {
       locally {
         val σ = SkillState.create;
         for (i ← 0 until n)
-          σ.Node("black", HashSet())
+          σ.Node("black", new HashSet[Node])
 
         // create random colors
         for (n ← σ.Node.all)
@@ -280,7 +268,7 @@ class WSR14Test extends FunSuite {
         // fix, because pool access is not yet an indexed seq or something like that
         val nodes = σ.Node.all.toArray
         for (i ← 0 until n) {
-          val n = σ.Node("orange", HashSet())
+          val n = σ.Node("orange", new HashSet[Node])
           for (j ← 0 until 100)
             n.edges.add(nodes(Random.nextInt(nodes.length)));
         }
