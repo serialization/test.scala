@@ -1,8 +1,10 @@
 package node
 
 import org.junit.Assert
+
 import common.CommonTest
 import node.api.SkillState
+import node.internal.PoolSizeMissmatchError
 import node.internal.SkillException
 
 /**
@@ -32,7 +34,6 @@ class ParseTest extends CommonTest {
 
   /**
    * null pointers are legal in regular fields if restricted to be nullable
-   *  (although the behavior is not visible here due to lazyness)
    */
   test("nullable restricted null pointer") { read("nullableNode.sf").Node.all }
   /**
@@ -49,11 +50,17 @@ class ParseTest extends CommonTest {
     read("illformed/nullNode.sf").Node.all
   }
 
-  test("data chunk is too long; lazy case!") {
-    read("illformed/longerDataChunk.sf").Node.all
+  test("data chunk is too long") {
+    val thrown = intercept[PoolSizeMissmatchError] {
+      read("illformed/longerDataChunk.sf").Node.all
+    }
+    assert(thrown.getMessage === "expected: 3, was: 2, field type: v64")
   }
-  test("data chunk is too short; lazy case!") {
-    read("illformed/shorterDataChunk.sf").Node.all
+  test("data chunk is too short") {
+    val thrown = intercept[PoolSizeMissmatchError] {
+      read("illformed/shorterDataChunk.sf").Node.all
+    }
+    assert(thrown.getMessage === "expected: 1, was: 2, field type: v64")
   }
   test("incompatible field types; lazy case!") {
     read("illformed/incompatibleType.sf").Node.all
