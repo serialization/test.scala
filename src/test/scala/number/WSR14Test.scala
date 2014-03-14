@@ -9,6 +9,8 @@ import java.nio.file.Path
 
 /**
  * This test is used to produce results for the WSR'14 paper.
+ * 
+ * @note These results did not make it into the paper, because the graph example was found to be more interesting
  *
  * run with: -XX:MaxHeapFreeRatio=99 -Xmx4G -Xms4G
  * @author Timm Felden
@@ -16,11 +18,11 @@ import java.nio.file.Path
 @RunWith(classOf[JUnitRunner])
 class WSR14Test extends CommonTest {
 
-  val counts = Array(1, 100, 10000, 1000000)
+  val counts = Array(1, 100, 10000)
 
   // set to 500 for wsr results; reduced for tests
   // @note: running all tests with 500 repetitions will cause funny errors:)
-  val repetitions = 50;
+  val repetitions = 10;
 
   @inline def averageOut(test: ⇒ Unit) {
     System.gc
