@@ -22,7 +22,7 @@ class FullTest extends CommonTest {
     assert(0 === SkillState.read(path).D.size, "there should be no D")
   }
 
-  test("delete -- marked") {
+  ignore("delete -- marked") {
     val σ = SkillState.read("localBasePoolStartIndex.sf")
     for (d ← σ.D.all)
       d.delete

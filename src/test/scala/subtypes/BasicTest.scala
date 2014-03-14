@@ -17,5 +17,4 @@ class BasicTest extends CommonTest {
     c.c = c
     state.write(p)
   }
-
 }
