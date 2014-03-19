@@ -57,16 +57,8 @@ class WSR14Test extends FunSuite {
 
   @inline def averageSize(implicit test: Int ⇒ Long) = counts.map { n ⇒
     Random.setSeed(31337)
-    // @note: we use a different thread to escape from a very wired memory leak produced by scala's parser combinators
-    System.gc
-    var size = 0L
-    val t = new Thread(new Runnable {
-      def run {
-        size = test(n)
-      }
-    })
-    t.start
-    t.join
+
+    val size = test(n)
 
     println(size+" Bytes")
     size
@@ -114,7 +106,7 @@ class WSR14Test extends FunSuite {
       println("""
   \end{loglogaxis}
  \end{tikzpicture}
- \caption{time taken}
+ \caption{time per node}
 \end{figure}""")
     }
 
@@ -125,13 +117,13 @@ class WSR14Test extends FunSuite {
  \begin{tikzpicture}
   \begin{semilogxaxis}""")
 
-      val results = Array(cr._2, wr._2, re._2, ap._2)
+      val results = Array(wr, re, ap)
 
       for (r ← results)
         println(
           (
-            for (i ← 0 until r.length)
-              yield s"(${counts(i)},${r(i) / counts(i).toDouble})"
+            for (i ← 0 until r._1.length)
+              yield s"(${counts(i)},${r._2(i) / r._1(i).toDouble})"
           ).mkString("""
     \addplot+[smooth] coordinates
      {""", " ", "};")
@@ -140,7 +132,7 @@ class WSR14Test extends FunSuite {
       println("""
   \end{semilogxaxis}
  \end{tikzpicture}
- \caption{time taken}
+ \caption{time per size}
 \end{figure}""")
     }
   }
