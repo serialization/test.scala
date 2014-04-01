@@ -8,6 +8,9 @@ import org.scalatest.events.Formatter
 import org.scalatest.junit.JUnitRunner
 import common.CommonTest
 import java.nio.file.Files
+import org.scalatest.FunSuite
+import java.io.File
+import java.security.MessageDigest
 
 /**
  * The desired test makes use of core functionality, but it is not a unit test, but checks several features at once.
@@ -15,20 +18,32 @@ import java.nio.file.Files
  * @author Timm Felden
  */
 @RunWith(classOf[JUnitRunner])
-class CoreTest extends CommonTest {
+class CoreTest extends FunSuite {
   import tool1.api.{ SkillState ⇒ Creator }
   import tool2.api.{ SkillState ⇒ ColorTool }
   import tool3.api.{ SkillState ⇒ DescriptionTool }
   import viewer.api.{ SkillState ⇒ Viewer }
 
-  def invokeCreator(path: Path) {
+  @inline final def tmpFile(s : String) = {
+    val r = File.createTempFile(s, ".sf")
+    //    r.deleteOnExit
+    r.toPath
+  }
+
+  final def sha256(name : String) : String = sha256(new File("src/test/resources/"+name).toPath)
+  @inline final def sha256(path : Path) : String = {
+    val bytes = Files.readAllBytes(path)
+    MessageDigest.getInstance("SHA-256").digest(bytes).map("%02X".format(_)).mkString
+  }
+
+  def invokeCreator(path : Path) {
     val σ = Creator.create
     σ.Node(23)
     σ.Node(42)
     σ.write(path)
   }
 
-  def invokeColorTool(path: Path) {
+  def invokeColorTool(path : Path) {
     import tool2.Node
 
     val σ = ColorTool.read(path)
@@ -40,7 +55,7 @@ class CoreTest extends CommonTest {
     σ.append
   }
 
-  def invokeDescriptionTool(path: Path) {
+  def invokeDescriptionTool(path : Path) {
     import tool3.Node
 
     val σ = DescriptionTool.read(path)
@@ -181,6 +196,7 @@ class CoreTest extends CommonTest {
     }
   }
 
+  //@note: the behavior of this test changed, as empty pools have to be written
   test("append field to an empty pool -- no instances, all append") {
     val path = tmpFile("nodeExample.no.create.append")
 
@@ -198,17 +214,13 @@ class CoreTest extends CommonTest {
       val σ = Creator.read(path)
       σ.Node(-1)
       σ.Node(2)
-
-      val e = intercept[AssertionError] {
-        σ.append(path)
-      }
-      assert(e.getMessage() === "assertion failed: adding instances with an unknown field is currently not supported")
+      σ.append(path)
     }
 
     // the last write projected colors and descriptions away
     locally {
       val σ = Viewer.read(path)
-      assert(σ.Node.size === 0)
+      assert(σ.Node.size === 2)
     }
   }
 
