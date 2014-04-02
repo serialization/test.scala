@@ -116,6 +116,21 @@ class CoreTest extends FunSuite {
     }
   }
 
+  test("write to different files") {
+    val path1 = tmpFile("commutativity.path1.")
+    val path2 = tmpFile("commutativity.path2.")
+
+    val σ = Creator.create
+    σ.Node(23)
+    σ.Node(42)
+    σ.write(path1)
+    σ.write(path2)
+
+    assert(Viewer.read(path1).Node.size === 2, "first lacks instances")
+    assert(Viewer.read(path2).Node.size === 2, "second lacks instances")
+    assert(sha256(path1) == sha256(path2), "files should be equal")
+  }
+
   test("toolchain commutativity -- append") {
     val path1 = tmpFile("commutativity.path1.")
     val path2 = tmpFile("commutativity.path2.")
@@ -141,8 +156,8 @@ class CoreTest extends FunSuite {
     locally {
       val σ1 = Viewer.read(path1)
       val σ2 = Viewer.read(path2)
-      assert(σ1.Node.all.size === σ2.Node.all.size, "no node was lost")
-      assert(σ1.Node.all.size === 2, "no node was lost")
+      assert(σ1.Node.size === σ2.Node.size, s"a path lost nodes: ${σ1.Node.size} != ${σ2.Node.size}")
+      assert(σ1.Node.size === 2, "no node was lost")
       assert(σ1.Node.all.map(_.ID).sameElements(σ2.Node.all.map(_.ID)), "same ID")
       assert(σ1.Node.all.map(_.color).sameElements(σ2.Node.all.map(_.color)), "same colors")
       assert(σ1.Node.all.map(_.description).sameElements(σ2.Node.all.map(_.description)), "same description")
