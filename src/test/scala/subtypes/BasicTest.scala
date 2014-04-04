@@ -17,4 +17,16 @@ class BasicTest extends CommonTest {
     c.c = c
     state.write(p)
   }
+
+  test("insert a and b") {
+    val σ = SkillState.create
+
+    σ.A(σ.B(null, null))
+
+    val b = σ.B.all.next
+    b.a = b
+    b.b = b
+
+    σ.write(tmpFile("insertAB"))
+  }
 }
