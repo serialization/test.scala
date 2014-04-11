@@ -185,4 +185,26 @@ class AppendTest extends CommonTest {
       assert(i1.hasNext === i2.hasNext, "state1 had less elements!")
     }
   }
+  
+  test("write, append, check") {
+    val path = tmpFile("date.write.append.check")
+
+    locally {
+      val σ = SkillState.create
+      σ.Date(1)
+      σ.Date(2)
+      σ.Date(3)
+      σ.write(path)
+    }
+
+    locally {
+      val σ = SkillState.read(path)
+      σ.Date(1)
+      σ.Date(2)
+      σ.Date(3)
+      σ.append(path)
+    }
+
+    assert("123123" === SkillState.read(path).Date.all.map(_.date).mkString(""))
+  }
 }
