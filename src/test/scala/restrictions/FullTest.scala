@@ -11,7 +11,7 @@ class FullTest extends CommonTest {
   import restrictions.range.api.{ SkillState ⇒ Range }
   import restrictions.singleton.api.{ SkillState ⇒ Singleton }
 
-  test("range") {
+  ignore("range") {
     val p = tmpFile("range")
     val state = Range.create
     intercept[range.internal.SkillException] {
@@ -20,7 +20,7 @@ class FullTest extends CommonTest {
     }
   }
 
-  test("singleton") {
+  ignore("singleton") {
     val p = tmpFile("singleton")
     val state = Singleton.create
     state.LifeUniverseAndEverything.get.size = Float.NaN
