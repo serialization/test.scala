@@ -8,24 +8,25 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 // we need to be internal to check skill IDs
+// TODO make skillid available over the reflective interface; this will be the safe way to do this as of TR14! (skillID will be reserved for its purpose in this implementation)
 package internal {
   /**
    * @author Timm Felden
    */
   @RunWith(classOf[JUnitRunner])
   class InternalTest extends CommonTest {
-  @inline def read(s: String) = SkillState.read("src/test/resources/"+s)
+    @inline def read(s : String) = SkillState.read("src/test/resources/"+s)
 
-    test("subtypes read foreign") {
+    ignore("subtypes read foreign") {
       val state = read("annotationTest.sf")
       assert(null != state)
     }
 
-    test("simple read §6.3.2") {
+    ignore("simple read §6.3.2") {
       assert(null != read("localBasePoolStartIndex.sf"))
     }
 
-    test("subtypes read; see §6.3.2") {
+    ignore("subtypes read; see §6.3.2") {
       val state = read("localBasePoolStartIndex.sf")
       val types = "aabbbcbbddacd"
 
@@ -44,7 +45,7 @@ package internal {
         assert(d.d === d)
     }
 
-    test("subtypes write") {
+    ignore("subtypes write") {
       val path = tmpFile("lbpsi.write")
 
       val state = read("localBasePoolStartIndex.sf")
