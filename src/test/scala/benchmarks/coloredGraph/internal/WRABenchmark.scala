@@ -27,7 +27,7 @@ class WRABenchmark extends FunSuite {
 
   final def tmpFile(s : String) = {
     val r = File.createTempFile(s, ".sf")
-    r.deleteOnExit
+//    r.deleteOnExit
     r.toPath
   }
 
@@ -45,6 +45,7 @@ class WRABenchmark extends FunSuite {
     def end(x : Int) {
       val t = System.nanoTime
       if (!timings.contains(x)) {
+        // TODO factor this out to "reset" and add a "dryRunCount" to the test
         timings.put(x, 0.0)
         speeds.put(x, 0.0)
       }
@@ -65,17 +66,16 @@ class WRABenchmark extends FunSuite {
   val randomSeed = 31337
 
   // set upper bound to 7 for nice results; max = 8??(fdp takes too long); reduced to 4 for test-suite
-  val counts = (0 to 7).map(20 << _).toArray
+  val counts = (12 to 15).map(20 << _).toArray
   // results
   val create = Result("create")
   val write = Result("write")
   val read = Result("read")
   val createDot = Result("create dot")
-  val makeDot = Result("make dot")
-  val results = Seq(create, write, read, createDot, makeDot)
+  val results = Seq(create, write, read, createDot)
 
   // set to 10 for nice results; max = 100 (0⇀7); reduced to 1 for tests
-  val repetitions = 1;
+  val repetitions = 10;
 
   def eval(test : Int ⇒ Unit) {
     for (count ← 0 until repetitions) {
@@ -137,27 +137,22 @@ class WRABenchmark extends FunSuite {
       val σ = SkillState.read(f);
       read.end(n);
 
-      // create a dot file
-      // for publication use "new File(s"out-$n.dot")" instead
-      val dotFile = File.createTempFile(s"out-$n", ".dot")
-      val dot = new BufferedOutputStream(new FileOutputStream(dotFile))
-      @inline def put(s : String) {
-        dot.write(s.getBytes())
-      }
-      put(s"digraph sfBenchmark$n{")
-      for (n ← σ.Node) {
-        put(f"""
-  ${n.getSkillID}[label="",style=filled,color="#${n.color.red}%2X${n.color.green}%2X${n.color.blue}%2X"];
-  ${n.getSkillID} -> ${n.edges.map(_.getSkillID).mkString("{", ";", "}")}[dir=none,color="#${n.color.red}%2X${n.color.green}%2X${n.color.blue}%2X"];""")
-      }
-      put("\n}")
-      dot.close
+//      // create a dot file
+//      // for publication use "new File(s"out-$n.dot")" instead
+//      val dotFile = File.createTempFile(s"out-$n", ".dot")
+//      val dot = new BufferedOutputStream(new FileOutputStream(dotFile))
+//      @inline def put(s : String) {
+//        dot.write(s.getBytes())
+//      }
+//      put(s"digraph sfBenchmark$n{")
+//      for (n ← σ.Node) {
+//        put(f"""
+//  ${n.getSkillID}[label="",style=filled,color="#${n.color.red}%2X${n.color.green}%2X${n.color.blue}%2X"];
+//  ${n.getSkillID} -> ${n.edges.map(_.getSkillID).mkString("{", ";", "}")}[dir=none,color="#${n.color.red}%2X${n.color.green}%2X${n.color.blue}%2X"];""")
+//      }
+//      put("\n}")
+//      dot.close
       createDot.end(n)
-
-      // invoke dot-tool
-      // @note uncomment for publication results; removed for tests, because it creates an unnecessary dependency to dot
-      //s"""fdp -Gmaxiter=50 -Gratio=0.5625 -Gresolution=10 -Gsize="16,9" -Tpng -O ${dotFile.getAbsolutePath}""".!!
-      makeDot.end(n)
     }
   }
 }
