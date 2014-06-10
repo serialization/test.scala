@@ -3,9 +3,9 @@ import JacocoPlugin._
 
 name := "skillScalaTestsuite"
 
-version := "0.1"
+version := "0.5"
 
-scalaVersion := "2.10.3"
+scalaVersion := "2.11.1"
 
 javacOptions ++= Seq("-encoding", "UTF-8")
 
@@ -15,7 +15,7 @@ scalacOptions ++= Opts.compile.encoding("UTF8")
 
 libraryDependencies ++= Seq(
 	"junit" % "junit" % "4.10" % "test",
-	"org.scalatest" % "scalatest_2.10" % "2.0.M5b" % "test"
+	"org.scalatest" % "scalatest_2.11" % "2.1.7" % "test"
 )
 
 testOptions in Test <+= (target in Test) map {
