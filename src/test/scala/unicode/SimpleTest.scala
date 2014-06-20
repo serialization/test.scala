@@ -11,7 +11,7 @@ class SimpleTest  extends CommonTest {
   import SkillState._
 
   test("create unicode example") {
-    val path = new File("/home/feldentm/Desktop/unicode-reference.sf").toPath // tmpFile("unicode.writetest")
+    val path = tmpFile("unicode.writetest")
 
     val σ = create
     σ.Unicode("1", "ö", "☢")
