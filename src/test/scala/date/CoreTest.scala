@@ -6,8 +6,8 @@ import date.api.SkillState
 
 class CoreTest extends CommonTest {
 
-  def read(s: String) = SkillState.read("src/test/resources/"+s)
-  def check(name: String, size: Long) = assert(read(name).Date.size === size)
+  def read(s : String) = SkillState.read("src/test/resources/"+s)
+  def check(name : String, size : Long) = assert(read(name).Date.size === size)
 
   // read unknown types
   test("read unknown: nodes")(check("node.sf", 0))
@@ -32,4 +32,17 @@ class CoreTest extends CommonTest {
 
   // compound types
   //! @note not here
+
+  // full reflection
+  test("reflection: two types") {
+    val σ = read("twoTypes.sf")
+    val fields = (for (
+      t ← σ.all;
+      f ← t.allFields;
+      i ← t.all
+    ) yield s"${t.name}${f.name}").mkString(",")
+
+    assert(fields.contains("aa"))
+    assert(fields.contains("bb"))
+  }
 }
