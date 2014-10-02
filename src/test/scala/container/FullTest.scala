@@ -13,17 +13,17 @@ import container.api.SkillState
 @RunWith(classOf[JUnitRunner])
 class FullTest extends FunSuite {
 
-  @inline final def tmpFile(s: String) = {
+  @inline final def tmpFile(s : String) = {
     val r = File.createTempFile(s, ".sf")
     r.deleteOnExit
     r.toPath
   }
 
-  @inline final def read(s: String) = {
+  @inline final def read(s : String) = {
     println(s)
     SkillState.read("src/test/resources/"+s)
   }
-  @inline final def dump(state: SkillState) {
+  @inline final def dump(state : SkillState) {
     for (t ← state.all) {
       println(s"Pool[${t.name}${
         if (t.superName.isDefined)
@@ -34,7 +34,7 @@ class FullTest extends FunSuite {
       for (i ← t.all) {
         println(s"  $i = ${
           t.allFields.map {
-            f ⇒ s"${f.name}: ${i.get(t, f)}"
+            f ⇒ s"${f.name}: ${i.get(f)}"
           }.mkString("[", ", ", "]")
         }")
       }

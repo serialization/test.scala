@@ -15,7 +15,7 @@ class FullTest extends CommonTest {
     val p = tmpFile("range")
     val state = Range.create
     intercept[range.internal.SkillException] {
-      state.RangeRestricted(0, 0, 0, 0.0f, 0)
+      state.RangeRestricted(0.0f, 0, 0, 0, 0)
       state.write(p)
     }
   }
