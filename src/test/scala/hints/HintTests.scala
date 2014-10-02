@@ -7,7 +7,7 @@ import common.CommonTest
 import hints.ignore.api.SkillState
 
 class HintTests extends CommonTest {
-  def read(s: String) = SkillState.read("src/test/resources/"+s)
+  def read(s : String) = SkillState.read("src/test/resources/"+s)
 
   test("access ignored field") {
     val state = read("date-example.sf")

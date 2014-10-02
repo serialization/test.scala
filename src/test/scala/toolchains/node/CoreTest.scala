@@ -48,8 +48,8 @@ class CoreTest extends FunSuite {
 
     val σ = ColorTool.read(path)
     σ.Node.all.foreach {
-      case n @ Node(23, _) ⇒ n.color = "red"
-      case n @ Node(42, _) ⇒ n.color = "black"
+      case n @ Node(_, 23) ⇒ n.color = "red"
+      case n @ Node(_, 42) ⇒ n.color = "black"
       case n               ⇒ n.color = "grey"
     }
     σ.append
@@ -60,8 +60,8 @@ class CoreTest extends FunSuite {
 
     val σ = DescriptionTool.read(path)
     σ.Node.all.foreach {
-      case n @ Node(23, _) ⇒ n.description = "Some odd number."
-      case n @ Node(42, _) ⇒ n.description = "The answer."
+      case n @ Node(_, 23) ⇒ n.description = "Some odd number."
+      case n @ Node(_, 42) ⇒ n.description = "The answer."
       case n               ⇒ n.description = "Boring!"
     }
     σ.append
@@ -78,8 +78,8 @@ class CoreTest extends FunSuite {
 
     val σ = ColorTool.read(path)
     assert(σ.Node.all.forall {
-      case n @ Node(23, "red")   ⇒ true
-      case n @ Node(42, "black") ⇒ true
+      case n @ Node("red", 23)   ⇒ true
+      case n @ Node("black", 42) ⇒ true
       case n                     ⇒ false
     })
   }
@@ -256,8 +256,8 @@ class CoreTest extends FunSuite {
       val σ = ColorTool.read(path)
       assert(σ.Node.size === 2)
       σ.Node.all.foreach {
-        case n @ Node(23, _) ⇒ n.color = "red"
-        case n @ Node(42, _) ⇒ n.color = "black"
+        case n @ Node(_, 23) ⇒ n.color = "red"
+        case n @ Node(_, 42) ⇒ n.color = "black"
         case n               ⇒ n.color = "grey"
       }
       σ.append
@@ -269,8 +269,8 @@ class CoreTest extends FunSuite {
       val σ = DescriptionTool.read(path)
       assert(σ.Node.size === 2)
       σ.Node.all.foreach {
-        case n @ Node(23, _) ⇒ n.description = "Some odd number."
-        case n @ Node(42, _) ⇒ n.description = "The answer."
+        case n @ Node(_, 23) ⇒ n.description = "Some odd number."
+        case n @ Node(_, 42) ⇒ n.description = "The answer."
         case n               ⇒ n.description = "Boring!"
       }
       σ.append
