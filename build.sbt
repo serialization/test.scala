@@ -5,7 +5,7 @@ name := "skillScalaTestsuite"
 
 version := "0.5"
 
-scalaVersion := "2.11.1"
+scalaVersion := "2.11.2"
 
 javacOptions ++= Seq("-encoding", "UTF-8")
 
