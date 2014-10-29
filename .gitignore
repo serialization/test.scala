@@ -1,6 +1,9 @@
 # ignore actual source code, because it is supplied by the generator test
 src/main/*
 
+# ignore generated tests
+*.generated.scala
+
 *.class
 *.log
 
