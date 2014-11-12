@@ -22,6 +22,8 @@ testOptions in Test <+= (target in Test) map {
   t => Tests.Argument(TestFrameworks.ScalaTest, "junitxml(directory=\"%s\")" format (t / "test-reports"))
 }
 
+testOptions in Test += Tests.Argument("-P")
+
 org.scalastyle.sbt.ScalastylePlugin.Settings
 
 jacoco.settings
