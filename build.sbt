@@ -23,11 +23,6 @@ testOptions in Test <+= (target in Test) map {
   t => Tests.Argument(TestFrameworks.ScalaTest, "junitxml(directory=\"%s\")" format (t / "test-reports"))
 }
 
-concurrentRestrictions in Global := {
-  val max = Runtime.getRuntime.availableProcessors
-  Tags.limit(Tags.Test, max) :: Tags.limitAll(max) :: Nil
-}
-
 org.scalastyle.sbt.ScalastylePlugin.Settings
 
 jacoco.settings
