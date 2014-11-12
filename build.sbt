@@ -1,5 +1,6 @@
 import de.johoop.jacoco4sbt._
 import JacocoPlugin._
+import java.lang.Runtime
 
 name := "skillScalaTestsuite"
 
@@ -22,7 +23,10 @@ testOptions in Test <+= (target in Test) map {
   t => Tests.Argument(TestFrameworks.ScalaTest, "junitxml(directory=\"%s\")" format (t / "test-reports"))
 }
 
-testOptions in Test += Tests.Argument("-P")
+concurrentRestrictions in Global := {
+  val max = Runtime.getRuntime.availableProcessors
+  Tags.limit(Tags.Test, max) :: Tags.limitAll(max) :: Nil
+}
 
 org.scalastyle.sbt.ScalastylePlugin.Settings
 
