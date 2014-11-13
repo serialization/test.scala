@@ -12,7 +12,7 @@ import common.CommonTest
  * Tests the file reading capabilities.
  */
 class ParseTest extends CommonTest {
-  @inline def read(s: String) = SkillState.read("src/test/resources/"+s)
+  @inline def read(s : String) = SkillState.read("src/test/resources/"+s)
 
   test("two dates") {
     val σ = read("date-example.sf")
@@ -51,8 +51,10 @@ class ParseTest extends CommonTest {
   /**
    * null pointers are legal in regular fields if restricted to be nullable
    *  (although the behavior is not visible here due to lazyness)
+   *
+   *  @note changed in V1
    */
-  test("nullable restricted null pointer") { read("nullableNode.sf").Test.all }
+  ignore("nullable restricted null pointer") { read("nullableNode.sf").Test.all }
   /**
    * null pointers are legal in annotations
    */
@@ -63,7 +65,7 @@ class ParseTest extends CommonTest {
    *
    * @note this is the lazy case, i.e. the node pointer is never evaluated
    */
-  test("null pointer in a nonnull field; lazy case!") {
+  ignore("null pointer in a nonnull field; lazy case!") {
     read("illformed/nullNode.sf").Test.all
   }
 
@@ -154,5 +156,12 @@ class ParseTest extends CommonTest {
     // no its not
     if (t.f == t)
       fail;
+  }
+
+  test("annotation coding") {
+    val σ = read("annotationString.sf")
+    val t = σ.Test.all.next
+    // in this file we ensure that coding uses typeIDs in contrast to strings
+    assert(t.f === t)
   }
 }
