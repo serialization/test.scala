@@ -72,7 +72,7 @@ class ParseTest extends CommonTest {
     val thrown = intercept[ParseException] {
       read("illformed/illegalTypeID.sf").Date.all
     }
-    assert(thrown.getMessage === """In block 1 @0x11: Invalid type ID: 16""")
+    assert(thrown.getMessage === """In block 1 @0x12: Invalid type ID: 16""")
   }
   test("missing user type") {
     val thrown = intercept[ParseException] {
@@ -85,12 +85,6 @@ class ParseTest extends CommonTest {
       read("illformed/illegalStringPoolOffsets.sf").Date.all
     }
     assert(thrown.getMessage === "In block 1 @0x5: corrupted string block")
-  }
-  test("missing field declarations in second block") {
-    val thrown = intercept[ParseException] {
-      read("illformed/missingFieldInSecondBlock.sf").Date.all
-    }
-    assert(thrown.getMessage === "In block 2 @0x16: Type a has 0 fields (requires 1)")
   }
 
   test("duplicate type definition in the first block") {
