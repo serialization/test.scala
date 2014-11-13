@@ -23,21 +23,6 @@ class ParseTest extends CommonTest {
     assert(!it.hasNext, "there shouldn't be any more elemnets!")
   }
 
-  test("simple nodes") { Assert.assertNotNull(read("node.sf")) }
-  test("simple test") { Assert.assertNotNull(read("date-example.sf")) }
-  /**
-   * @see § 6.2.3.Fig.3
-   */
-  test("two node blocks") { Assert.assertNotNull(read("twoNodeBlocks.sf")) }
-  /**
-   * @see § 6.2.3.Fig.4
-   */
-  test("colored nodes") { Assert.assertNotNull(read("coloredNodes.sf")) }
-  test("four colored nodes") { Assert.assertNotNull(read("fourColoredNodes.sf")) }
-  test("empty blocks") { Assert.assertNotNull(read("emptyBlocks.sf")) }
-  test("two types") { Assert.assertNotNull(read("twoTypes.sf")) }
-  test("trivial type definition") { Assert.assertNotNull(read("trivialType.sf")) }
-
   /**
    * a regression test checking correct treatment of types without fields
    */
@@ -55,10 +40,6 @@ class ParseTest extends CommonTest {
    *  @note changed in V1
    */
   ignore("nullable restricted null pointer") { read("nullableNode.sf").Test.all }
-  /**
-   * null pointers are legal in annotations
-   */
-  test("null pointer in an annotation") { read("nullAnnotation.sf").Test.all }
 
   /**
    * null pointers are not legal in regular fields
@@ -97,7 +78,7 @@ class ParseTest extends CommonTest {
     val thrown = intercept[ParseException] {
       read("illformed/missingUserType.sf").Date.all
     }
-    assert(thrown.getMessage === "In block 1 @0x13: inexistent user type 1 (user types: 0 -> date)")
+    assert(thrown.getMessage === "In block 1 @0x14: inexistent user type 1 (user types: 0 -> date)")
   }
   test("illegal string pool offset") {
     val thrown = intercept[ParseException] {
