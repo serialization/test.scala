@@ -1,18 +1,19 @@
 package annotation
 
 import org.junit.Assert
-
-import annotation.api.SkillState
 import annotation.internal.ParseException
 import annotation.internal.PoolSizeMissmatchError
 import annotation.internal.TypeMissmatchError
 import common.CommonTest
+import annotation.api.SkillFile
+import annotation.api.Read
+import annotation.api.Write
 
 /**
  * Tests the file reading capabilities.
  */
 class ParseTest extends CommonTest {
-  @inline def read(s : String) = SkillState.read("src/test/resources/"+s)
+  @inline def read(s : String) = SkillFile.open("src/test/resources/"+s, Read, Write)
 
   test("two dates") {
     val σ = read("date-example.sf")
