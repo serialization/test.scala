@@ -21,7 +21,7 @@ class FullTest extends CommonTest {
     }
   }
 
-  ignore("singleton") {
+  test("singleton") {
     import restrictions.singleton.api.Create
 
     val p = tmpFile("singleton")
