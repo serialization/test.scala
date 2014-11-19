@@ -50,9 +50,7 @@ class FullTest extends FunSuite {
   test("read reflective: empty blocks") { dump(read("emptyBlocks.sf")) }
   test("read reflective: two types") { dump(read("twoTypes.sf")) }
   test("read reflective: trivial type definition") { dump(read("trivialType.sf")) }
-  test("read reflective: nullable restricted null pointer") { dump(read("nullableNode.sf")) }
-  test("read reflective: null pointer in an annotation") { dump(read("nullAnnotation.sf")) }
-  test("read reflective: subtypes") { dump(read("localBasePoolStartIndex.sf")) }
+  test("read reflective: subtypes") { dump(read("localBasePoolOffset.sf")) }
   test("read reflective: container") { dump(read("container.sf")) }
   test("read reflective: commutativity path 1") { dump(read("commutativityPath1.sf")) }
   test("read reflective: commutativity path 2") { dump(read("commutativityPath2.sf")) }
