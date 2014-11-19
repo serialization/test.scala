@@ -8,12 +8,15 @@ import scala.util.Random
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-import benchmarks.coloredGraph.api.SkillState
 import scala.collection.mutable.HashSet
 import benchmarks.coloredGraph.Color
 import java.io.FileOutputStream
 import java.io.BufferedOutputStream
 import scala.sys.process._
+import benchmarks.coloredGraph.api.Write
+import benchmarks.coloredGraph.api.Read
+import benchmarks.coloredGraph.api.SkillFile
+import benchmarks.coloredGraph.api.Create
 
 /**
  * Write - Read - Append - Benchmark, based on the WSR'14 paper, but without sets.
@@ -109,7 +112,7 @@ class WRABenchmark extends FunSuite {
     val f = tmpFile("wsr.append");
     locally {
       init;
-      val σ = SkillState.create;
+      val σ = SkillFile.open(f, Create, Write);
       // n nodes, random color 0->10 (for later distribution; keep below 255 for printing)
       for (i ← 0 until n)
         σ.Node(σ.Color(Random.nextInt(16).toByte, Random.nextInt(16).toByte, Random.nextInt(16).toByte), HashSet())
@@ -129,12 +132,12 @@ class WRABenchmark extends FunSuite {
 
       create.end(n);
 
-      σ.write(f)
+      σ.close
       write.end(n);
     }
 
     locally {
-      val σ = SkillState.read(f);
+      val σ = SkillFile.open(f, Read);
       read.end(n);
 
 //      // create a dot file

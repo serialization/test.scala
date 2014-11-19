@@ -3,16 +3,16 @@ package date
 import org.junit.Assert
 import common.CommonTest
 import org.junit.runner.RunWith
-import date.api.SkillState
+import date.api.SkillFile
+import date.api.Read
 import date.internal.SkillException
-import date.internal.SerializableState
 
 /**
  * Tests the file reading capabilities.
  */
 class ParseTest extends CommonTest {
 
-  def read(s: String) = SkillState.read("src/test/resources/"+s)
+  def read(s: String) = SkillFile.open("src/test/resources/"+s, Read)
 
   test("two dates") {
     val σ = read("date-example.sf")

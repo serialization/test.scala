@@ -7,7 +7,7 @@ import scala.util.Random
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-import graph.api.SkillState
+import graph.api._
 import scala.collection.mutable.HashSet
 
 /**
@@ -141,7 +141,7 @@ class WSR14Test extends FunSuite {
     val f = tmpFile("wsr.create");
 
     @inline def t(n: Int): Long = {
-      val σ = SkillState.create;
+      val σ = SkillFile.open(f, Create);
       for (i ← 0 until n)
         σ.Node("black", new HashSet[Node])
 
@@ -169,7 +169,7 @@ class WSR14Test extends FunSuite {
     val f = tmpFile("wsr.write");
 
     @inline def t(n: Int): Long = {
-      val σ = SkillState.create;
+      val σ = SkillFile.open(f, Create, Write);
       for (i ← 0 until n)
         σ.Node("black", new HashSet[Node])
 
@@ -187,7 +187,7 @@ class WSR14Test extends FunSuite {
       for (node ← σ.Node.all; j ← 0 until 100)
         node.edges.add(nodes(Random.nextInt(nodes.length)));
 
-      σ.write(f)
+      σ.close
       Files.size(f)
     }
 
@@ -199,7 +199,7 @@ class WSR14Test extends FunSuite {
 
     @inline def t(n: Int): Long = {
       locally {
-        val σ = SkillState.create;
+        val σ = SkillFile.open(f, Create, Write)
         for (i ← 0 until n)
           σ.Node("black", new HashSet[Node])
 
@@ -217,11 +217,11 @@ class WSR14Test extends FunSuite {
         for (node ← σ.Node.all; j ← 0 until 100)
           node.edges.add(nodes(Random.nextInt(nodes.length)));
 
-        σ.write(f)
+        σ.close
       }
 
       locally {
-        val σ = SkillState.read(f);
+        val σ = SkillFile.open(f, Read);
         Files.size(f)
       }
     }
@@ -234,7 +234,7 @@ class WSR14Test extends FunSuite {
 
     @inline def t(n: Int): Long = {
       locally {
-        val σ = SkillState.create;
+        val σ = SkillFile.open(f, Create, Write);
         for (i ← 0 until n)
           σ.Node("black", new HashSet[Node])
 
@@ -252,11 +252,11 @@ class WSR14Test extends FunSuite {
         for (node ← σ.Node.all; j ← 0 until 100)
           node.edges.add(nodes(Random.nextInt(nodes.length)));
 
-        σ.write(f)
+        σ.close
       }
 
       locally {
-        val σ = SkillState.read(f);
+        val σ = SkillFile.open(f, Read, Append);
         // add 100% orange nodes
         // fix, because pool access is not yet an indexed seq or something like that
         val nodes = σ.Node.all.toArray
@@ -266,7 +266,7 @@ class WSR14Test extends FunSuite {
             n.edges.add(nodes(Random.nextInt(nodes.length)));
         }
 
-        σ.append
+        σ.close
 
         Files.size(f)
       }

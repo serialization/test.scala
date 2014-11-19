@@ -4,7 +4,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import common.CommonTest
 import java.io.File
-import number.api.SkillState
+import number.api._
 
 @RunWith(classOf[JUnitRunner])
 class WriteTest extends CommonTest {
@@ -16,13 +16,13 @@ class WriteTest extends CommonTest {
     val file = File.createTempFile("writetest", ".sf")
     val path = file.toPath()
 
-    val σ = SkillState.create
+    val σ = SkillFile.open(path, Create, Write)
     for (i ← -limit until limit)
       σ.Number(i)
 
-    σ.write(path)
+    σ.close
 
-    val d = SkillState.read(path).Number.all
+    val d = SkillFile.open(path).Number.all
     var cond = true
     for (i ← -limit until limit)
       cond &&= (i == d.next.number)

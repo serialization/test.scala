@@ -3,9 +3,12 @@ package floatTest
 import common.CommonTest
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import api.SkillState
 import java.text.DecimalFormat
 import java.math.RoundingMode
+import floats.api.Write
+import floats.api.Read
+import floats.api.SkillFile
+import floats.api.Create
 
 @RunWith(classOf[JUnitRunner])
 class BasicTest extends CommonTest {
@@ -14,7 +17,7 @@ class BasicTest extends CommonTest {
     val p = tmpFile("float.check")
 
     locally {
-      val state = SkillState.create
+      val state = SkillFile.open(p, Create, Write)
       val f = state.FloatTest.get
 
       f.zero = 0
@@ -31,10 +34,10 @@ class BasicTest extends CommonTest {
       d.pi = Math.PI
       d.NaN = Double.NaN
 
-      state.write(p)
+      state.close
     }
 
-    val state = SkillState.read(p)
+    val state = SkillFile.open(p, Read)
     val f = state.FloatTest.get
 
     assert(f.zero === 0)

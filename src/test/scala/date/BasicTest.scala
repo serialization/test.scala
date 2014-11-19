@@ -1,7 +1,7 @@
 package date
 
 import common.CommonTest
-import date.api.SkillState
+import date.api._
 import junit.framework.Assert
 import java.io.File
 
@@ -9,7 +9,7 @@ import java.io.File
  * @author Timm Felden
  */
 class BasicTest extends CommonTest {
-  def read(s: String) = SkillState.read(new File("src/test/resources/"+s).toPath)
+  def read(s: String) = SkillFile.open(new File("src/test/resources/"+s).toPath, Read, Write)
 
   // read exact files
   test("read date example") {
@@ -30,7 +30,7 @@ class BasicTest extends CommonTest {
   // create state
   test("create state") {
     val p = tmpFile("create")
-    val state = SkillState.create
+    val state = SkillFile.open(p, Create, Write)
 
     state.Date(1)
     state.Date(-1)
@@ -44,30 +44,31 @@ class BasicTest extends CommonTest {
   // write
   test("create and write") {
     val p = tmpFile("create")
-    val state = SkillState.create
+    val state = SkillFile.open(p, Create, Write)
 
     state.Date(1)
     state.Date(-1)
 
-    state.write(p)
+    state.close
   }
 
-  test("read and write date example") {
+  ignore("read and write date example") {
     val p = tmpFile("dateExample")
 
-    read("date-example.sf").write(p)
+    // TODO [[read("date-example.sf").write(p)]]
+    // @note requires switchPath
 
     assert(sha256(p) === sha256(new File("src/test/resources/date-example.sf").toPath), "the file did not match the expected output")
   }
 
   test("create state, write and check against example") {
     val p = tmpFile("create")
-    val state = SkillState.create
+    val state = SkillFile.open(p, Create, Write)
 
     state.Date(1)
     state.Date(-1)
 
-    state.write(p)
+    state.close
 
     assert(sha256(p) === sha256(new File("src/test/resources/date-example.sf").toPath), "the file did not match the expected output")
   }

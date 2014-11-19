@@ -2,14 +2,14 @@ package date
 import org.junit.Assert
 import java.util.Random
 import common.CommonTest
-import date.api.SkillState
+import date.api.SkillFile
 import org.junit.runner.RunWith
 
 class DatesMakerTest extends CommonTest {
 
-  def read(s: String) = SkillState.read("src/test/resources/"+s)
+  def read(s: String) = SkillFile.open("src/test/resources/"+s)
 
-  def compareStates(σ: SkillState, σ2: SkillState) {
+  def compareStates(σ: SkillFile, σ2: SkillFile) {
     var i1 = σ.Date.all
     var i2 = σ2.Date.all
 
@@ -20,11 +20,11 @@ class DatesMakerTest extends CommonTest {
     val state = read("date-example.sf")
 
     val out = tmpFile("test")
-    state.write(out)
+    state.close
 
-    val σ2 = SkillState.read(out)
+    val σ2 = SkillFile.open(out)
 
-    compareStates(SkillState.read(out), σ2)
+    compareStates(SkillFile.open(out), σ2)
   }
 
   test("add a date") {
@@ -44,11 +44,11 @@ class DatesMakerTest extends CommonTest {
       d.date = 0
 
     val out = tmpFile("oneHundredInts.sf")
-    state.write(out)
+    state.close
 
-    val σ2 = SkillState.read(out)
+    val σ2 = SkillFile.open(out)
 
-    compareStates(SkillState.read(out), σ2)
+    compareStates(SkillFile.open(out), σ2)
     σ2.Date.all.foreach({ d ⇒ assert(d.date == 0) })
   }
 
@@ -59,11 +59,11 @@ class DatesMakerTest extends CommonTest {
     Assert.assertNotNull(σ)
 
     val out = tmpFile("someLinearDates.sf")
-    σ.write(out)
+    σ.close
 
-    val σ2 = SkillState.read(out)
+    val σ2 = SkillFile.open(out)
 
-    compareStates(SkillState.read(out), σ2)
+    compareStates(SkillFile.open(out), σ2)
   }
 
   test("write and read some random dates") {
@@ -72,9 +72,9 @@ class DatesMakerTest extends CommonTest {
     RandomDatesMaker.addDates(σ, 100)
     Assert.assertNotNull(σ)
     val out = tmpFile("someDates.sf")
-    σ.write(out)
+    σ.close
 
-    val σ2 = SkillState.read(out)
+    val σ2 = SkillFile.open(out)
 
     compareStates(σ, σ2);
   }
@@ -86,9 +86,9 @@ class DatesMakerTest extends CommonTest {
     Assert.assertNotNull(σ)
 
     val out = tmpFile("testOutWrite1MDatesNormal.sf")
-    σ.write(out)
+    σ.close
 
-    compareStates(σ, SkillState.read(out));
+    compareStates(σ, SkillFile.open(out));
   }
 
   test("write and read a million small random dates") {
@@ -98,9 +98,9 @@ class DatesMakerTest extends CommonTest {
     Assert.assertNotNull(σ)
 
     val out = tmpFile("testOutWrite1MDatesGaussian.sf")
-    σ.write(out)
+    σ.close
 
-    compareStates(σ, SkillState.read(out));
+    compareStates(σ, SkillFile.open(out));
   }
 
 }
@@ -113,7 +113,7 @@ object RandomDatesMaker {
   /**
    * adds count new dates with linear content to σ
    */
-  def addLinearDates(σ: SkillState, count: Long) {
+  def addLinearDates(σ: SkillFile, count: Long) {
     for (i ← 0L until count)
       σ.Date(i)
   }
@@ -121,7 +121,7 @@ object RandomDatesMaker {
   /**
    * adds count new dates with random content to σ
    */
-  def addDates(σ: SkillState, count: Int) {
+  def addDates(σ: SkillFile, count: Int) {
     var r = new Random()
     for (i ← 0 until count)
       σ.Date(r.nextLong())
@@ -132,7 +132,7 @@ object RandomDatesMaker {
    *
    * uses a gaussian distribution, but only positive numbers
    */
-  def addDatesGaussian(σ: SkillState, count: Int) {
+  def addDatesGaussian(σ: SkillFile, count: Int) {
     var r = new Random()
     for (i ← 0 until count)
       σ.Date((r.nextGaussian().abs * 100).toLong)

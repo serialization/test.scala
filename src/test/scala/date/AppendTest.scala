@@ -1,36 +1,36 @@
 package date
 import org.junit.runner.RunWith
 import common.CommonTest
-import date.api.SkillState
+import date.api._
 import org.scalatest.junit.JUnitRunner
 import java.io.File
 
 @RunWith(classOf[JUnitRunner])
 class AppendTest extends CommonTest {
-  import SkillState._
+  import SkillFile._
 
   test("Tr13 §6.2.3 based date example") {
     val path = tmpFile("writetest")
 
-    val σ = create
+    val σ = open(path, Create, Write)
     σ.Date(1)
     σ.Date(-1)
-    σ.write(path)
+    σ.close
 
     assert(sha256(path) === sha256(new File("src/test/resources/date-example.sf").toPath))
-    assert(SkillState.read(path).Date.all.map(_.date).toList.sameElements(List(1, -1)))
+    assert(SkillFile.open(path).Date.all.map(_.date).toList.sameElements(List(1, -1)))
   }
 
   test("Tr13 §6.2.3 append example") {
     val path = tmpFile("append.test")
 
-    val σ = SkillState.read("src/test/resources/date-example.sf")
+    val σ = open("src/test/resources/date-example.sf")
     σ.Date(2)
     σ.Date(3)
-    σ.append(path)
+    σ.close
 
     assert(sha256(path) === sha256(new File("src/test/resources/date-example-append.sf").toPath))
-    assert(SkillState.read(path).Date.all.map(_.date).toList.sameElements(List(1, -1, 2, 3)))
+    assert(SkillFile.open(path).Date.all.map(_.date).toList.sameElements(List(1, -1, 2, 3)))
   }
 
   test("write 100k dates; append 9x100k; write 1m dates and check them all -- multiple states") {
@@ -39,26 +39,26 @@ class AppendTest extends CommonTest {
 
     // write
     locally {
-      val σ = create
+      val σ = open(path, Create, Write)
       for (i ← 0 until limit)
         σ.Date(i)
 
-      σ.write(path)
+      σ.close
     }
 
     // append
     for (i ← 1 until 10) {
-      val σ = SkillState.read(path)
+      val σ = SkillFile.open(path, Read, Append)
       for (v ← i * limit until limit + i * limit)
         σ.Date(v)
 
-      σ.append
+      σ.close
     }
 
     // read & check & write
     val writePath = tmpFile("write")
     locally {
-      val state = SkillState.read(path)
+      val state = SkillFile.open(path, Create, Write)
       val d = state.Date.all
       assert(state.Date.size === 10 * limit, s"we somehow lost ${10 * limit - state.Date.size} dates")
 
@@ -67,13 +67,13 @@ class AppendTest extends CommonTest {
         cond &&= (i == d.next.date)
       assert(cond, "match failed")
 
-      state.write(writePath)
+      state.close
     }
 
     // check append against write
     locally {
-      val s1 = SkillState.read(path)
-      val s2 = SkillState.read(writePath)
+      val s1 = SkillFile.open(path)
+      val s2 = open(writePath)
 
       val i1 = s1.Date.all
       val i2 = s2.Date.all
@@ -91,24 +91,25 @@ class AppendTest extends CommonTest {
     val path = tmpFile("append")
 
     // write
-    val σ = create
+    val σ = open(path, Create, Write)
     for (i ← 0 until limit)
       σ.Date(i)
 
-    σ.write(path)
+    σ.flush
+    // TODO σ.modeSwitch(Append)!!
 
     // append
     for (i ← 1 until 10) {
       for (v ← i * limit until limit + i * limit)
         σ.Date(v)
 
-      σ.append
+      // TODO [[σ.append]]
     }
 
     // read & check & write
     val writePath = tmpFile("write")
     locally {
-      val state = read(path)
+      val state = open(path, Create, Write)
       val d = state.Date.all
       assert(state.Date.size === 10 * limit, s"we somehow lost ${10 * limit - state.Date.size} dates")
 
@@ -117,13 +118,13 @@ class AppendTest extends CommonTest {
         cond &&= (i == d.next.date)
       assert(cond, "match failed")
 
-      state.write(writePath)
+      state.close
     }
 
     // check append against write
     locally {
-      val s1 = read(path)
-      val s2 = read(writePath)
+      val s1 = open(path)
+      val s2 = open(writePath)
 
       val i1 = s1.Date.all
       val i2 = s2.Date.all
@@ -141,18 +142,19 @@ class AppendTest extends CommonTest {
     val path = tmpFile("append")
 
     // write
-    val σ = create
+    val σ = open(path, Create, Write)
     for (i ← 0 until limit)
       σ.Date(i)
 
-    σ.write(path)
+    σ.flush
+    // TODO modeswitch!
 
     // append
     for (i ← 1 until 10) {
       for (v ← i * limit until limit + i * limit)
         σ.Date(v)
 
-      σ.append
+      // TODO [[σ.append]]
     }
 
     // read & check & write
@@ -167,13 +169,13 @@ class AppendTest extends CommonTest {
         cond &&= (i == d.next.date)
       assert(cond, "match failed")
 
-      state.write(writePath)
+      // TODO [[state.write(writePath)]]
     }
 
     // check append against write
     locally {
-      val s1 = read(path)
-      val s2 = read(writePath)
+      val s1 = open(path)
+      val s2 = open(writePath)
 
       val i1 = s1.Date.all
       val i2 = s2.Date.all
@@ -190,21 +192,21 @@ class AppendTest extends CommonTest {
     val path = tmpFile("date.write.append.check")
 
     locally {
-      val σ = SkillState.create
+      val σ = open(path, Create, Write)
       σ.Date(1)
       σ.Date(2)
       σ.Date(3)
-      σ.write(path)
+      σ.close
     }
 
     locally {
-      val σ = SkillState.read(path)
+      val σ = SkillFile.open(path, Read, Append)
       σ.Date(1)
       σ.Date(2)
       σ.Date(3)
-      σ.append(path)
+      σ.close
     }
 
-    assert("123123" === SkillState.read(path).Date.all.map(_.date).mkString(""))
+    assert("123123" === SkillFile.open(path).Date.all.map(_.date).mkString(""))
   }
 }

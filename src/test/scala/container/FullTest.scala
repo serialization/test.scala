@@ -8,7 +8,7 @@ import common.CommonTest
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import java.io.File
-import container.api.SkillState
+import container.api.SkillFile
 
 @RunWith(classOf[JUnitRunner])
 class FullTest extends FunSuite {
@@ -21,9 +21,9 @@ class FullTest extends FunSuite {
 
   @inline final def read(s : String) = {
     println(s)
-    SkillState.read("src/test/resources/"+s)
+    SkillFile.open("src/test/resources/"+s)
   }
-  @inline final def dump(state : SkillState) {
+  @inline final def dump(state : SkillFile) {
     for (t ← state.all) {
       println(s"Pool[${t.name}${
         if (t.superName.isDefined)

@@ -1,7 +1,7 @@
 package subtypes
 
 import common.CommonTest
-import subtypes.api.SkillState
+import subtypes.api._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
@@ -11,15 +11,15 @@ class BasicTest extends CommonTest {
   test("create and write") {
     val p = tmpFile("createAndWrite")
 
-    val state = SkillState.create
+    val state = SkillFile.open(p, Create, Write)
     val c = state.C(null, null)
     c.a = c
     c.c = c
-    state.write(p)
+    state.close
   }
 
   test("insert a and b") {
-    val σ = SkillState.create
+    val σ = SkillFile.open(tmpFile("insertAB"), Create, Write)
 
     σ.A(σ.B(null, null))
 
@@ -27,6 +27,6 @@ class BasicTest extends CommonTest {
     b.a = b
     b.b = b
 
-    σ.write(tmpFile("insertAB"))
+    σ.close
   }
 }

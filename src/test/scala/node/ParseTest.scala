@@ -3,7 +3,7 @@ package node
 import org.junit.Assert
 
 import common.CommonTest
-import node.api.SkillState
+import node.api.SkillFile
 import node.internal.PoolSizeMissmatchError
 import node.internal.SkillException
 
@@ -11,7 +11,7 @@ import node.internal.SkillException
  * Tests the file reading capabilities.
  */
 class ParseTest extends CommonTest {
-  @inline def read(s: String) = SkillState.read("src/test/resources/"+s)
+  @inline def read(s: String) = SkillFile.open("src/test/resources/"+s)
 
   test("two dates") {
     read("date-example.sf").Node.all

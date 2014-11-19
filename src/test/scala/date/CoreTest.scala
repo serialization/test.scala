@@ -2,11 +2,11 @@ package date
 
 import common.CommonTest
 import junit.framework.Assert
-import date.api.SkillState
+import date.api._
 
 class CoreTest extends CommonTest {
 
-  def read(s : String) = SkillState.read("src/test/resources/"+s)
+  def read(s : String) = SkillFile.open("src/test/resources/"+s, Read)
   def check(name : String, size : Long) = assert(read(name).Date.size === size)
 
   // read unknown types

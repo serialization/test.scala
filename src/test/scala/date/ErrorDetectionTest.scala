@@ -9,7 +9,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 import common.CommonTest
-import date.api.SkillState
+import date.api._
 import date.internal.ParseException
 import date.internal.PoolSizeMissmatchError
 import date.internal.TypeMissmatchError
@@ -20,13 +20,13 @@ import date.internal.TypeMissmatchError
  */
 @RunWith(classOf[JUnitRunner])
 class ErrorDetectionTest extends CommonTest {
-  def read(s: String) = SkillState.read(new File("src/test/resources/"+s).toPath)
+  def read(s: String) = SkillFile.open(new File("src/test/resources/"+s).toPath, Read)
 
   test("read inexistent file") {
     val fileName = "IKillYouIfYouCreateThisFile.sf"
     val p = FileSystems.getDefault().getPath(fileName)
     val thrown = intercept[NoSuchFileException] {
-      for (d ← SkillState.read(p).Date.all) println(d.prettyString)
+      for (d ← SkillFile.open(p, Read).Date.all) println(d.prettyString)
     }
     assert(thrown.getMessage === fileName)
   }

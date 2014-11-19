@@ -1,8 +1,7 @@
 package subtypes
 
 import common.CommonTest
-import subtypes.api.SkillState
-import subtypes.internal.SerializableState
+import subtypes.api.SkillFile
 import java.io.File
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
@@ -15,7 +14,7 @@ package internal {
    */
   @RunWith(classOf[JUnitRunner])
   class InternalTest extends CommonTest {
-    @inline def read(s : String) = SkillState.read("src/test/resources/"+s)
+    @inline def read(s : String) = SkillFile.open("src/test/resources/"+s)
 
     ignore("subtypes read foreign") {
       val state = read("annotationTest.sf")
@@ -56,7 +55,7 @@ package internal {
         assert(instance.a === instance, "self reference corrupted")
       }
 
-      state.write(path)
+      fail("state.write(path)")
 
       // check self references again (write might not have restored them)
       for ((instance, index) ← state.A.all.zipWithIndex) {
@@ -64,7 +63,7 @@ package internal {
         assert(instance.a === instance, "self reference corrupted after write")
       }
 
-      val state2 = SkillState.read(path)
+      val state2 = SkillFile.open(path)
 
       // check type of deserialized instances
       assert(state.A.allInTypeOrder.map(_.getClass.getSimpleName).sameElements(state2.A.allInTypeOrder.map(_.getClass.getSimpleName)))

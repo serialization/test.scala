@@ -6,7 +6,7 @@ import scala.collection.mutable.HashMap
 import scala.util.Random
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
-import benchmarks.graph.api.SkillState
+import benchmarks.graph.api._
 import org.scalatest.junit.JUnitRunner
 import java.nio.file.Files
 
@@ -104,7 +104,7 @@ class WRABenchmark extends FunSuite {
   def task(n : Int) {
     locally {
       init;
-      val σ = SkillState.create;
+      val σ = SkillFile.open(f, Create, Write);
       for (i ← 0 until n)
         σ.Node(null, null, null, null)
 
@@ -119,12 +119,12 @@ class WRABenchmark extends FunSuite {
 
       create.end(n);
 
-      σ.write(f)
+      σ.close
       write.end(n);
     }
 
     locally {
-      val σ = SkillState.read(f);
+      val σ = SkillFile.open(f, Read, Append);
       read.end(n);
 
       // add 100% orange nodes
@@ -140,7 +140,7 @@ class WRABenchmark extends FunSuite {
       }
       create2.end(n)
 
-      σ.append
+      σ.close
       append.end(n)
     }
   }

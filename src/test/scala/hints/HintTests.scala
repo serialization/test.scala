@@ -4,10 +4,10 @@ import scala.reflect.Manifest
 import org.scalatest.Engine
 import org.scalatest.events.Formatter
 import common.CommonTest
-import hints.ignore.api.SkillState
+import hints.ignore.api.SkillFile
 
 class HintTests extends CommonTest {
-  def read(s : String) = SkillState.read("src/test/resources/"+s)
+  def read(s : String) = SkillFile.open("src/test/resources/"+s)
 
   test("access ignored field") {
     val state = read("date-example.sf")
