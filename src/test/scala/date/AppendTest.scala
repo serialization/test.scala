@@ -88,37 +88,32 @@ class AppendTest extends CommonTest {
     }
   }
 
-  ignore("write 100k dates; append 9x100k; write 1m dates and check them all -- in two states") {
+  test("write 100k dates; append 9x100k; write 1m dates and check them all -- in two states") {
     val limit = 1e5.toInt
     val path = tmpFile("append")
 
     // write
-    val sf = open(path, Create, Write)
+    val sf = open(path, Read, Append)
     for (i ← 0 until limit)
       sf.Date(i)
 
     sf.flush
-    // TODO sf.modeSwitch(Append)!!
 
     // append
     for (i ← 1 until 10) {
       for (v ← i * limit until limit + i * limit)
         sf.Date(v)
 
-      // TODO [[sf.append]]
+      sf.flush
     }
 
     // read & check & write
     val writePath = tmpFile("write")
     locally {
-      val state = open(path, Create, Write)
-      val d = state.Date.all
-      assert(state.Date.size === 10 * limit, s"we somehow lost ${10 * limit - state.Date.size} dates")
+      val state = open(writePath, Create, Write)
 
-      var cond = true
       for (i ← 0 until 10 * limit)
-        cond &&= (i == d.next.date)
-      assert(cond, "match failed")
+        state.Date(i)
 
       state.close
     }
@@ -139,7 +134,7 @@ class AppendTest extends CommonTest {
     }
   }
 
-  ignore("write 100k dates; append 9x100k; write 1m dates and check them all -- in a single state") {
+  test("write 100k dates; append 9x100k; write 1m dates and check them all -- in a single state") {
     val limit = 1e5.toInt
     val path = tmpFile("append")
 
