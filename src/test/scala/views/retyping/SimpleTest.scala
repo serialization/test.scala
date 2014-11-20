@@ -7,25 +7,24 @@ import org.scalatest.junit.JUnitRunner
 import views.retyping.api._
 
 /**
- * @note these tests are basically a copy of unicode test and do not make any inherent sense; testing was done based on
- * the compiler
+ * @note these tests are basically a copy of unicode test and do not useful per se
+ * @note this test is already successful if the code compiles!
  * @author Timm Felden
  */
 @RunWith(classOf[JUnitRunner])
 class SimpleTest extends CommonTest {
 
-  test("create some instances") {
-    val path = tmpFile("views.writetest")
-
-    val σ = SkillFile.open(path)
-    σ.A(null)
-    σ.close
-
-    assert(sha256(path) === sha256(new File("src/test/resources/unicode-reference.sf").toPath))
-  }
-
   test("check unicode example") {
     val path = new File("src/test/resources/unicode-reference.sf").toPath()
+
+    val σ = SkillFile.open(path)
+  }
+
+  /**
+   * views work here, because the test file contains only self-referential instances
+   */
+  test("check views") {
+    val path = new File("src/test/resources/localBasePoolOffset.sf").toPath()
 
     val σ = SkillFile.open(path)
   }
