@@ -11,13 +11,15 @@ import date.api._
 @RunWith(classOf[JUnitRunner])
 class WriteTest extends CommonTest {
 
-  ignore("copy of §6.6 example") {
+  test("copy of §6.6 example") {
     val path = tmpFile("write.copy")
 
-    // TODO [[SkillFile.open("src/test/resources/date-example.sf").write(path)]]
+    val sf = SkillFile.open("src/test/resources/date-example.sf")
+    sf.changePath(path)
+    sf.close
 
     assert(sha256(path) === sha256(new File("src/test/resources/date-example.sf").toPath))
-    //TODO assert(SkillState.read(path).Date.all.map(_.date).toList.sameElements(List(1, -1)))
+    assert(SkillFile.open(path).Date.all.map(_.date).toList.sameElements(List(1, -1)))
   }
 
   test("TR13 §6.6 date example") {
@@ -60,6 +62,7 @@ class WriteTest extends CommonTest {
     for (d ← σ.Date.all)
       d.date -= min
 
-    // TODO [[σ.write(tmpFile("normalized"))]]
+    σ.changePath(tmpFile("normalized"))
+    σ.close
   }
 }

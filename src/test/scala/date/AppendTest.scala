@@ -24,9 +24,10 @@ class AppendTest extends CommonTest {
   test("Tr13 §6.2.3 append example") {
     val path = tmpFile("append.test")
 
-    val σ = open("src/test/resources/date-example.sf")
+    val σ = open("src/test/resources/date-example.sf", Read, Append)
     σ.Date(2)
     σ.Date(3)
+    σ.changePath(path)
     σ.close
 
     assert(sha256(path) === sha256(new File("src/test/resources/date-example-append.sf").toPath))
