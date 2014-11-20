@@ -5,4 +5,4 @@ date { v64 date }
 Die objekte sollten date{1} und date{-1} sein.
 
 
-Das Beispiel ist in §6.6 vollständig vorgerechnet.
+Das Beispiel ist in TR13 §6.6 vollständig vorgerechnet.
