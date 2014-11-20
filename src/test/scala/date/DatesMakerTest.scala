@@ -9,9 +9,9 @@ class DatesMakerTest extends CommonTest {
 
   def read(s: String) = SkillFile.open("src/test/resources/"+s)
 
-  def compareStates(σ: SkillFile, σ2: SkillFile) {
-    var i1 = σ.Date.all
-    var i2 = σ2.Date.all
+  def compareStates(sf: SkillFile, sf2: SkillFile) {
+    var i1 = sf.Date.all
+    var i2 = sf2.Date.all
 
     assert(i1.map(_.date).sameElements(i2.map(_.date)), "the argument states differ somehow")
   }
@@ -20,87 +20,91 @@ class DatesMakerTest extends CommonTest {
     val state = read("date-example.sf")
 
     val out = tmpFile("test")
+    state.changePath(out)
     state.close
 
-    val σ2 = SkillFile.open(out)
+    val sf2 = SkillFile.open(out)
 
-    compareStates(SkillFile.open(out), σ2)
+    compareStates(SkillFile.open(out), sf2)
   }
 
   test("add a date") {
     val state = read("date-example.sf")
 
-    val out = tmpFile("test")
-
     state.Date(-15L)
 
-    assert(!state.Date.all.filter(_.date == -15L).isEmpty, "the added date does not exist!")
+    assert(state.Date.all.exists(_.date == -15L), "the added date does not exist!")
   }
 
   test("read, add, modify and write some dates") {
-    val state = read("date-example.sf")
-    RandomDatesMaker.addLinearDates(state, 98)
-    for (d ← state.Date.all)
+    val sf = read("date-example.sf")
+    RandomDatesMaker.addLinearDates(sf, 98)
+    for (d ← sf.Date.all)
       d.date = 0
 
     val out = tmpFile("oneHundredInts.sf")
-    state.close
+    sf.changePath(out)
+    sf.close
 
-    val σ2 = SkillFile.open(out)
+    val sf2 = SkillFile.open(out)
 
-    compareStates(SkillFile.open(out), σ2)
-    σ2.Date.all.foreach({ d ⇒ assert(d.date == 0) })
+    compareStates(SkillFile.open(out), sf2)
+    sf2.Date.all.foreach({ d ⇒ assert(d.date == 0) })
   }
 
   test("write and read some linear dates") {
-    val σ = read("date-example.sf")
-    Assert.assertNotNull(σ)
-    RandomDatesMaker.addLinearDates(σ, 100)
-    Assert.assertNotNull(σ)
+    val sf = read("date-example.sf")
+    Assert.assertNotNull(sf)
+    RandomDatesMaker.addLinearDates(sf, 100)
+    Assert.assertNotNull(sf)
 
     val out = tmpFile("someLinearDates.sf")
-    σ.close
+    sf.changePath(out)
+    sf.close
 
-    val σ2 = SkillFile.open(out)
+    val sf2 = SkillFile.open(out)
 
-    compareStates(SkillFile.open(out), σ2)
+    compareStates(SkillFile.open(out), sf2)
   }
 
   test("write and read some random dates") {
-    val σ = read("date-example.sf")
-    Assert.assertNotNull(σ)
-    RandomDatesMaker.addDates(σ, 100)
-    Assert.assertNotNull(σ)
+    val sf = read("date-example.sf")
+    Assert.assertNotNull(sf)
+    RandomDatesMaker.addDates(sf, 100)
+    Assert.assertNotNull(sf)
     val out = tmpFile("someDates.sf")
-    σ.close
+    sf.changePath(out)
+    sf.close
 
-    val σ2 = SkillFile.open(out)
+    val sf2 = SkillFile.open(out)
 
-    compareStates(σ, σ2);
+    compareStates(sf, sf2);
   }
 
   test("write and read a million random dates") {
-    val σ = read("date-example.sf")
-    Assert.assertNotNull(σ)
-    RandomDatesMaker.addDates(σ, (1e6 - 2).toInt)
-    Assert.assertNotNull(σ)
+    val sf = read("date-example.sf")
+    Assert.assertNotNull(sf)
+    RandomDatesMaker.addDates(sf, (1e6 - 2).toInt)
+    Assert.assertNotNull(sf)
 
     val out = tmpFile("testOutWrite1MDatesNormal.sf")
-    σ.close
+    sf.changePath(out)
+    sf.close
 
-    compareStates(σ, SkillFile.open(out));
+    compareStates(sf, SkillFile.open(out));
   }
 
   test("write and read a million small random dates") {
-    val σ = read("date-example.sf")
-    Assert.assertNotNull(σ)
-    RandomDatesMaker.addDatesGaussian(σ, (1e6 - 2).toInt)
-    Assert.assertNotNull(σ)
+    val sf = read("date-example.sf")
+    Assert.assertNotNull(sf)
+    RandomDatesMaker.addDatesGaussian(sf, (1e6 - 2).toInt)
+    Assert.assertNotNull(sf)
 
     val out = tmpFile("testOutWrite1MDatesGaussian.sf")
-    σ.close
+    sf.changePath(out)
+    sf.close
 
-    compareStates(σ, SkillFile.open(out));
+    compareStates(sf, SkillFile.open(out));
   }
 
 }
@@ -111,31 +115,31 @@ class DatesMakerTest extends CommonTest {
 object RandomDatesMaker {
 
   /**
-   * adds count new dates with linear content to σ
+   * adds count new dates with linear content to sf
    */
-  def addLinearDates(σ: SkillFile, count: Long) {
+  def addLinearDates(sf: SkillFile, count: Long) {
     for (i ← 0L until count)
-      σ.Date(i)
+      sf.Date(i)
   }
 
   /**
-   * adds count new dates with random content to σ
+   * adds count new dates with random content to sf
    */
-  def addDates(σ: SkillFile, count: Int) {
+  def addDates(sf: SkillFile, count: Int) {
     var r = new Random()
     for (i ← 0 until count)
-      σ.Date(r.nextLong())
+      sf.Date(r.nextLong())
   }
 
   /**
-   * adds count new dates with random content to σ.
+   * adds count new dates with random content to sf.
    *
    * uses a gaussian distribution, but only positive numbers
    */
-  def addDatesGaussian(σ: SkillFile, count: Int) {
+  def addDatesGaussian(sf: SkillFile, count: Int) {
     var r = new Random()
     for (i ← 0 until count)
-      σ.Date((r.nextGaussian().abs * 100).toLong)
+      sf.Date((r.nextGaussian().abs * 100).toLong)
 
   }
 }
