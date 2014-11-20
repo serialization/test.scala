@@ -17,8 +17,8 @@ class CoreTest extends CommonTest {
   test("read unknown: empty blocks")(check("emptyBlocks.sf", 0))
   test("read unknown: two types")(check("twoTypes.sf", 0))
   test("read unknown: trivial type definition") { check("trivialType.sf", 0) }
-  test("read unknown: nullable restricted null pointer") { check("nullableNode.sf", 0) }
-  test("read unknown: null pointer in an annotation") { check("nullAnnotation.sf", 2) }
+  test("read unknown: nullable restricted null pointer") { check("nullNode.sf", 0) }
+  test("read unknown: null pointer in an annotation") { check("annotationNull.sf", 2) }
 
   // on-demand deserialization
   // TODO
