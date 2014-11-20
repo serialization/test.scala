@@ -7,13 +7,13 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class SimpleTest  extends CommonTest {
+class SimpleTest extends CommonTest {
 
   test("create unicode example") {
     val path = tmpFile("unicode.writetest")
 
     val σ = SkillFile.open(path, Create, Write)
-    σ.Unicode("1", "ö", "☢")
+    σ.Unicode(one = "1", two = "ö", three = "☢")
     σ.close
 
     assert(sha256(path) === sha256(new File("src/test/resources/unicode-reference.sf").toPath))
