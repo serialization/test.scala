@@ -11,7 +11,7 @@ import node.internal.SkillException
  * Tests the file reading capabilities.
  */
 class ParseTest extends CommonTest {
-  @inline def read(s: String) = SkillFile.open("src/test/resources/"+s)
+  @inline def read(s : String) = SkillFile.open("src/test/resources/"+s)
 
   test("two dates") {
     read("date-example.sf").Node.all
@@ -32,33 +32,15 @@ class ParseTest extends CommonTest {
   test("two types") { Assert.assertNotNull(read("twoTypes.sf")) }
   test("trivial type definition") { Assert.assertNotNull(read("trivialType.sf")) }
 
-  /**
-   * null pointers are legal in regular fields if restricted to be nullable
-   */
-  test("nullable restricted null pointer") { read("nullableNode.sf").Node.all }
-  /**
-   * null pointers are legal in annotations
-   */
-  test("null pointer in an annotation") { read("nullAnnotation.sf").Node.all }
-
-  /**
-   * null pointers are not legal in regular fields
-   *
-   * @note this is the lazy case, i.e. the node pointer is never evaluated
-   */
-  test("null pointer in a nonnull field; lazy case!") {
-    read("illformed/nullNode.sf").Node.all
-  }
-
-  test("data chunk is too long") {
+  ignore("data chunk is too long -- reflective read") {
     val thrown = intercept[PoolSizeMissmatchError] {
       read("illformed/longerDataChunk.sf").Node.all
     }
     assert(thrown.getMessage === "expected: 3, was: 2, field type: v64")
   }
-  test("data chunk is too short") {
+  ignore("data chunk is too short -- reflective read") {
     val thrown = intercept[PoolSizeMissmatchError] {
-      read("illformed/shorterDataChunk.sf").Node.all
+      read("illformed/shorterDataChunk.sf")
     }
     assert(thrown.getMessage === "expected: 1, was: 2, field type: v64")
   }
@@ -78,11 +60,6 @@ class ParseTest extends CommonTest {
   test("illegal string pool offset") {
     intercept[SkillException] {
       read("illformed/illegalStringPoolOffsets.sf").Node.all
-    }
-  }
-  test("missing field declarations in second block") {
-    intercept[SkillException] {
-      read("illformed/missingFieldInSecondBlock.sf").Node.all
     }
   }
   test("duplicate type definition in the first block") {
