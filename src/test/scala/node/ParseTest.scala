@@ -32,17 +32,21 @@ class ParseTest extends CommonTest {
   test("two types") { Assert.assertNotNull(read("twoTypes.sf")) }
   test("trivial type definition") { Assert.assertNotNull(read("trivialType.sf")) }
 
-  ignore("data chunk is too long -- reflective read") {
+  test("data chunk is too long -- reflective read") {
     val thrown = intercept[PoolSizeMissmatchError] {
-      read("illformed/longerDataChunk.sf").Node.all
+      val sf = read("illformed/longerDataChunk.sf")
+      for (t ← sf.all; i ← t.all; f ← t.allFields)
+        println(s"${i.prettyString}.${f.name} = ${i.get(f)}")
     }
-    assert(thrown.getMessage === "expected: 3, was: 2, field type: v64")
+    assert(thrown.getMessage === "Corrupted data chunk in block 1 between 0x14 and 0x17 in Field date.date of type: v64")
   }
-  ignore("data chunk is too short -- reflective read") {
+  test("data chunk is too short -- reflective read") {
     val thrown = intercept[PoolSizeMissmatchError] {
-      read("illformed/shorterDataChunk.sf")
+      val sf = read("illformed/shorterDataChunk.sf")
+      for (t ← sf.all; i ← t.all; f ← t.allFields)
+        println(s"${i.prettyString}.${f.name} = ${i.get(f)}")
     }
-    assert(thrown.getMessage === "expected: 1, was: 2, field type: v64")
+    assert(thrown.getMessage === "Corrupted data chunk in block 1 between 0x14 and 0x15 in Field date.date of type: v64")
   }
   test("incompatible field types; lazy case!") {
     read("illformed/incompatibleType.sf").Node.all
