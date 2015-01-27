@@ -11,19 +11,20 @@ class FullTest extends CommonTest {
   /**
    * not fully implemented
    */
-  ignore("delete and write") {
-//    val σ = SkillState.read("localBasePoolStartIndex.sf")
-//    for (d ← σ.D.all)
-//      d.delete
-//
-//    val path = tmpFile("delete")
-//    σ.write(path)
-//
-//    assert(0 === SkillState.read(path).D.size, "there should be no D")
+  test("delete and write") {
+    val sf = SkillFile.open("localBasePoolOffset.sf")
+    for (d ← sf.D.all)
+      d.delete
+
+    val path = tmpFile("delete")
+    sf.changePath(path)
+    sf.close
+
+    assert(0 === SkillFile.open(path).D.size, "there should be no D, because we deleted them all!")
   }
 
-  ignore("delete -- marked") {
-    val σ = SkillFile.open("localBasePoolStartIndex.sf")
+  test("delete -- marked") {
+    val σ = SkillFile.open("localBasePoolOffset.sf")
     for (d ← σ.D.all)
       d.delete
 
