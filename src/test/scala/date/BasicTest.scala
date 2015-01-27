@@ -9,7 +9,7 @@ import java.io.File
  * @author Timm Felden
  */
 class BasicTest extends CommonTest {
-  def read(s: String) = SkillFile.open(new File("src/test/resources/"+s).toPath, Read, Write)
+  def read(s : String) = SkillFile.open(new File("src/test/resources/"+s).toPath, Read, Write)
 
   // read exact files
   test("read date example") {
@@ -36,7 +36,7 @@ class BasicTest extends CommonTest {
     state.Date(-1)
 
     assert(2 === state.Date.size)
-    val seq: Seq[Date] = state.Date.all.to
+    val seq : Seq[Date] = state.Date.all.to
     assert(1L === seq.head.date)
     assert(-1L === seq.last.date)
   }
@@ -52,11 +52,12 @@ class BasicTest extends CommonTest {
     state.close
   }
 
-  ignore("read and write date example") {
+  test("read and write date example") {
     val p = tmpFile("dateExample")
 
-    // TODO [[read("date-example.sf").write(p)]]
-    // @note requires switchPath
+    val sf = read("date-example.sf")
+    sf.changePath(p)
+    sf.close
 
     assert(sha256(p) === sha256(new File("src/test/resources/date-example.sf").toPath), "the file did not match the expected output")
   }
