@@ -35,20 +35,13 @@ class ParseTest extends CommonTest {
   test("appended dates without fields")(assert(read("noFieldRegressionDates.sf").Date.all.size === 2))
 
   /**
-   * null pointers are legal in regular fields if restricted to be nullable
-   *  (although the behavior is not visible here due to lazyness)
-   *
-   *  @note changed in V1
-   */
-  ignore("nullable restricted null pointer") { read("nullableNode.sf").Test.all }
-
-  /**
    * null pointers are not legal in regular fields
    *
    * @note this is the lazy case, i.e. the node pointer is never evaluated
+   * @note ignored, because reflection is eager atm.
    */
   ignore("null pointer in a nonnull field; lazy case!") {
-    read("illformed/nullNode.sf").Test.all
+    read("illformed/nullInNonNullNode.sf").Test.all
   }
 
   test("data chunk is too long") {
