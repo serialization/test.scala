@@ -4,15 +4,17 @@ import common.CommonTest
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import subtypes.api.SkillFile
+import subtypes.internal.FieldDeclaration
 
 @RunWith(classOf[JUnitRunner])
 class FullTest extends CommonTest {
+  @inline def read(s : String) = SkillFile.open("src/test/resources/"+s)
 
   /**
    * not fully implemented
    */
   test("delete and write") {
-    val sf = SkillFile.open("localBasePoolOffset.sf")
+    val sf = read("localBasePoolOffset.sf")
     for (d ← sf.D.all)
       d.delete
 
@@ -24,10 +26,19 @@ class FullTest extends CommonTest {
   }
 
   test("delete -- marked") {
-    val σ = SkillFile.open("localBasePoolOffset.sf")
+    val σ = read("localBasePoolOffset.sf")
     for (d ← σ.D.all)
       d.delete
 
     assert(σ.D.all.forall(_.markedForDeletion), "some D is not marked for deletion?!")
+  }
+
+  test("magic") {
+    val sf = SkillFile.open("../java/test/age16.sf")
+    for (p ← sf.all; if p.name == "age") {
+      val f = p.allFields.find(_.name == "age").get.asInstanceOf[FieldDeclaration[Long]];
+
+      println(p.all.count(_.get(f) == 0))
+    }
   }
 }

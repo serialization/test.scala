@@ -5,6 +5,9 @@ import subtypes.api.SkillFile
 import java.io.File
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
+import subtypes.api.Create
+import subtypes.api.Write
+import subtypes.api.Append
 
 /**
  * @author Timm Felden
@@ -40,6 +43,37 @@ class InternalTest extends CommonTest {
       assert(c.c === c)
     for (d ← state.D.all)
       assert(d.d === d)
+  }
+
+  test("subtypes create") {
+    val path = tmpFile("lbpsi.create")
+
+    val sf = SkillFile.open(path, Create, Append)
+
+    val blocks = Seq("aabbbc", "bbdd", "acd")
+    for (b ← blocks) {
+      for (c ← b) {
+        c match {
+          case 'a' ⇒
+            val i = sf.A(null);
+            i.a = i;
+          case 'b' ⇒
+            val i = sf.B(null, null);
+            i.a = i;
+            i.b = i;
+          case 'c' ⇒
+            val i = sf.C(null, null);
+            i.a = i;
+            i.c = i;
+          case 'd' ⇒
+            val i = sf.D(null, null, null);
+            i.a = i;
+            i.b = i;
+            i.d = i;
+        }
+      }
+      sf.flush;
+    }
   }
 
   test("subtypes write") {
