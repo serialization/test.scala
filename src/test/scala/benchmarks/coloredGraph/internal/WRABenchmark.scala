@@ -69,7 +69,7 @@ class WRABenchmark extends FunSuite {
   val randomSeed = 31337
 
   // set upper bound to 7 for nice results; max = 8??(fdp takes too long); reduced to 4 for test-suite
-  val counts = (12 to 15).map(20 << _).toArray
+  val counts = (5 to 8).map(20 << _).toArray
   // results
   val create = Result("create")
   val write = Result("write")
@@ -78,7 +78,7 @@ class WRABenchmark extends FunSuite {
   val results = Seq(create, write, read, createDot)
 
   // set to 10 for nice results; max = 100 (0⇀7); reduced to 1 for tests
-  val repetitions = 10;
+  val repetitions = 2;
 
   def eval(test : Int ⇒ Unit) {
     for (count ← 0 until repetitions) {
