@@ -1,5 +1,5 @@
 /*  ___ _  ___ _ _                                                            *\
 ** / __| |/ (_) | |       The SKilL Scala Test Suite                          **
-** \__ \ ' <| | | |__     (c) 2013 University of Stuttgart                    **
+** \__ \ ' <| | | |__     (c) 2013-15 University of Stuttgart                 **
 ** |___/_|\_\_|_|____|    see LICENSE                                         **
 \*                                                                            */
