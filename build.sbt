@@ -1,5 +1,3 @@
-import de.johoop.jacoco4sbt._
-import JacocoPlugin._
 import java.lang.Runtime
 
 name := "skillScalaTestsuite"
@@ -24,5 +22,3 @@ testOptions in Test <+= (target in Test) map {
 }
 
 org.scalastyle.sbt.ScalastylePlugin.Settings
-
-jacoco.settings
