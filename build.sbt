@@ -19,4 +19,22 @@ libraryDependencies ++= Seq(
 
 (testOptions in Test) += Tests.Argument(TestFrameworks.ScalaTest, "-u", "target/tests")
 
+testResultLogger in (Test, test) := new TestResultLogger {
+    import sbt.Tests._
+    import sbt.TestResultLogger.Defaults._
+    def run(log: Logger, results: Output, taskName: String): Unit = {
+        def run(r: TestResultLogger): Unit = r.run(log, results, taskName)
+
+        run(printSummary)
+
+        if (printStandard_?(results))
+          run(printStandard)
+
+        if (results.events.isEmpty)
+          run(printNoTests)
+        else
+          run(printFailures)
+    }
+}
+
 org.scalastyle.sbt.ScalastylePlugin.Settings
