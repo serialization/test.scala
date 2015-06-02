@@ -58,7 +58,7 @@ class ErrorDetectionTest extends CommonTest {
     val thrown = intercept[ParseException] {
       read("illformed/missingUserType.sf").Date.all
     }
-    assert(thrown.getMessage === "In block 1 @0x14: inexistent user type 1 (user types: 0 -> date)")
+    assert(thrown.getMessage === "In block 1 @0x12: inexistent user type 1 (user types: 0 -> date)")
   }
   test("illegal string pool offset") {
     val thrown = intercept[ParseException] {
