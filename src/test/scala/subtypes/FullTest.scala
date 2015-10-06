@@ -4,7 +4,9 @@ import common.CommonTest
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import subtypes.api.SkillFile
-import subtypes.internal.FieldDeclaration
+import de.ust.skill.common.scala.api.FieldDeclaration
+import de.ust.skill.common.scala.api.Read
+import de.ust.skill.common.scala.api.ReadOnly
 
 @RunWith(classOf[JUnitRunner])
 class FullTest extends CommonTest {
@@ -22,7 +24,7 @@ class FullTest extends CommonTest {
     sf.changePath(path)
     sf.close
 
-    assert(0 === SkillFile.open(path).D.size, "there should be no D, because we deleted them all!")
+    assert(0 === SkillFile.open(path, Read, ReadOnly).D.size, "there should be no D, because we deleted them all!")
   }
 
   test("delete -- marked") {
@@ -35,7 +37,7 @@ class FullTest extends CommonTest {
 
   test("magic") {
     val sf = SkillFile.open("../java/test/age16.sf")
-    for (p ← sf.all; if p.name == "age") {
+    for (p ← sf; if p.name == "age") {
       val f = p.allFields.find(_.name == "age").get.asInstanceOf[FieldDeclaration[Long]];
 
       println(p.all.count(_.get(f) == 0))

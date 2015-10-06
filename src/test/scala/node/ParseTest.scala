@@ -1,11 +1,10 @@
 package node
 
 import org.junit.Assert
-
 import common.CommonTest
 import node.api.SkillFile
-import node.internal.PoolSizeMissmatchError
-import node.internal.SkillException
+import de.ust.skill.common.scala.api.PoolSizeMissmatchError
+import de.ust.skill.common.scala.api.SkillException
 
 /**
  * Tests the file reading capabilities.
@@ -35,7 +34,7 @@ class ParseTest extends CommonTest {
   test("data chunk is too long -- reflective read") {
     val thrown = intercept[PoolSizeMissmatchError] {
       val sf = read("illformed/longerDataChunk.sf")
-      for (t ← sf.all; i ← t.all; f ← t.allFields)
+      for (t ← sf; i ← t.all; f ← t.allFields)
         println(s"${i.prettyString}.${f.name} = ${i.get(f)}")
     }
     assert(thrown.getMessage === "Corrupted data chunk in block 1 between 0x14 and 0x17 in Field date.date of type: v64")
@@ -43,7 +42,7 @@ class ParseTest extends CommonTest {
   test("data chunk is too short -- reflective read") {
     val thrown = intercept[PoolSizeMissmatchError] {
       val sf = read("illformed/shorterDataChunk.sf")
-      for (t ← sf.all; i ← t.all; f ← t.allFields)
+      for (t ← sf; i ← t.all; f ← t.allFields)
         println(s"${i.prettyString}.${f.name} = ${i.get(f)}")
     }
     assert(thrown.getMessage === "Corrupted data chunk in block 1 between 0x14 and 0x15 in Field date.date of type: v64")

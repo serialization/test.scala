@@ -13,10 +13,11 @@ import benchmarks.coloredGraph.Color
 import java.io.FileOutputStream
 import java.io.BufferedOutputStream
 import scala.sys.process._
-import benchmarks.coloredGraph.api.Write
-import benchmarks.coloredGraph.api.Read
 import benchmarks.coloredGraph.api.SkillFile
-import benchmarks.coloredGraph.api.Create
+import de.ust.skill.common.scala.api.Write
+import de.ust.skill.common.scala.api.Read
+import de.ust.skill.common.scala.api.Create
+import benchmarks.coloredGraph.api.internal.NodePool
 
 /**
  * Write - Read - Append - Benchmark, based on the WSR'14 paper, but without sets.
@@ -30,7 +31,7 @@ class WRABenchmark extends FunSuite {
 
   final def tmpFile(s : String) = {
     val r = File.createTempFile(s, ".sf")
-//    r.deleteOnExit
+    //    r.deleteOnExit
     r.toPath
   }
 
@@ -115,10 +116,10 @@ class WRABenchmark extends FunSuite {
       val σ = SkillFile.open(f, Create, Write);
       // n nodes, random color 0->10 (for later distribution; keep below 255 for printing)
       for (i ← 0 until n)
-        σ.Node(σ.Color(Random.nextInt(16).toByte, Random.nextInt(16).toByte, Random.nextInt(16).toByte), HashSet())
+        σ.Node.make(σ.Color.make(Random.nextInt(16).toByte, Random.nextInt(16).toByte, Random.nextInt(16).toByte), HashSet())
 
       // up to 10 random edges; distribute color over edge
-      val nodes = σ.Node.asInstanceOf[NodeStoragePool].newObjects
+      val nodes = σ.Node.filter(_.getSkillID == -1)
       @inline def merge(a : Color, b : Color) {
         a.red = (a.red + b.red).toByte
         a.green = (a.green + b.green).toByte
@@ -137,24 +138,24 @@ class WRABenchmark extends FunSuite {
     }
 
     locally {
-      val σ = SkillFile.open(f, Read);
+      val σ = SkillFile.open(f, Read, Write);
       read.end(n);
 
-//      // create a dot file
-//      // for publication use "new File(s"out-$n.dot")" instead
-//      val dotFile = File.createTempFile(s"out-$n", ".dot")
-//      val dot = new BufferedOutputStream(new FileOutputStream(dotFile))
-//      @inline def put(s : String) {
-//        dot.write(s.getBytes())
-//      }
-//      put(s"digraph sfBenchmark$n{")
-//      for (n ← σ.Node) {
-//        put(f"""
-//  ${n.getSkillID}[label="",style=filled,color="#${n.color.red}%2X${n.color.green}%2X${n.color.blue}%2X"];
-//  ${n.getSkillID} -> ${n.edges.map(_.getSkillID).mkString("{", ";", "}")}[dir=none,color="#${n.color.red}%2X${n.color.green}%2X${n.color.blue}%2X"];""")
-//      }
-//      put("\n}")
-//      dot.close
+      //      // create a dot file
+      //      // for publication use "new File(s"out-$n.dot")" instead
+      //      val dotFile = File.createTempFile(s"out-$n", ".dot")
+      //      val dot = new BufferedOutputStream(new FileOutputStream(dotFile))
+      //      @inline def put(s : String) {
+      //        dot.write(s.getBytes())
+      //      }
+      //      put(s"digraph sfBenchmark$n{")
+      //      for (n ← σ.Node) {
+      //        put(f"""
+      //  ${n.getSkillID}[label="",style=filled,color="#${n.color.red}%2X${n.color.green}%2X${n.color.blue}%2X"];
+      //  ${n.getSkillID} -> ${n.edges.map(_.getSkillID).mkString("{", ";", "}")}[dir=none,color="#${n.color.red}%2X${n.color.green}%2X${n.color.blue}%2X"];""")
+      //      }
+      //      put("\n}")
+      //      dot.close
       createDot.end(n)
     }
   }

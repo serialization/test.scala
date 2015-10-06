@@ -4,28 +4,28 @@ import java.io.File
 import java.nio.file.FileSystems
 import java.nio.file.NoSuchFileException
 import java.nio.file.Path
-
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-
 import common.CommonTest
 import date.api._
-import date.internal.ParseException
-import date.internal.PoolSizeMissmatchError
-import date.internal.TypeMissmatchError
+import de.ust.skill.common.scala.api.TypeMissmatchError
+import de.ust.skill.common.scala.api.Read
+import de.ust.skill.common.scala.api.PoolSizeMissmatchError
+import de.ust.skill.common.scala.api.ParseException
+import de.ust.skill.common.scala.api.ReadOnly
 
 /**
  * @author Timm Felden
  */
 @RunWith(classOf[JUnitRunner])
 class ErrorDetectionTest extends CommonTest {
-  def read(s: String) = SkillFile.open(new File("src/test/resources/"+s).toPath, Read)
+  def read(s: String) = SkillFile.open(new File("src/test/resources/"+s).toPath, Read, ReadOnly)
 
   test("read inexistent file") {
     val fileName = "IKillYouIfYouCreateThisFile.sf"
     val p = FileSystems.getDefault().getPath(fileName)
     val thrown = intercept[NoSuchFileException] {
-      for (d ← SkillFile.open(p, Read).Date.all) println(d.prettyString)
+      for (d ← SkillFile.open(p, Read, ReadOnly).Date) println(d.prettyString)
     }
     assert(thrown.getMessage === fileName)
   }

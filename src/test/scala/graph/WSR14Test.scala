@@ -9,6 +9,11 @@ import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 import graph.api._
 import scala.collection.mutable.HashSet
+import de.ust.skill.common.scala.api.Read
+import de.ust.skill.common.scala.api.Append
+import de.ust.skill.common.scala.api.Write
+import de.ust.skill.common.scala.api.ReadOnly
+import de.ust.skill.common.scala.api.Create
 
 /**
  * This test is used to produce results for the WSR'14 paper.
@@ -141,9 +146,9 @@ class WSR14Test extends FunSuite {
     val f = tmpFile("wsr.create");
 
     @inline def t(n: Int): Long = {
-      val σ = SkillFile.open(f, Create);
+      val σ = SkillFile.open(f, Create, ReadOnly);
       for (i ← 0 until n)
-        σ.Node("black", new HashSet[Node])
+        σ.Node.make("black", new HashSet[Node])
 
       // create random colors
       for (n ← σ.Node.all)
@@ -171,7 +176,7 @@ class WSR14Test extends FunSuite {
     @inline def t(n: Int): Long = {
       val σ = SkillFile.open(f, Create, Write);
       for (i ← 0 until n)
-        σ.Node("black", new HashSet[Node])
+        σ.Node.make("black", new HashSet[Node])
 
       // create random colors
       for (n ← σ.Node.all)
@@ -201,7 +206,7 @@ class WSR14Test extends FunSuite {
       locally {
         val σ = SkillFile.open(f, Create, Write)
         for (i ← 0 until n)
-          σ.Node("black", new HashSet[Node])
+          σ.Node.make("black", new HashSet[Node])
 
         // create random colors
         for (n ← σ.Node.all)
@@ -221,7 +226,7 @@ class WSR14Test extends FunSuite {
       }
 
       locally {
-        val σ = SkillFile.open(f, Read);
+        val σ = SkillFile.open(f, Read, ReadOnly);
         Files.size(f)
       }
     }
@@ -236,7 +241,7 @@ class WSR14Test extends FunSuite {
       locally {
         val σ = SkillFile.open(f, Create, Write);
         for (i ← 0 until n)
-          σ.Node("black", new HashSet[Node])
+          σ.Node.make("black", new HashSet[Node])
 
         // create random colors
         for (n ← σ.Node.all)
@@ -261,7 +266,7 @@ class WSR14Test extends FunSuite {
         // fix, because pool access is not yet an indexed seq or something like that
         val nodes = σ.Node.all.toArray
         for (i ← 0 until n) {
-          val n = σ.Node("orange", new HashSet[Node])
+          val n = σ.Node.make("orange", new HashSet[Node])
           for (j ← 0 until 100)
             n.edges.add(nodes(Random.nextInt(nodes.length)));
         }

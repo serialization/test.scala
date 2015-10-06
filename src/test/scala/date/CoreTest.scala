@@ -3,6 +3,7 @@ package date
 import common.CommonTest
 import junit.framework.Assert
 import date.api._
+import de.ust.skill.common.scala.api.Read
 
 class CoreTest extends CommonTest {
 
@@ -37,7 +38,7 @@ class CoreTest extends CommonTest {
   test("reflection: two types") {
     val σ = read("twoTypes.sf")
     val fields = (for (
-      t ← σ.all;
+      t ← σ;
       f ← t.allFields;
       i ← t.all
     ) yield s"${t.name}${f.name}").mkString(",")

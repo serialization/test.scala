@@ -4,8 +4,8 @@ import org.junit.Assert
 import common.CommonTest
 import org.junit.runner.RunWith
 import date.api.SkillFile
-import date.api.Read
-import date.internal.SkillException
+import de.ust.skill.common.scala.api.Read
+import de.ust.skill.common.scala.api.SkillException
 
 /**
  * Tests the file reading capabilities.

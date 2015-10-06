@@ -9,6 +9,10 @@ import org.scalatest.FunSuite
 import benchmarks.graph.api._
 import org.scalatest.junit.JUnitRunner
 import java.nio.file.Files
+import de.ust.skill.common.scala.api.Write
+import de.ust.skill.common.scala.api.Read
+import de.ust.skill.common.scala.api.Append
+import de.ust.skill.common.scala.api.Create
 
 /**
  * Write - Read - Append - Benchmark, based on the WSR'14 paper, but without sets.
@@ -106,10 +110,10 @@ class WRABenchmark extends FunSuite {
       init;
       val σ = SkillFile.open(f, Create, Write);
       for (i ← 0 until n)
-        σ.Node(null, null, null, null)
+        σ.Node.make(null, null, null, null)
 
       // random edges
-      val nodes = σ.Node.asInstanceOf[NodeStoragePool].newObjects
+      val nodes = σ.Node.filter(-1 == _.getSkillID).toArray
       for (node ← σ.Node) {
         node.north = nodes(Random.nextInt(nodes.size))
         node.south = nodes(Random.nextInt(nodes.size))
@@ -129,9 +133,9 @@ class WRABenchmark extends FunSuite {
 
       // add 100% orange nodes
       // fix, because pool access is not yet an indexed seq or something like that
-      val nodes = σ.Node.asInstanceOf[NodeStoragePool].data
+      val nodes = σ.Node.filter(_.getSkillID > 0).toArray
       for (i ← 0 until n) {
-        σ.Node(
+        σ.Node.make(
           nodes(Random.nextInt(nodes.size)),
           nodes(Random.nextInt(nodes.size)),
           nodes(Random.nextInt(nodes.size)),

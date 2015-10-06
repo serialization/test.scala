@@ -1,13 +1,13 @@
 package annotation
 
 import org.junit.Assert
-import annotation.internal.ParseException
-import annotation.internal.PoolSizeMissmatchError
-import annotation.internal.TypeMissmatchError
 import common.CommonTest
 import annotation.api.SkillFile
-import annotation.api.Read
-import annotation.api.Write
+import de.ust.skill.common.scala.api.Read
+import de.ust.skill.common.scala.api.Write
+import de.ust.skill.common.scala.api.PoolSizeMissmatchError
+import de.ust.skill.common.scala.api.TypeMissmatchError
+import de.ust.skill.common.scala.api.ParseException
 
 /**
  * Tests the file reading capabilities.

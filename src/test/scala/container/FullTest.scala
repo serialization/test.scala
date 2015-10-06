@@ -24,7 +24,7 @@ class FullTest extends FunSuite {
     SkillFile.open("src/test/resources/"+s)
   }
   @inline final def dump(state : SkillFile) {
-    for (t ← state.all) {
+    for (t ← state) {
       println(s"Pool[${t.name}${
         if (t.superName.isDefined)
           " <: "+t.superName.get

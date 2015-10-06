@@ -5,6 +5,10 @@ import org.scalatest.junit.JUnitRunner
 import common.CommonTest
 import java.io.File
 import number.api._
+import de.ust.skill.common.scala.api.Write
+import de.ust.skill.common.scala.api.Read
+import de.ust.skill.common.scala.api.ReadOnly
+import de.ust.skill.common.scala.api.Create
 
 @RunWith(classOf[JUnitRunner])
 class WriteTest extends CommonTest {
@@ -18,11 +22,11 @@ class WriteTest extends CommonTest {
 
     val σ = SkillFile.open(path, Create, Write)
     for (i ← -limit until limit)
-      σ.Number(i)
+      σ.Number.make(i)
 
     σ.close
 
-    val d = SkillFile.open(path).Number.all
+    val d = SkillFile.open(path, Read, ReadOnly).Number.all
     var cond = true
     for (i ← -limit until limit)
       cond &&= (i == d.next.number)

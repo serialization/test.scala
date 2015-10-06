@@ -4,6 +4,9 @@ import common.CommonTest
 import date.api._
 import junit.framework.Assert
 import java.io.File
+import de.ust.skill.common.scala.api.Write
+import de.ust.skill.common.scala.api.Read
+import de.ust.skill.common.scala.api.Create
 
 /**
  * @author Timm Felden

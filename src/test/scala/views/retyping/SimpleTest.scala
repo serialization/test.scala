@@ -5,6 +5,8 @@ import java.io.File
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import views.retyping.api._
+import de.ust.skill.common.scala.api.Read
+import de.ust.skill.common.scala.api.ReadOnly
 
 /**
  * @note these tests are basically a copy of unicode test and do not useful per se
@@ -17,7 +19,7 @@ class SimpleTest extends CommonTest {
   test("check unicode example") {
     val path = new File("src/test/resources/unicode-reference.sf").toPath()
 
-    val σ = SkillFile.open(path)
+    val σ = SkillFile.open(path, Read, ReadOnly)
   }
 
   /**
@@ -26,6 +28,6 @@ class SimpleTest extends CommonTest {
   test("check views") {
     val path = new File("src/test/resources/localBasePoolOffset.sf").toPath()
 
-    val σ = SkillFile.open(path)
+    val σ = SkillFile.open(path, Read, ReadOnly)
   }
 }

@@ -4,6 +4,11 @@ import common.CommonTest
 import date.api._
 import org.scalatest.junit.JUnitRunner
 import java.io.File
+import de.ust.skill.common.scala.api.Write
+import de.ust.skill.common.scala.api.Read
+import de.ust.skill.common.scala.api.Append
+import de.ust.skill.common.scala.api.Create
+import de.ust.skill.common.scala.api.ReadOnly
 
 @RunWith(classOf[JUnitRunner])
 class AppendTest extends CommonTest {
@@ -13,25 +18,25 @@ class AppendTest extends CommonTest {
     val path = tmpFile("writetest")
 
     val sf = open(path, Create, Write)
-    sf.Date(1)
-    sf.Date(-1)
+    sf.Date.make(1)
+    sf.Date.make(-1)
     sf.close
 
     assert(sha256(path) === sha256(new File("src/test/resources/date-example.sf").toPath))
-    assert(SkillFile.open(path).Date.all.map(_.date).toList.sameElements(List(1, -1)))
+    assert(SkillFile.open(path, Read, ReadOnly).Date.all.map(_.date).toList.sameElements(List(1, -1)))
   }
 
   test("Tr13 §6.2.3 append example") {
     val path = tmpFile("append.test")
 
     val sf = open("src/test/resources/date-example.sf", Read, Append)
-    sf.Date(2)
-    sf.Date(3)
+    sf.Date.make(2)
+    sf.Date.make(3)
     sf.changePath(path)
     sf.close
 
     assert(sha256(path) === sha256(new File("src/test/resources/date-example-append.sf").toPath))
-    assert(SkillFile.open(path, Read).Date.all.map(_.date).toList.sameElements(List(1, -1, 2, 3)))
+    assert(SkillFile.open(path, Read, ReadOnly).Date.all.map(_.date).toList.sameElements(List(1, -1, 2, 3)))
   }
 
   test("write 100k dates; append 9x100k; write 1m dates and check them all -- multiple states") {
@@ -42,7 +47,7 @@ class AppendTest extends CommonTest {
     locally {
       val sf = open(path, Create, Write)
       for (i ← 0 until limit)
-        sf.Date(i)
+        sf.Date.make(i)
 
       sf.close
     }
@@ -51,7 +56,7 @@ class AppendTest extends CommonTest {
     for (i ← 1 until 10) {
       val sf = SkillFile.open(path, Read, Append)
       for (v ← i * limit until limit + i * limit)
-        sf.Date(v)
+        sf.Date.make(v)
 
       sf.close
     }
@@ -74,8 +79,8 @@ class AppendTest extends CommonTest {
 
     // check append against write
     locally {
-      val s1 = SkillFile.open(path, Read)
-      val s2 = SkillFile.open(writePath, Read)
+      val s1 = SkillFile.open(path, Read, ReadOnly)
+      val s2 = SkillFile.open(writePath, Read, ReadOnly)
 
       val i1 = s1.Date.all
       val i2 = s2.Date.all
@@ -95,14 +100,14 @@ class AppendTest extends CommonTest {
     // write
     val sf = open(path, Read, Append)
     for (i ← 0 until limit)
-      sf.Date(i)
+      sf.Date.make(i)
 
     sf.flush
 
     // append
     for (i ← 1 until 10) {
       for (v ← i * limit until limit + i * limit)
-        sf.Date(v)
+        sf.Date.make(v)
 
       sf.flush
     }
@@ -120,8 +125,8 @@ class AppendTest extends CommonTest {
 
     // check append against write
     locally {
-      val s1 = open(path)
-      val s2 = open(writePath)
+      val s1 = open(path, Read, ReadOnly)
+      val s2 = open(writePath, Read, ReadOnly)
 
       val i1 = s1.Date.all
       val i2 = s2.Date.all
@@ -141,14 +146,14 @@ class AppendTest extends CommonTest {
     // write
     val sf = open(path, Create, Append)
     for (i ← 0 until limit)
-      sf.Date(i)
+      sf.Date.make(i)
 
     sf.flush
 
     // append
     for (i ← 1 until 10) {
       for (v ← i * limit until limit + i * limit)
-        sf.Date(v)
+        sf.Date.make(v)
 
       sf.flush
     }
@@ -171,8 +176,8 @@ class AppendTest extends CommonTest {
 
     // check append against write
     locally {
-      val s1 = open(path)
-      val s2 = open(writePath)
+      val s1 = open(path, Read, ReadOnly)
+      val s2 = open(writePath, Read, ReadOnly)
 
       val i1 = s1.Date.all
       val i2 = s2.Date.all
@@ -190,20 +195,20 @@ class AppendTest extends CommonTest {
 
     locally {
       val sf = open(path, Create, Write)
-      sf.Date(1)
-      sf.Date(2)
-      sf.Date(3)
+      sf.Date.make(1)
+      sf.Date.make(2)
+      sf.Date.make(3)
       sf.close
     }
 
     locally {
       val sf = SkillFile.open(path, Read, Append)
-      sf.Date(1)
-      sf.Date(2)
-      sf.Date(3)
+      sf.Date.make(1)
+      sf.Date.make(2)
+      sf.Date.make(3)
       sf.close
     }
 
-    assert("123123" === SkillFile.open(path).Date.all.map(_.date).mkString(""))
+    assert("123123" === SkillFile.open(path, Read, ReadOnly).Date.all.map(_.date).mkString(""))
   }
 }

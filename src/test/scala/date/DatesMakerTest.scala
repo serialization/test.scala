@@ -4,6 +4,8 @@ import java.util.Random
 import common.CommonTest
 import date.api.SkillFile
 import org.junit.runner.RunWith
+import de.ust.skill.common.scala.api.Read
+import de.ust.skill.common.scala.api.ReadOnly
 
 class DatesMakerTest extends CommonTest {
 
@@ -23,15 +25,15 @@ class DatesMakerTest extends CommonTest {
     state.changePath(out)
     state.close
 
-    val sf2 = SkillFile.open(out)
+    val sf2 = SkillFile.open(out, Read, ReadOnly)
 
-    compareStates(SkillFile.open(out), sf2)
+    compareStates(SkillFile.open(out, Read, ReadOnly), sf2)
   }
 
   test("add a date") {
     val state = read("date-example.sf")
 
-    state.Date(-15L)
+    state.Date.make(-15L)
 
     assert(state.Date.all.exists(_.date == -15L), "the added date does not exist!")
   }
@@ -46,9 +48,9 @@ class DatesMakerTest extends CommonTest {
     sf.changePath(out)
     sf.close
 
-    val sf2 = SkillFile.open(out)
+    val sf2 = SkillFile.open(out, Read, ReadOnly)
 
-    compareStates(SkillFile.open(out), sf2)
+    compareStates(sf, sf2)
     sf2.Date.all.foreach({ d ⇒ assert(d.date == 0) })
   }
 
@@ -62,9 +64,7 @@ class DatesMakerTest extends CommonTest {
     sf.changePath(out)
     sf.close
 
-    val sf2 = SkillFile.open(out)
-
-    compareStates(SkillFile.open(out), sf2)
+    compareStates(SkillFile.open(out, Read, ReadOnly), sf)
   }
 
   test("write and read some random dates") {
@@ -76,7 +76,7 @@ class DatesMakerTest extends CommonTest {
     sf.changePath(out)
     sf.close
 
-    val sf2 = SkillFile.open(out)
+    val sf2 = SkillFile.open(out, Read, ReadOnly)
 
     compareStates(sf, sf2);
   }
@@ -91,7 +91,7 @@ class DatesMakerTest extends CommonTest {
     sf.changePath(out)
     sf.close
 
-    compareStates(sf, SkillFile.open(out));
+    compareStates(sf, SkillFile.open(out, Read, ReadOnly));
   }
 
   test("write and read a million small random dates") {
@@ -104,7 +104,7 @@ class DatesMakerTest extends CommonTest {
     sf.changePath(out)
     sf.close
 
-    compareStates(sf, SkillFile.open(out));
+    compareStates(sf, SkillFile.open(out, Read, ReadOnly));
   }
 
 }
@@ -119,7 +119,7 @@ object RandomDatesMaker {
    */
   def addLinearDates(sf: SkillFile, count: Long) {
     for (i ← 0L until count)
-      sf.Date(i)
+      sf.Date.make(i)
   }
 
   /**
@@ -128,7 +128,7 @@ object RandomDatesMaker {
   def addDates(sf: SkillFile, count: Int) {
     var r = new Random()
     for (i ← 0 until count)
-      sf.Date(r.nextLong())
+      sf.Date.make(r.nextLong())
   }
 
   /**
@@ -139,7 +139,7 @@ object RandomDatesMaker {
   def addDatesGaussian(sf: SkillFile, count: Int) {
     var r = new Random()
     for (i ← 0 until count)
-      sf.Date((r.nextGaussian().abs * 100).toLong)
+      sf.Date.make((r.nextGaussian().abs * 100).toLong)
 
   }
 }

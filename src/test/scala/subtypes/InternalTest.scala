@@ -5,9 +5,10 @@ import subtypes.api.SkillFile
 import java.io.File
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import subtypes.api.Create
-import subtypes.api.Write
-import subtypes.api.Append
+import de.ust.skill.common.scala.api.Append
+import de.ust.skill.common.scala.api.Create
+import de.ust.skill.common.scala.api.Read
+import de.ust.skill.common.scala.api.ReadOnly
 
 /**
  * @author Timm Felden
@@ -55,18 +56,18 @@ class InternalTest extends CommonTest {
       for (c ← b) {
         c match {
           case 'a' ⇒
-            val i = sf.A(null);
+            val i = sf.A.make(null);
             i.a = i;
           case 'b' ⇒
-            val i = sf.B(null, null);
+            val i = sf.B.make(null, null);
             i.a = i;
             i.b = i;
           case 'c' ⇒
-            val i = sf.C(null, null);
+            val i = sf.C.make(null, null);
             i.a = i;
             i.c = i;
           case 'd' ⇒
-            val i = sf.D(null, null, null);
+            val i = sf.D.make(null, null, null);
             i.a = i;
             i.b = i;
             i.d = i;
@@ -96,7 +97,7 @@ class InternalTest extends CommonTest {
       assert(instance.a === instance, "self reference corrupted after write")
     }
 
-    val state2 = SkillFile.open(path)
+    val state2 = SkillFile.open(path, Read, ReadOnly)
 
     // check type of deserialized instances
     assert(state.A.allInTypeOrder.map(_.getClass.getSimpleName).sameElements(state2.A.allInTypeOrder.map(_.getClass.getSimpleName)))

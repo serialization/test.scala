@@ -3,6 +3,9 @@ package restrictions
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import common.CommonTest
+import de.ust.skill.common.scala.api.Create
+import de.ust.skill.common.scala.api.Write
+import de.ust.skill.common.scala.api.SkillException
 
 @RunWith(classOf[JUnitRunner])
 class FullTest extends CommonTest {
@@ -11,21 +14,17 @@ class FullTest extends CommonTest {
   import restrictions.singleton.api.{ SkillFile ⇒ Singleton }
 
   test("range") {
-    import restrictions.range.api.Create
-
     val p = tmpFile("range")
-    val sf = Range.open(p, Create)
-    intercept[range.internal.SkillException] {
-      sf.RangeRestricted(0.0f, 0, 0, 0, 0)
+    val sf = Range.open(p, Create, Write)
+    intercept[SkillException] {
+      sf.RangeRestricted.make(0.0f, 0, 0, 0, 0)
       sf.close
     }
   }
 
   test("singleton") {
-    import restrictions.singleton.api.Create
-
     val p = tmpFile("singleton")
-    val sf = Singleton.open(p, Create)
+    val sf = Singleton.open(p, Create, Write)
     sf.LifeUniverseAndEverything.get.size = Float.NaN
     sf.close
   }

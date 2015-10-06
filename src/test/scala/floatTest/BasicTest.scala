@@ -5,10 +5,11 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import java.text.DecimalFormat
 import java.math.RoundingMode
-import floats.api.Write
-import floats.api.Read
 import floats.api.SkillFile
-import floats.api.Create
+import de.ust.skill.common.scala.api.Write
+import de.ust.skill.common.scala.api.Read
+import de.ust.skill.common.scala.api.Create
+import de.ust.skill.common.scala.api.ReadOnly
 
 @RunWith(classOf[JUnitRunner])
 class BasicTest extends CommonTest {
@@ -37,7 +38,7 @@ class BasicTest extends CommonTest {
       state.close
     }
 
-    val state = SkillFile.open(p, Read)
+    val state = SkillFile.open(p, Read, ReadOnly)
     val f = state.FloatTest.get
 
     assert(f.zero === 0)
