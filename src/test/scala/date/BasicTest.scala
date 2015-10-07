@@ -35,8 +35,8 @@ class BasicTest extends CommonTest {
     val p = tmpFile("create")
     val state = SkillFile.open(p, Create, Write)
 
-    state.Date(1)
-    state.Date(-1)
+    state.Date.make(1)
+    state.Date.make(-1)
 
     assert(2 === state.Date.size)
     val seq : Seq[Date] = state.Date.all.to
@@ -49,8 +49,8 @@ class BasicTest extends CommonTest {
     val p = tmpFile("create")
     val state = SkillFile.open(p, Create, Write)
 
-    state.Date(1)
-    state.Date(-1)
+    state.Date.make(1)
+    state.Date.make(-1)
 
     state.close
   }
@@ -69,8 +69,8 @@ class BasicTest extends CommonTest {
     val p = tmpFile("create")
     val state = SkillFile.open(p, Create, Write)
 
-    state.Date(1)
-    state.Date(-1)
+    state.Date.make(1)
+    state.Date.make(-1)
 
     state.close
 

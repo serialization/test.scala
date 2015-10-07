@@ -40,7 +40,7 @@ class ParseTest extends CommonTest {
    * @note this is the lazy case, i.e. the node pointer is never evaluated
    * @note ignored, because reflection is eager atm.
    */
-  ignore("null pointer in a nonnull field; lazy case!") {
+  test("null pointer in a nonnull field; lazy case!") {
     read("illformed/nullInNonNullNode.sf").Test.all
   }
 
@@ -60,7 +60,8 @@ class ParseTest extends CommonTest {
     val thrown = intercept[TypeMissmatchError] {
       read("illformed/incompatibleType.sf").Date.all
     }
-    assert(thrown.getMessage === """During construction of date.date: Encountered incompatible type "date" (expected: v64)""")
+    assert(thrown.getMessage === """During construction of date.date.
+Encountered incompatible type "date" (expected: v64)""")
   }
   test("reserved type ID") {
     val thrown = intercept[ParseException] {
