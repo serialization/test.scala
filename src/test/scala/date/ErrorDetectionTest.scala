@@ -46,7 +46,8 @@ class ErrorDetectionTest extends CommonTest {
     val thrown = intercept[TypeMissmatchError] {
       read("illformed/incompatibleType.sf").Date.all
     }
-    assert(thrown.getMessage === """During construction of date.date: Encountered incompatible type "date" (expected: v64)""")
+    assert(thrown.getMessage === """During construction of date.date.
+Encountered incompatible type "date" (expected: v64)""")
   }
   test("reserved type ID") {
     val thrown = intercept[ParseException] {
