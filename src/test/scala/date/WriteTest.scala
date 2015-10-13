@@ -28,8 +28,8 @@ class WriteTest extends CommonTest {
     val path = tmpFile("write.make")
 
     val σ = SkillFile.open(path, Create, Write)
-    σ.Date(1)
-    σ.Date(-1)
+    σ.Date.make(1)
+    σ.Date.make(-1)
     σ.close
 
     assert(sha256(path) === sha256(new File("src/test/resources/date-example.sf").toPath))
@@ -43,25 +43,20 @@ class WriteTest extends CommonTest {
 
     val σ = SkillFile.open(path, Create, Write)
     for (i ← low until high)
-      σ.Date(i)
+      σ.Date.make(i)
 
     σ.close
 
     val d = SkillFile.open(path, Read, ReadOnly).Date.all
-    var cond = true
-    for (i ← low until high)
-      cond &&= (i == d.next.date)
-    assert(cond, "match failed")
+    assert(∀(low until high)(d.next.date == _), "match failed")
   }
 
   test("normalize 10MB v64") {
     val σ = SkillFile.open("src/test/resources/normalizedInput.sf")
 
-    var min = Long.MaxValue
-    for (d ← σ.Date.all)
-      min = Math.min(d.date, min)
+    val min = σ.Date.foldLeft(Long.MaxValue) { case (m, d) ⇒ Math.min(m, d.date) }
 
-    for (d ← σ.Date.all)
+    for (d ← σ.Date)
       d.date -= min
 
     σ.changePath(tmpFile("normalized"))
