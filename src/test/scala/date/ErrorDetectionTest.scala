@@ -32,9 +32,11 @@ class ErrorDetectionTest extends CommonTest {
 
   test("data chunk is too long") {
     val thrown = intercept[PoolSizeMissmatchError] {
-      read("illformed/longerDataChunk.sf").Date.all
+      read("illformed/longerDataChunk.sf").check
     }
-    assert(thrown.getMessage === "Corrupted data chunk in block 1 between 0x14 and 0x17 in Field date.date of type: v64")
+    assert(thrown.getMessage === """Corrupted data chunk in block 1 between 0x14 and 0x17
+ Field date.date of type: v64
+ Last position: 16""")
   }
   test("data chunk is too short") {
     val thrown = intercept[PoolSizeMissmatchError] {
