@@ -34,6 +34,7 @@ import de.ust.skill.common.scala.internal.fieldTypes.ListType
 import scala.collection.mutable.HashSet
 import de.ust.skill.common.scala.internal.fieldTypes.MapType
 import scala.collection.mutable.HashMap
+import de.ust.skill.common.scala.api.SkillException
 
 @RunWith(classOf[JUnitRunner])
 class CommonTest extends FunSuite {
@@ -60,10 +61,10 @@ class CommonTest extends FunSuite {
    */
   final def reflectiveInit(sf : SkillState) {
     // create instances
-    for (t ← sf.par; i ← 0 until 100) {
+    for (t ← sf.par; i ← 0 until 100) try {
       t.reflectiveAllocateInstance
-
-      // TODO catch an exception, that should be thrown by abstract and singleton types
+    } catch {
+      case e : Exception ⇒ // can not be instantiated
     }
 
     // set fields
@@ -71,9 +72,11 @@ class CommonTest extends FunSuite {
       t ← sf.par;
       i ← t.par;
       f ← t.allFields
-    ) {
+    ) try {
       // note: we will even set auto fields
       set(f.asInstanceOf[FieldDeclaration[_, _]], i, sf)
+    } catch {
+      case e : Exception ⇒ // no legal value selected
     }
   }
 
