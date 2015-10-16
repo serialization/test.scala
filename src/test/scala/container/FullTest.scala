@@ -9,6 +9,11 @@ import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import java.io.File
 import container.api.SkillFile
+import de.ust.skill.common.scala.internal.SkillState
+import de.ust.skill.common.scala.api.Write
+import de.ust.skill.common.scala.api.Create
+import de.ust.skill.common.scala.api.Read
+import de.ust.skill.common.scala.api.ReadOnly
 
 @RunWith(classOf[JUnitRunner])
 class FullTest extends FunSuite {
@@ -56,33 +61,33 @@ class FullTest extends FunSuite {
   test("read reflective: commutativity path 2") { dump(read("commutativityPath2.sf")) }
 
   // compound types
-  //    test("create container instances") {
-  //      val p = tmpFile("container.create")
-  //  
-  //      locally {
-  //        val state = SkillState.create
-  //        state.Container(
-  //          Arr = ArrayBuffer(0, 0, 0),
-  //          Varr = ArrayBuffer(1, 2, 3),
-  //          L = ListBuffer(),
-  //          S = Set().to,
-  //          F = HashMap("f" -> HashMap(0L -> 0L)),
-  //          SomeSet = Set().to
-  //        )
-  //        for (c ← state.Container.all)
-  //          c.s = c.arr.toSet.to
-  //  
-  //        state.write(p)
-  //      }
-  //  
-  //      locally {
-  //        val state = SkillState.read(p)
-  //        val c = state.Container.all.next
-  //        assert(c.arr.size === 3)
-  //        assert(c.varr.sameElements(1 to 3))
-  //        assert(c.l.isEmpty)
-  //        assert(c.s.sameElements(0 to 0))
-  //        assert(c.f("f")(c.s.head) == 0)
-  //      }
-  //    }
+  test("create container instances") {
+    val p = tmpFile("container.create")
+
+    locally {
+      val state = SkillFile.open(p, Create, Write)
+      state.Container.make(
+        arr = ArrayBuffer(0, 0, 0),
+        varr = ArrayBuffer(1, 2, 3),
+        l = ListBuffer(),
+        s = Set().to,
+        f = HashMap("f" -> HashMap(0L -> 0L)),
+        someSet = Set().to
+      )
+      for (c ← state.Container.all)
+        c.s = c.arr.toSet.to
+
+      state.close
+    }
+
+    locally {
+      val state = SkillFile.open(p, Read, ReadOnly)
+      val c = state.Container.all.next
+      assert(c.arr.size === 3)
+      assert(c.varr.sameElements(1 to 3))
+      assert(c.l.isEmpty)
+      assert(c.s.sameElements(0 to 0))
+      assert(c.f("f")(c.s.head) == 0)
+    }
+  }
 }
