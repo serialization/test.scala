@@ -9,13 +9,13 @@ import de.ust.skill.common.scala.api.ReadOnly
 
 class DatesMakerTest extends CommonTest {
 
-  def read(s: String) = SkillFile.open("src/test/resources/"+s)
+  def read(s : String) = SkillFile.open("src/test/resources/"+s)
 
-  def compareStates(sf: SkillFile, sf2: SkillFile) {
-    var i1 = sf.Date.all
-    var i2 = sf2.Date.all
-
-    assert(i1.map(_.date).sameElements(i2.map(_.date)), "the argument states differ somehow")
+  def compareStates(sf : SkillFile, sf2 : SkillFile) {
+    assert(sf.Date.size == sf2.Date.size, "dates must have the same size");
+    for (((l, r), i) ← sf.Date.zip(sf2.Date).zipWithIndex)
+      if (l.date != r.date)
+        fail(s"${l.date} != ${r.date} at index $i")
   }
 
   test("write and read dates") {
@@ -117,7 +117,7 @@ object RandomDatesMaker {
   /**
    * adds count new dates with linear content to sf
    */
-  def addLinearDates(sf: SkillFile, count: Long) {
+  def addLinearDates(sf : SkillFile, count : Long) {
     for (i ← 0L until count)
       sf.Date.make(i)
   }
@@ -125,7 +125,7 @@ object RandomDatesMaker {
   /**
    * adds count new dates with random content to sf
    */
-  def addDates(sf: SkillFile, count: Int) {
+  def addDates(sf : SkillFile, count : Int) {
     var r = new Random()
     for (i ← 0 until count)
       sf.Date.make(r.nextLong())
@@ -136,7 +136,7 @@ object RandomDatesMaker {
    *
    * uses a gaussian distribution, but only positive numbers
    */
-  def addDatesGaussian(sf: SkillFile, count: Int) {
+  def addDatesGaussian(sf : SkillFile, count : Int) {
     var r = new Random()
     for (i ← 0 until count)
       sf.Date.make((r.nextGaussian().abs * 100).toLong)
