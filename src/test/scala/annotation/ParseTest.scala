@@ -56,7 +56,9 @@ class ParseTest extends CommonTest {
     val thrown = intercept[PoolSizeMissmatchError] {
       read("illformed/shorterDataChunk.sf").Date.all
     }
-    assert(thrown.getMessage === "Corrupted data chunk in block 1 between 0x14 and 0x15 in Field date.date of type: v64")
+    assert(thrown.getMessage === """Corrupted data chunk in block 1 between 0x14 and 0x15
+ Field date.date of type: v64
+ Last position: 15""")
   }
   test("incompatible field types") {
     val thrown = intercept[TypeMissmatchError] {

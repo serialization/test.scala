@@ -12,7 +12,7 @@ import de.ust.skill.common.scala.api.SkillException
  */
 class ParseTest extends CommonTest {
 
-  def read(s: String) = SkillFile.open("src/test/resources/"+s, Read)
+  def read(s : String) = SkillFile.open("src/test/resources/"+s, Read)
 
   test("two dates") {
     val σ = read("date-example.sf")
@@ -37,7 +37,7 @@ class ParseTest extends CommonTest {
   test("empty blocks") { Assert.assertNotNull(read("emptyBlocks.sf")) }
   test("two types") { Assert.assertNotNull(read("twoTypes.sf")) }
   test("trivial type definition") { Assert.assertNotNull(read("trivialType.sf")) }
-  
+
   test("data chunk is too long") {
     intercept[SkillException] {
       read("illformed/longerDataChunk.sf").Date.all
