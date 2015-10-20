@@ -106,11 +106,11 @@ class CommonTest extends FunSuite {
     case F32                       ⇒ Random.nextFloat
     case F64                       ⇒ Random.nextDouble
 
-    case ConstantLengthArray(l, t) ⇒ ArrayBuffer((0 until l).map(i ⇒ random(t, sf)))
+    case ConstantLengthArray(l, t) ⇒ ArrayBuffer() ++ (0 until l).map(i ⇒ random(t, sf)).to
 
-    case VariableLengthArray(t)    ⇒ ArrayBuffer((0 until Random.nextInt(20)).map(i ⇒ random(t, sf)))
-    case ListType(t)               ⇒ ListBuffer((0 until Random.nextInt(20)).map(i ⇒ random(t, sf)))
-    case SetType(t)                ⇒ HashSet((0 until Random.nextInt(20)).map(i ⇒ random(t, sf)))
+    case VariableLengthArray(t)    ⇒ ArrayBuffer() ++ (0 until Random.nextInt(20)).map(i ⇒ random(t, sf)).to
+    case ListType(t)               ⇒ ListBuffer() ++ (0 until Random.nextInt(20)).map(i ⇒ random(t, sf)).to
+    case SetType(t)                ⇒ HashSet() ++ (0 until Random.nextInt(20)).map(i ⇒ random(t, sf)).toSet.to
 
     case MapType(k, v)             ⇒ makeMap(k, v, sf)
 
