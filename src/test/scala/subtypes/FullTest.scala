@@ -18,7 +18,7 @@ class FullTest extends CommonTest {
   test("delete and write") {
     val sf = read("localBasePoolOffset.sf")
     for (d ← sf.D.all)
-      d.delete
+      sf.delete(d)
 
     val path = tmpFile("delete")
     sf.changePath(path)
@@ -30,17 +30,17 @@ class FullTest extends CommonTest {
   test("delete -- marked") {
     val σ = read("localBasePoolOffset.sf")
     for (d ← σ.D.all)
-      d.delete
+      σ.delete(d)
 
     assert(σ.D.all.forall(_.markedForDeletion), "some D is not marked for deletion?!")
   }
 
-  test("magic") {
+  ignore("reflective count ages") {
     val sf = SkillFile.open("../java/test/age16.sf")
     for (p ← sf; if p.name == "age") {
       val f = p.allFields.find(_.name == "age").get.asInstanceOf[FieldDeclaration[Long]];
 
-      println(p.all.count(_.get(f) == 0))
+      assert(53725 === p.all.count(_.get(f) == 0))
     }
   }
 }
