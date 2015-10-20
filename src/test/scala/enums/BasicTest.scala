@@ -4,6 +4,7 @@ import common.CommonTest
 import enums.api.SkillFile
 import de.ust.skill.common.scala.api.Read
 import de.ust.skill.common.scala.api.ReadOnly
+import de.ust.skill.common.scala.api.Write
 
 /**
  * Tests the file reading capabilities.
@@ -22,12 +23,12 @@ class BasicTest extends CommonTest {
   }
 
   test("enums - create and close empty") {
-    val sf = SkillFile.open(tmpFile("enum.create"), Read, ReadOnly)
+    val sf = SkillFile.open(tmpFile("enum.create"), Read, Write)
     sf.close
   }
 
   test("enums - create & flush") {
-    val sf = SkillFile.open(tmpFile("enum.create"), Read, ReadOnly)
+    val sf = SkillFile.open(tmpFile("enum.create"), Read, Write)
     sf.foreach(println)
     sf.`Testenum:default`.get
     sf.flush
