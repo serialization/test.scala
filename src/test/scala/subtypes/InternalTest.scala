@@ -29,7 +29,7 @@ class InternalTest extends CommonTest {
 
   test("subtypes read; see §6.3.2") {
     val state = read("localBasePoolOffset.sf")
-    val types = "aabbbcbbddacd"
+    val types = "aabbbcbbddadc"
 
     // check types
     val actualTypes = state.A.all.map(_.getClass.getSimpleName.toLowerCase).mkString("");
@@ -75,6 +75,8 @@ class InternalTest extends CommonTest {
       }
       sf.flush;
     }
+
+    assert("aabbbcbbddadc" === SkillFile.open(sf.path, Read, ReadOnly).A.map(_.getTypeName).mkString)
   }
 
   test("subtypes write") {
