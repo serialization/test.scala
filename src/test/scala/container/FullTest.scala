@@ -16,13 +16,7 @@ import de.ust.skill.common.scala.api.Read
 import de.ust.skill.common.scala.api.ReadOnly
 
 @RunWith(classOf[JUnitRunner])
-class FullTest extends FunSuite {
-
-  @inline final def tmpFile(s : String) = {
-    val r = File.createTempFile(s, ".sf")
-    r.deleteOnExit
-    r.toPath
-  }
+class FullTest extends CommonTest {
 
   @inline final def read(s : String) = {
     println(s)
