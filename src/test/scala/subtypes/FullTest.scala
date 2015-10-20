@@ -27,6 +27,29 @@ class FullTest extends CommonTest {
     assert(0 === SkillFile.open(path, Read, ReadOnly).D.size, "there should be no D, because we deleted them all!")
   }
 
+  test("delete and write -- hard") {
+    val sf = read("localBasePoolOffset.sf")
+
+    // remember size
+    val sizes = sf.map(p ⇒ p.name -> p.size).toMap
+
+    for (x ← sf.B if !x.isInstanceOf[D])
+      sf.delete(x)
+
+    for (x ← sf.C)
+      sf.delete(x)
+
+    val path = tmpFile("delete")
+    sf.changePath(path)
+    sf.close
+
+    val σ = SkillFile.open(path, Read, ReadOnly)
+    assert(sizes("a") - sizes("c") - (sizes("b") - sizes("d")) === σ.A.size)
+    assert(sizes("d") === σ.B.size)
+    assert(0 === σ.C.size)
+    assert(sizes("d") === σ.D.size)
+  }
+
   test("delete -- marked") {
     val σ = read("localBasePoolOffset.sf")
     for (d ← σ.D.all)
