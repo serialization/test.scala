@@ -35,8 +35,8 @@ class AppendTest extends CommonTest {
     sf.changePath(path)
     sf.close
 
-    assert(sha256(path) === sha256(new File("src/test/resources/date-example-append.sf").toPath))
     assert(SkillFile.open(path, Read, ReadOnly).Date.all.map(_.date).toList.sameElements(List(1, -1, 2, 3)))
+    assert(sha256(path) === sha256(new File("src/test/resources/date-example-append.sf").toPath))
   }
 
   test("write 100k dates; append 9x100k; write 1m dates and check them all -- multiple states") {
@@ -118,7 +118,7 @@ class AppendTest extends CommonTest {
       val state = open(writePath, Create, Write)
 
       for (i ← 0 until 10 * limit)
-        state.Date(i)
+        state.Date.make(i)
 
       state.close
     }
