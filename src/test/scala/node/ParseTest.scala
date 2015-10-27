@@ -37,7 +37,9 @@ class ParseTest extends CommonTest {
       for (t ← sf; i ← t.all; f ← t.allFields)
         println(s"${i.prettyString}.${f.name} = ${i.get(f)}")
     }
-    assert(thrown.getMessage === "Corrupted data chunk in block 1 between 0x14 and 0x17 in Field date.date of type: v64")
+    assert(thrown.getMessage === """Corrupted data chunk in block 1 between 0x14 and 0x17
+ Field date.date of type: v64
+ Last position: 16""")
   }
   test("data chunk is too short -- reflective read") {
     val thrown = intercept[PoolSizeMissmatchError] {
@@ -45,7 +47,9 @@ class ParseTest extends CommonTest {
       for (t ← sf; i ← t.all; f ← t.allFields)
         println(s"${i.prettyString}.${f.name} = ${i.get(f)}")
     }
-    assert(thrown.getMessage === "Corrupted data chunk in block 1 between 0x14 and 0x15 in Field date.date of type: v64")
+    assert(thrown.getMessage === """Corrupted data chunk in block 1 between 0x14 and 0x15
+ Field date.date of type: v64
+ Last position: 15""")
   }
   test("incompatible field types; lazy case!") {
     read("illformed/incompatibleType.sf").Node.all
