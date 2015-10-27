@@ -25,7 +25,7 @@ class BasicTest extends CommonTest {
 
     σ.A.make(σ.B.make(null, null))
 
-    val b = σ.B.all.next
+    val b = σ.B.head
     b.a = b
     b.b = b
 
