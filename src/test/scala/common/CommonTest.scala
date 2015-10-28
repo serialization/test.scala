@@ -79,7 +79,7 @@ class CommonTest extends FunSuite {
       // note: we will even set auto fields
       set(f.asInstanceOf[FieldDeclaration[_, _]], i, sf)
     } catch {
-      case e : Exception ⇒ // no legal value selected
+      case e : Throwable ⇒ // no legal value selected
     }
   }
 
