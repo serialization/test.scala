@@ -1,8 +1,5 @@
 package hints
 
-import scala.reflect.Manifest
-import org.scalatest.Engine
-import org.scalatest.events.Formatter
 import common.CommonTest
 import hints.ignore.api.SkillFile
 
