@@ -13,6 +13,16 @@ import de.ust.skill.common.scala.api.ReadOnly
 @RunWith(classOf[JUnitRunner])
 class WriteTest extends CommonTest {
 
+  test("double write") {
+    val sf = SkillFile.create(tmpFile("double.write."))
+    sf.Date.make(1)
+    sf.Date.make(9)
+    sf.Date.make(1989)
+
+    sf.flush
+    sf.close
+  }
+
   test("copy of §6.6 example") {
     val path = tmpFile("write.copy")
 

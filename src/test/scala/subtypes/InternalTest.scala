@@ -32,7 +32,7 @@ class InternalTest extends CommonTest {
     val types = "aabbbcbbddadc"
 
     // check types
-    val actualTypes = state.A.all.map(_.getClass.getSimpleName.toLowerCase).mkString("");
+    val actualTypes = state.A.map(_.getClass.getSimpleName.toLowerCase).mkString("");
     assert(actualTypes === types)
 
     // check fields (all fields are self-references)

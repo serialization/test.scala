@@ -27,7 +27,7 @@ class SimpleTest extends CommonTest {
     val path = new File("src/test/resources/unicode-reference.sf").toPath()
 
     val σ = SkillFile.open(path, Read, ReadOnly)
-    val u = σ.Unicode.all.next
+    val u = σ.Unicode.head
     assert(σ.Unicode.size === 1)
     assert(u.one.length === 1, u.one)
     assert(u.one.getBytes.length === 1, u.one)

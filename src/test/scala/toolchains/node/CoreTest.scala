@@ -19,23 +19,11 @@ import de.ust.skill.common.scala.api.Append
  * @author Timm Felden
  */
 @RunWith(classOf[JUnitRunner])
-class CoreTest extends FunSuite {
+class CoreTest extends CommonTest {
   import tool1.api.{ SkillFile ⇒ Creator }
   import tool2.api.{ SkillFile ⇒ ColorTool }
   import tool3.api.{ SkillFile ⇒ DescriptionTool }
   import viewer.api.{ SkillFile ⇒ Viewer }
-
-  @inline final def tmpFile(s : String) = {
-    val r = File.createTempFile(s, ".sf")
-    //    r.deleteOnExit
-    r.toPath
-  }
-
-  final def sha256(name : String) : String = sha256(new File("src/test/resources/"+name).toPath)
-  @inline final def sha256(path : Path) : String = {
-    val bytes = Files.readAllBytes(path)
-    MessageDigest.getInstance("SHA-256").digest(bytes).map("%02X".format(_)).mkString
-  }
 
   def invokeCreator(path : Path) {
     val σ = Creator.create(path)
@@ -98,9 +86,7 @@ class CoreTest extends FunSuite {
     }
   }
 
-  // TODO this test will have different semantics in TR14 (⇒partial fields)
   test("two toolchain cycles -- append") {
-    fail("TODO this test will have different semantics in TR14 (⇒partial fields)")
 
     val path = tmpFile("toolchain.two.cycles.append")
 
@@ -112,15 +98,12 @@ class CoreTest extends FunSuite {
       val σ = Creator.read(path, Append)
       σ.Node.make(23)
       σ.Node.make(42)
-      // not allowed: some fields are missing
-      val e = intercept[AssertionError] {
-        σ.close
-      }
-      assert(e.getMessage() === "assertion failed: adding instances with an unknown field is currently not supported")
+
+      fail("close will crash, because there is currently no notion of partial fields")
+      σ.close
     }
   }
 
-  // TODO this test is broken indeed:)
   test("write to different files") {
     val path1 = tmpFile("commutativity.path1.")
     val path2 = tmpFile("commutativity.path2.")
@@ -137,7 +120,6 @@ class CoreTest extends FunSuite {
     assert(sha256(path1) == sha256(path2), "files should be equal")
   }
 
-  // TODO this test should start working again, after the test above has been fixed
   test("toolchain commutativity -- append") {
     val path1 = tmpFile("commutativity.path1.")
     val path2 = tmpFile("commutativity.path2.")
@@ -187,6 +169,7 @@ class CoreTest extends FunSuite {
     }
 
     // the last write projected colors and descriptions away
+    fail("this test is no longer working, because write will not project; requires implementation of partial fields")
     locally {
       val σ = Viewer.read(path)
       assert(σ.Node.size === 4)
