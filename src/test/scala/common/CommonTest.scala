@@ -4,18 +4,15 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.security.MessageDigest
-
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.HashMap
 import scala.collection.mutable.HashSet
 import scala.collection.mutable.ListBuffer
 import scala.language.implicitConversions
 import scala.util.Random
-
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-
 import de.ust.skill.common.scala.api.SkillObject
 import de.ust.skill.common.scala.internal.FieldDeclaration
 import de.ust.skill.common.scala.internal.SkillState
@@ -38,6 +35,12 @@ import de.ust.skill.common.scala.internal.fieldTypes.UserType
 import de.ust.skill.common.scala.internal.fieldTypes.V64
 import de.ust.skill.common.scala.internal.fieldTypes.VariableLengthArray
 import de.ust.skill.common.scala.internal.restrictions.NonNull
+import de.ust.skill.common.scala.internal.restrictions.Range.RangeI8
+import de.ust.skill.common.scala.internal.restrictions.Range.RangeI16
+import de.ust.skill.common.scala.internal.restrictions.Range.RangeI32
+import de.ust.skill.common.scala.internal.restrictions.Range.RangeI64
+import de.ust.skill.common.scala.internal.restrictions.Range.RangeF32
+import de.ust.skill.common.scala.internal.restrictions.Range.RangeF64
 
 @RunWith(classOf[JUnitRunner])
 class CommonTest extends FunSuite {
@@ -70,6 +73,10 @@ class CommonTest extends FunSuite {
       case e : Exception ⇒ // can not be instantiated
     }
 
+    // ensure existence of some strings
+    for (t ← sf)
+      sf.String.add(t.name)
+
     // set fields
     for (
       t ← sf.par;
@@ -86,50 +93,103 @@ class CommonTest extends FunSuite {
   private final def set[T, Obj <: SkillObject](field : FieldDeclaration[_, _], i : SkillObject, sf : SkillState) {
     val f = field.asInstanceOf[FieldDeclaration[T, Obj]]
 
-    f.setR(i, random(f.t, sf, f.restrictions.exists(_.isInstanceOf[NonNull[_]])))
+    f.setR(i, random(f.t, sf, f))
   }
 
-  private final def random[T](t : FieldType[T], sf : SkillState, nonNull : Boolean) : T = t match {
+  private final def isNonnull(f : FieldDeclaration[_, _]) = f.restrictions.contains(NonNull.theNonNull)
+  private final def toRange(f : FieldDeclaration[_, _], value : Byte) : Byte = {
+    var r = value
+    f.restrictions.foreach {
+      case RangeI8(min, max) ⇒ r = (min + (r % (max - min))).toByte
+      case _                 ⇒
+    }
+    r
+  }
+  private final def toRange(f : FieldDeclaration[_, _], value : Short) : Short = {
+    var r = value
+    f.restrictions.foreach {
+      case RangeI16(min, max) ⇒ r = (min + (r % (max - min))).toShort
+      case _                  ⇒
+    }
+    r
+  }
+  private final def toRange(f : FieldDeclaration[_, _], value : Int) : Int = {
+    var r = value
+    f.restrictions.foreach {
+      case RangeI32(min, max) ⇒ r = (min + (r % (max - min)))
+      case _                  ⇒
+    }
+    r
+  }
+  private final def toRange(f : FieldDeclaration[_, _], value : Long) : Long = {
+    var r = value
+    f.restrictions.foreach {
+      case RangeI64(min, max) ⇒ r = (min + (r % (max - min)))
+      case _                  ⇒
+    }
+    r
+  }
+  private final def toRange(f : FieldDeclaration[_, _], value : Float) : Float = {
+    var r = value
+    f.restrictions.foreach {
+      case RangeF32(min, max) ⇒ r = (min + (r % (max - min)))
+      case _                  ⇒
+    }
+    r
+  }
+  private final def toRange(f : FieldDeclaration[_, _], value : Double) : Double = {
+    var r = value
+    f.restrictions.foreach {
+      case RangeF64(min, max) ⇒ r = (min + (r % (max - min)))
+      case _                  ⇒
+    }
+    r
+  }
+
+  private final def random[T](t : FieldType[T], sf : SkillState, f : FieldDeclaration[_, _]) : T = t match {
     case t : ConstantInteger[_] ⇒ ???
     case t : AnnotationType ⇒
-      if (!nonNull && Random.nextBoolean) null
+      if (!isNonnull(f) && Random.nextBoolean) null
       else {
         val t = sf(Random.nextInt(sf.size))
         t(1 + Random.nextInt(t.size - 1))
       }
 
-    case t : StringType ⇒ sf.String.get(
-      if (nonNull) 1 + Random.nextInt(sf.String.size - 1)
-      else Random.nextInt(sf.String.size)
-    )
+    case t : StringType ⇒ {
+      val i = sf.String.iterator.drop(
+        if (isNonnull(f)) Random.nextInt(sf.String.size - 1)
+        else Random.nextInt(sf.String.size)
+      )
+      if (i.hasNext) i.next else null
+    }
 
     case BoolType                  ⇒ Random.nextBoolean
-    case I8                        ⇒ Random.nextInt.toByte
-    case I16                       ⇒ Random.nextInt.toShort
-    case I32                       ⇒ Random.nextInt
-    case I64                       ⇒ Random.nextLong
-    case V64                       ⇒ Random.nextLong
+    case I8                        ⇒ toRange(f, Random.nextInt.toByte)
+    case I16                       ⇒ toRange(f, Random.nextInt.toShort)
+    case I32                       ⇒ toRange(f, Random.nextInt)
+    case I64                       ⇒ toRange(f, Random.nextLong)
+    case V64                       ⇒ toRange(f, Random.nextLong)
 
-    case F32                       ⇒ Random.nextFloat
-    case F64                       ⇒ Random.nextDouble
+    case F32                       ⇒ toRange(f, Random.nextFloat)
+    case F64                       ⇒ toRange(f, Random.nextDouble)
 
-    case ConstantLengthArray(l, t) ⇒ ArrayBuffer() ++ (0 until l).map(i ⇒ random(t, sf, nonNull)).to
+    case ConstantLengthArray(l, t) ⇒ ArrayBuffer() ++ (0 until l).map(i ⇒ random(t, sf, f)).to
 
-    case VariableLengthArray(t)    ⇒ ArrayBuffer() ++ (0 until Random.nextInt(20)).map(i ⇒ random(t, sf, nonNull)).to
-    case ListType(t)               ⇒ ListBuffer() ++ (0 until Random.nextInt(20)).map(i ⇒ random(t, sf, nonNull)).to
-    case SetType(t)                ⇒ HashSet() ++ (0 until Random.nextInt(20)).map(i ⇒ random(t, sf, nonNull)).toSet.to
+    case VariableLengthArray(t)    ⇒ ArrayBuffer() ++ (0 until Random.nextInt(20)).map(i ⇒ random(t, sf, f)).to
+    case ListType(t)               ⇒ ListBuffer() ++ (0 until Random.nextInt(20)).map(i ⇒ random(t, sf, f)).to
+    case SetType(t)                ⇒ HashSet() ++ (0 until Random.nextInt(20)).map(i ⇒ random(t, sf, f)).toSet.to
 
-    case MapType(k, v)             ⇒ makeMap(k, v, sf, nonNull)
+    case MapType(k, v)             ⇒ makeMap(k, v, sf, f)
 
     case t : UserType[T] ⇒ t(
-      if (nonNull) 1 + Random.nextInt(t.size - 1)
+      if (isNonnull(f)) 1 + Random.nextInt(t.size - 1)
       else Random.nextInt(t.size))
   }
 
-  private final def makeMap[K, V](k : FieldType[K], v : FieldType[V], sf : SkillState, nonNull : Boolean) : HashMap[K, V] = {
+  private final def makeMap[K, V](k : FieldType[K], v : FieldType[V], sf : SkillState, f : FieldDeclaration[_, _]) : HashMap[K, V] = {
     val r = new HashMap[K, V]
     for (i ← 0 until Random.nextInt(4))
-      r(random(k, sf, nonNull)) = random(v, sf, nonNull)
+      r(random(k, sf, f)) = random(v, sf, f)
 
     r
   }
