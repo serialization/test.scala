@@ -86,7 +86,7 @@ class CoreTest extends CommonTest {
     }
   }
 
-  test("two toolchain cycles -- append") {
+  ignore("two toolchain cycles -- append") {
 
     val path = tmpFile("toolchain.two.cycles.append")
 
@@ -154,7 +154,7 @@ class CoreTest extends CommonTest {
     }
   }
 
-  test("two toolchain cycles -- write") {
+  ignore("two toolchain cycles -- write") {
     val path = tmpFile("nodeExample.write.projection")
 
     invokeCreator(path)
