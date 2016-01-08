@@ -23,14 +23,6 @@ class IteratorTest extends CommonTest {
   }
 
   test("dynamic data iterator") {
-    val state = read
-    val c = state.C.make(null, null)
-    c.a = c
-    c.c = c
-    state.close
-  }
-
-  test("static data iterator") {
     val σ = read
 
     // A
@@ -55,6 +47,34 @@ class IteratorTest extends CommonTest {
     locally {
       val ts = "ddd"
       assert(ts === σ.D.allInTypeOrder.map(_.getTypeName.charAt(0)).mkString)
+    }
+  }
+
+  test("static data iterator") {
+    val σ = read
+
+    // A
+    locally {
+      val ts = "aaabbbbbdddcc"
+      assert(ts === σ.A.staticInstances.map(_.getTypeName.charAt(0)).mkString)
+    }
+
+    // B
+    locally {
+      val ts = "bbbbbddd"
+      assert(ts === σ.B.staticInstances.map(_.getTypeName.charAt(0)).mkString)
+    }
+
+    // C
+    locally {
+      val ts = "cc"
+      assert(ts === σ.C.staticInstances.map(_.getTypeName.charAt(0)).mkString)
+    }
+
+    // D
+    locally {
+      val ts = "ddd"
+      assert(ts === σ.D.staticInstances.map(_.getTypeName.charAt(0)).mkString)
     }
   }
 }
