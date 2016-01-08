@@ -33,8 +33,8 @@ class WSR14Test extends FunSuite {
   // we use a deterministic random number generator, in order to get reproducible results over several runs
   val Random = new Random
 
-  // set upper bound to 9 for wsr results; reduced to 6 for test-suite
-  val counts = (0 to 6).map(1000 * 1 << _).toArray
+  // set upper bound to 9 for wsr results; reduced to 2 for test-suite
+  val counts = (0 to 2).map(1000 * 1 << _).toArray
 
   // set to 10 for wsr results; reduced for tests
   val repetitions = 2;
