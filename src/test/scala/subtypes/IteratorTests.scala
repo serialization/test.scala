@@ -55,13 +55,13 @@ class IteratorTest extends CommonTest {
 
     // A
     locally {
-      val ts = "aaabbbbbdddcc"
+      val ts = "aaa"
       assert(ts === σ.A.staticInstances.map(_.getTypeName.charAt(0)).mkString)
     }
 
     // B
     locally {
-      val ts = "bbbbbddd"
+      val ts = "bbbbb"
       assert(ts === σ.B.staticInstances.map(_.getTypeName.charAt(0)).mkString)
     }
 
