@@ -31,7 +31,7 @@ class BasicTest extends CommonTest {
     val sf = SkillFile.open(tmpFile("enum.create"), Read, Write)
     sf.foreach(println)
     sf.`Testenum:default`.get
-    sf.flush
+    sf.flush()
     for (e ← sf.TestEnum.all) {
       val n = e.getClass.getName
       e.name = n.substring(n.lastIndexOf('$'))

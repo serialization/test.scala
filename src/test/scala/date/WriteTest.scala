@@ -19,7 +19,7 @@ class WriteTest extends CommonTest {
     sf.Date.make(9)
     sf.Date.make(1989)
 
-    sf.flush
+    sf.flush()
     sf.close
   }
 

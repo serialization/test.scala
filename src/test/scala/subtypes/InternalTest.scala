@@ -73,7 +73,7 @@ class InternalTest extends CommonTest {
             i.d = i;
         }
       }
-      sf.flush;
+      sf.flush();
     }
 
     assert("aabbbcbbddadc" === SkillFile.open(sf.path, Read, ReadOnly).A.map(_.getTypeName).mkString)
@@ -91,7 +91,7 @@ class InternalTest extends CommonTest {
     }
 
     state.changePath(path)
-    state.flush
+    state.flush()
 
     // check self references again (write might not have restored them)
     for ((instance, index) ← state.A.all.zipWithIndex) {

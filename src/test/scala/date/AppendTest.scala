@@ -102,14 +102,14 @@ class AppendTest extends CommonTest {
     for (i ← 0 until limit)
       sf.Date.make(i)
 
-    sf.flush
+    sf.flush()
 
     // append
     for (i ← 1 until 10) {
       for (v ← i * limit until limit + i * limit)
         sf.Date.make(v)
 
-      sf.flush
+      sf.flush()
     }
 
     // read & check & write
@@ -148,14 +148,14 @@ class AppendTest extends CommonTest {
     for (i ← 0 until limit)
       sf.Date.make(i)
 
-    sf.flush
+    sf.flush()
 
     // append
     for (i ← 1 until 10) {
       for (v ← i * limit until limit + i * limit)
         sf.Date.make(v)
 
-      sf.flush
+      sf.flush()
     }
 
     // read & check & write
@@ -199,14 +199,14 @@ class AppendTest extends CommonTest {
     for (i ← 0 until limit)
       sf.Date.make(i)
 
-    sf.flush
+    sf.flush()
 
     // append
     for (i ← 1 until 10) {
       for (v ← i * limit until limit + i * limit)
         sf.Date.make(v)
 
-      sf.flush
+      sf.flush()
     }
 
     // read & check & write

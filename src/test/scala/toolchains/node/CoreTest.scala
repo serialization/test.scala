@@ -111,7 +111,7 @@ class CoreTest extends CommonTest {
     val σ = Creator.create(path1)
     σ.Node.make(23)
     σ.Node.make(42)
-    σ.flush
+    σ.flush()
     σ.changePath(path2)
     σ.close
 
@@ -128,7 +128,7 @@ class CoreTest extends CommonTest {
       val σ = Creator.create(path1)
       σ.Node.make(23)
       σ.Node.make(42)
-      σ.flush
+      σ.flush()
       σ.changePath(path2)
       σ.close
     }
