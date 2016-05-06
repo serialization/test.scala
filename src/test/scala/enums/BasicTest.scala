@@ -30,7 +30,7 @@ class BasicTest extends CommonTest {
   test("enums - create & flush") {
     val sf = SkillFile.open(tmpFile("enum.create"), Read, Write)
     sf.foreach(println)
-    sf.`Testenum:default`.get
+    assert(sf.`Testenum:default`.get !== sf.`Testenum:second`.get)
     sf.flush()
     for (e ← sf.TestEnum.all) {
       val n = e.getClass.getName
