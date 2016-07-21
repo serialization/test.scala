@@ -36,5 +36,3 @@ testResultLogger in (Test, test) := new TestResultLogger {
           run(printFailures)
     }
 }
-
-org.scalastyle.sbt.ScalastylePlugin.Settings
