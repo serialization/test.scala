@@ -29,5 +29,11 @@ class SimpleTest extends CommonTest {
     val path = new File("src/test/resources/localBasePoolOffset.sf").toPath()
 
     val σ = SkillFile.open(path, Read, ReadOnly)
+    val b = σ.B.head.a
+
+    // compiling this line is the very test 
+    b.b;
+
+    assert(b.b === b)
   }
 }
