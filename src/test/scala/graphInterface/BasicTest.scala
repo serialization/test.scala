@@ -36,18 +36,16 @@ class BasicTest extends CommonTest {
   }
 
   test("access headless interface") {
-    intercept[Error] {
-      val path = tmpFile("graph");
-      val sf = SkillFile.open(path, Create, Write)
+    val path = tmpFile("graph");
+    val sf = SkillFile.open(path, Create, Write)
 
-      val n = sf.Node.make(color = "red", edges = new HashSet())
+    val n = sf.Node.make(color = "red", edges = new HashSet())
 
-      val c = sf.ColorHolder.make(n, n)
+    val c = sf.ColorHolder.make(n, n)
 
-      sf.Marker.map(_.prettyString).foreach(println)
+    sf.Marker.map(_.prettyString).foreach(println)
 
-      sf.close
-    }
+    sf.close
   }
 
 }
