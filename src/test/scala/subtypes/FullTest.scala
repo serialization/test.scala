@@ -7,10 +7,13 @@ import subtypes.api.SkillFile
 import de.ust.skill.common.scala.api.FieldDeclaration
 import de.ust.skill.common.scala.api.Read
 import de.ust.skill.common.scala.api.ReadOnly
+import de.ust.skill.common.scala.api.Write
+import de.ust.skill.common.scala.api.Create
+import de.ust.skill.common.scala.api.Append
 
 @RunWith(classOf[JUnitRunner])
 class FullTest extends CommonTest {
-  @inline def read(s : String) = SkillFile.open("src/test/resources/"+s)
+  @inline def read(s : String) = SkillFile.open("src/test/resources/" + s)
 
   /**
    * not fully implemented
@@ -64,6 +67,35 @@ class FullTest extends CommonTest {
       val f = p.allFields.find(_.name == "age").get.asInstanceOf[FieldDeclaration[Long]];
 
       assert(53725 === p.all.count(_.get(f) == 0))
+    }
+  }
+
+  test("change tolerant append") {
+    val target = tmpFile("ctAppend")
+    // create a partial file
+    locally {
+      val sf = unknown.api.SkillFile.open(target, Create, Write)
+      sf.C.make(a = sf.A.make(null))
+      sf.close
+    }
+    // append the new type system
+    locally {
+      SkillFile.open(target, Read, Append).close
+    }
+    // append a new instance
+    locally {
+      val sf = SkillFile.open(target, Read, Append)
+      sf.D.make(a = sf.C.head)
+      sf.close
+    }
+    // read the whole thing again and check content
+    locally {
+      val sf = SkillFile.open(target, Read, ReadOnly)
+      assert(sf.A.head.a === null)
+      assert(sf.C.head.a === sf.A.head)
+      assert(sf.C.head.c === null)
+      assert(sf.D.head.a === sf.C.head)
+      assert(sf.D.head.d === null)
     }
   }
 }
