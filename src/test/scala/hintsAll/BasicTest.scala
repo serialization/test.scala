@@ -1,9 +1,8 @@
 package hintsAll
 
-import scala.collection.mutable.HashSet
-
 import common.CommonTest
 import de.ust.skill.common.scala.api.Create
+import de.ust.skill.common.scala.api.Read
 import de.ust.skill.common.scala.api.Write
 import hintsAll.api.SkillFile
 
@@ -19,6 +18,23 @@ class BasicTest extends CommonTest {
     println(n.age)
 
     sf.close
+  }
+
+  test("create a node write and read") {
+    val path = tmpFile("hints");
+    locally {
+      val sf = SkillFile.open(path, Create, Write)
+
+      val n = sf.User.make(30, "ich", "ich nicht")
+      println(n.age)
+
+      sf.close
+    }
+    locally {
+      val sf = SkillFile.open(path, Read, Write)
+      assert(30 === sf.User.head.age)
+      sf.close
+    }
   }
 
 }
