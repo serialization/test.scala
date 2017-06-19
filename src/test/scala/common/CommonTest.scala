@@ -206,4 +206,77 @@ class CommonTest extends FunSuite {
 					+ "\n" + "Expected one of { 'list', 'set', 'array' }");
 		}
 	}
+  
+  protected def wrapPrimitveTypes(value : Double,
+			declaration : de.ust.skill.common.scala.api.FieldDeclaration[_]): Any = {
+
+		if (declaration.toString().contains("f32")) {
+			if (Math.abs(value) > Float.MaxValue) {
+				return value;
+			} else {
+				return value.toFloat;
+			}
+		} else if (declaration.toString().contains("f64")) {
+			return value.toDouble;
+		}
+		if (declaration.toString().contains("i8")) {
+			if (Math.abs(value) > Byte.MaxValue) {
+				return value;
+			} else {
+				return value.toByte;
+			}
+		} else if (declaration.toString().contains("i16")) {
+			if (Math.abs(value) > Short.MaxValue) {
+				return value;
+			} else {
+				return value.toShort;
+			}
+		} else if (declaration.toString().contains("i32")) {
+			if (Math.abs(value) > Integer.MAX_VALUE) {
+				return value;
+			} else {
+				return value.toInt;
+			}
+		} else if (declaration.toString().contains("i64") || declaration.toString().contains("v64")) {
+			if (Math.abs(value) > Long.MaxValue) {
+				return value;
+			} else {
+				return value.toLong;
+			}
+		} else {
+			throw new IllegalArgumentException(
+					"The given fieldDeclaration is not supported.\n" + "Declaration was: " + declaration.toString()
+							+ "\n" + "But should contain one of the following : {'i8','i16','i32','i64,'f32','f64'}");
+		}
+	}
+  
+  protected def wrapPrimitveMapTypes(value : String,
+			mapDeclaration : de.ust.skill.common.scala.api.FieldDeclaration[_], isKey : Boolean): Any = {
+		def mapDeclarationSplit = mapDeclaration.toString().split(",");
+
+		def declaration = if(isKey)  mapDeclarationSplit(0) else mapDeclarationSplit(1);
+
+		if (declaration.toString().contains("f32")) {
+			return value.toFloat;
+		} else if (declaration.toString().contains("f64")) {
+			return value.toDouble;
+		} else if (declaration.toString().contains("i8")) {
+			return value.toByte;
+		} else if (declaration.toString().contains("i16")) {
+			return value.toShort;
+		} else if (declaration.toString().contains("i32")) {
+			return value.toInt;
+		} else if (declaration.toString().contains("i64") || declaration.toString().contains("v64")) {
+			return value.toLong;
+		} else if (declaration.toString().contains("string")) {
+			return value;
+		} else if (declaration.toString().contains("bool")) {
+			return value.toBoolean;
+		} else {
+			throw new IllegalArgumentException("The given fieldDeclaration is not supported.\n" + "Declaration was: "
+					+ declaration.toString() + "\n"
+					+ "But should contain one of the following : {'i8','i16','i32','i64,'f32','f64','string','bool'}");
+		}
+	}
+  
 }
