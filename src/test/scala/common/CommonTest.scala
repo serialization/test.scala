@@ -193,4 +193,17 @@ class CommonTest extends FunSuite {
 
     r
   }
+  
+  protected def getProperCollectionType(collectionType :String): String = {
+		if (collectionType.contains("list")) {
+			return "scala.collection.mutable.ListBuffer";
+		} else if (collectionType.contains("set")) {
+			return "scala.collection.mutable.HashSet";
+		} else if (collectionType.contains("[]")) {
+			return "scala.collection.mutable.ArrayBuffer";
+		} else {
+			throw new IllegalArgumentException("Could not parse provided SKilL collection type.\n" + "Type was: " + collectionType
+					+ "\n" + "Expected one of { 'list', 'set', 'array' }");
+		}
+	}
 }
