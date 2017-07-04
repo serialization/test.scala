@@ -5,6 +5,9 @@ lib/
 # ignore generated tests
 *.generated.scala
 
+#ignore serializedTestfiles
+src/test/resources/serializedTestfiles/
+
 *.class
 *.log
 
