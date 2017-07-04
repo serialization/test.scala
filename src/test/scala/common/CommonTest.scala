@@ -50,6 +50,12 @@ class CommonTest extends FunSuite {
     r.toPath
   }
 
+  
+  final def createFile(name : String) = {
+    val f = new File("src/test/resources/serializedTestfiles/" + name);
+    f.toPath
+  }
+  
   final def sha256(name : String) : String = sha256(new File("src/test/resources/"+name).toPath)
   @inline final def sha256(path : Path) : String = {
     val bytes = Files.readAllBytes(path)
