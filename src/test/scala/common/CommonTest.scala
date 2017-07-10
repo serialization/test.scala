@@ -55,7 +55,7 @@ class CommonTest extends FunSuite {
     if (!dir.exists()) {
       dir.mkdirs();
     }
-    val f = new File("src/test/resources/serializedTestfiles/" + name + ".sf");
+    val f = new File("src/test/resources/serializedTestfiles/" + packagePath + name + ".sf");
     f.toPath
   }
 
