@@ -50,8 +50,8 @@ class CommonTest extends FunSuite {
     r.toPath
   }
 
-  final def createFile(name: String) = {
-    val dir = new File("src/test/resources/serializedTestfiles/");
+  final def createFile(packagePath: String, name: String) = {
+    val dir = new File("src/test/resources/serializedTestfiles/" + packagePath);
     if (!dir.exists()) {
       dir.mkdirs();
     }
