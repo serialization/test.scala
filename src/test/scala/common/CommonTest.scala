@@ -205,6 +205,12 @@ class CommonTest extends FunSuite {
     r
   }
 
+  protected def initCollection[T](t: FieldType[T], f: FieldDeclaration[_, _], elements : Any*) : T = t match{
+    case VariableLengthArray(t) ⇒ ArrayBuffer() ++ elements 
+    case ListType(t) ⇒ ListBuffer() ++ elements
+    case SetType(t) ⇒ HashSet() ++ elements
+  }
+  
   protected def getProperCollectionType(collectionType: String): String = {
     if (collectionType.contains("list")) {
       return "scala.collection.mutable.ListBuffer";
