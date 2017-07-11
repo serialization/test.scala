@@ -16,7 +16,7 @@ object SkillObjectCreator {
   }
 
   def generateSkillFileFieldMappings(sf: SkillFile): Map[String, Map[String, FieldDeclaration[_, _]]] = {
-    val fieldMappings: Map[String, Map[String, FieldDeclaration[_, _]]] = sf.map(t ⇒ (t.name, t.fields.map(f =>
+    val fieldMappings: Map[String, Map[String, FieldDeclaration[_, _]]] = sf.map(t ⇒ (t.name, t.allFields.map(f =>
       (f.name, f.asInstanceOf[FieldDeclaration[_, _ <: SkillObject]])).toMap: Map[String, FieldDeclaration[_, _]])).toMap;
     return fieldMappings;
   }
