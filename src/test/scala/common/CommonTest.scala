@@ -55,8 +55,11 @@ class CommonTest extends FunSuite {
     if (!dir.exists()) {
       dir.mkdirs();
     }
-    val f = new File("src/test/resources/serializedTestfiles/" + packagePath + name + ".sf");
-    f.toPath
+    val file = new File("src/test/resources/serializedTestfiles/" + packagePath + name + ".sf");
+		if(file.exists()){
+			file.delete();
+		}
+		file.toPath();
   }
 
   final def sha256(name: String): String = sha256(new File("src/test/resources/" + name).toPath)
