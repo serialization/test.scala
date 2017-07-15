@@ -206,6 +206,7 @@ class CommonTest extends FunSuite {
   }
 
   protected def initCollection[T](t: FieldType[T], f: FieldDeclaration[_, _], elements : Any*) : T = t match{
+    case ConstantLengthArray(l, t) ⇒ ArrayBuffer() ++ elements
     case VariableLengthArray(t) ⇒ ArrayBuffer() ++ elements 
     case ListType(t) ⇒ ListBuffer() ++ elements
     case SetType(t) ⇒ HashSet() ++ elements
@@ -216,7 +217,7 @@ class CommonTest extends FunSuite {
       return "scala.collection.mutable.ListBuffer";
     } else if (collectionType.contains("set")) {
       return "scala.collection.mutable.HashSet";
-    } else if (collectionType.contains("[]")) {
+    } else if (collectionType.contains("[")) {
       return "scala.collection.mutable.ArrayBuffer";
     } else {
       throw new IllegalArgumentException("Could not parse provided SKilL collection type.\n" + "Type was: " + collectionType
@@ -266,10 +267,82 @@ class CommonTest extends FunSuite {
           + "\n" + "But should contain one of the following : {'i8','i16','i32','i64,'f32','f64'}");
     }
   }
+  
+  protected def wrapPrimitveTypes(value: Double,
+    declaration: String): Any = {
+
+    if (declaration.contains("f32")) {
+      if (Math.abs(value) > Float.MaxValue) {
+        return value;
+      } else {
+        return value.toFloat;
+      }
+    } else if (declaration.contains("f64")) {
+      return value.toDouble;
+    }
+    if (declaration.contains("i8")) {
+      if (Math.abs(value) > Byte.MaxValue) {
+        return value;
+      } else {
+        return value.toByte;
+      }
+    } else if (declaration.contains("i16")) {
+      if (Math.abs(value) > Short.MaxValue) {
+        return value;
+      } else {
+        return value.toShort;
+      }
+    } else if (declaration.contains("i32")) {
+      if (Math.abs(value) > Integer.MAX_VALUE) {
+        return value;
+      } else {
+        return value.toInt;
+      }
+    } else if (declaration.contains("i64") || declaration.contains("v64")) {
+      if (Math.abs(value) > Long.MaxValue) {
+        return value;
+      } else {
+        return value.toLong;
+      }
+    } else {
+      throw new IllegalArgumentException(
+        "The given fieldDeclaration is not supported.\n" + "Declaration was: " + declaration
+          + "\n" + "But should contain one of the following : {'i8','i16','i32','i64,'f32','f64'}");
+    }
+  }
 
   protected def wrapPrimitveMapTypes(value: String,
     mapDeclaration: de.ust.skill.common.scala.api.FieldDeclaration[_], isKey: Boolean): Any = {
     def mapDeclarationSplit = mapDeclaration.toString().split(",");
+
+    def declaration = if (isKey) mapDeclarationSplit(0) else mapDeclarationSplit(1);
+
+    if (declaration.toString().contains("f32")) {
+      return value.toFloat;
+    } else if (declaration.toString().contains("f64")) {
+      return value.toDouble;
+    } else if (declaration.toString().contains("i8")) {
+      return value.toByte;
+    } else if (declaration.toString().contains("i16")) {
+      return value.toShort;
+    } else if (declaration.toString().contains("i32")) {
+      return value.toInt;
+    } else if (declaration.toString().contains("i64") || declaration.toString().contains("v64")) {
+      return value.toLong;
+    } else if (declaration.toString().contains("string")) {
+      return value;
+    } else if (declaration.toString().contains("bool")) {
+      return value.toBoolean;
+    } else {
+      throw new IllegalArgumentException("The given fieldDeclaration is not supported.\n" + "Declaration was: "
+        + declaration.toString() + "\n"
+        + "But should contain one of the following : {'i8','i16','i32','i64,'f32','f64','string','bool'}");
+    }
+  }
+  
+  protected def wrapPrimitveMapTypes(value: String,
+    mapDeclaration:String, isKey: Boolean): Any = {
+    def mapDeclarationSplit = mapDeclaration.split(",");
 
     def declaration = if (isKey) mapDeclarationSplit(0) else mapDeclarationSplit(1);
 
