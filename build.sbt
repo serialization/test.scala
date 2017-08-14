@@ -14,8 +14,7 @@ scalacOptions ++= Opts.compile.encoding("UTF8")
 
 libraryDependencies ++= Seq(
 	"junit" % "junit" % "4.12" % "test",
-	"org.scalatest" % "scalatest_2.11" % "2.2.6" % "test",
-  "org.json" % "json" % "20160810"
+	"org.scalatest" % "scalatest_2.11" % "2.2.6" % "test"
 )
 
 (testOptions in Test) += Tests.Argument(TestFrameworks.ScalaTest, "-u", "target/tests")
