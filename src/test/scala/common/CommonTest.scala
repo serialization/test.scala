@@ -223,9 +223,10 @@ class CommonTest extends FunSuite {
       r += e
     r
   }
-  protected def map[K, V] = new HashMap[K, V]()
+  protected def map[K, V] = new HashMap[K, V];
+  
   protected def put[K, V](m : HashMap[K, V], k : K, v : V) : HashMap[K, V] = {
-    m(k) = v
+    m.put(k, v)
     m
   }
 
