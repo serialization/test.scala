@@ -4,7 +4,7 @@ name := "skillScalaTestsuite"
 
 version := "0.5"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.12.4"
 
 javacOptions ++= Seq("-encoding", "UTF-8")
 
@@ -14,25 +14,9 @@ scalacOptions ++= Opts.compile.encoding("UTF8")
 
 libraryDependencies ++= Seq(
 	"junit" % "junit" % "4.12" % "test",
-    "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+    "org.scalatest" %% "scalatest" % "3.0.4" % "test"
 )
 
 (testOptions in Test) += Tests.Argument(TestFrameworks.ScalaTest, "-u", "target/tests")
 
-testResultLogger in (Test, test) := new TestResultLogger {
-    import sbt.Tests._
-    import sbt.TestResultLogger.Defaults._
-    def run(log: Logger, results: Output, taskName: String): Unit = {
-        def run(r: TestResultLogger): Unit = r.run(log, results, taskName)
-
-        run(printSummary)
-
-        if (printStandard_?(results))
-          run(printStandard)
-
-        if (results.events.isEmpty)
-          run(printNoTests)
-        else
-          run(printFailures)
-    }
-}
+libraryDependencies += "commons-lang" % "commons-lang" % "2.6"
