@@ -62,7 +62,7 @@ class FullTest extends CommonTest {
   }
 
   test("reflective count ages") {
-    val sf = SkillFile.open("../java/test/age16.sf")
+    val sf = SkillFile.open("age16.sf")
     for (p ← sf; if p.name == "age") {
       val f = p.allFields.find(_.name == "age").get.asInstanceOf[FieldDeclaration[Long]];
 
