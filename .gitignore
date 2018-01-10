@@ -88,3 +88,4 @@ local.properties
 
 # Mac OS X
 .DS_Store
+/bin/
