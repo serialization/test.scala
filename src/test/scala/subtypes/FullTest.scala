@@ -73,6 +73,33 @@ class FullTest extends CommonTest {
     assert(σ.D.all.forall(_.markedForDeletion), "some D is not marked for deletion?!")
   }
 
+  test("delete -- write compress twice") {
+    val σ = read("localBasePoolOffset.sf")
+    σ.changePath(tmpFile("writeTwice"))
+    for (d ← σ.D.all)
+      σ.delete(d)
+
+    σ.compress
+    σ.compress
+    σ.flush()
+    σ.flush()
+
+    assert(σ.D.all.forall(_.markedForDeletion), "some D is not marked for deletion?!")
+  }
+
+  test("delete -- write compress") {
+    val σ = read("localBasePoolOffset.sf")
+    σ.changePath(tmpFile("writeTwice"))
+    for (d ← σ.D.all)
+      σ.delete(d)
+
+    σ.compress
+    σ.flush()
+    σ.flush()
+
+    assert(σ.D.all.forall(_.markedForDeletion), "some D is not marked for deletion?!")
+  }
+
   test("reflective count ages") {
     val sf = SkillFile.open("age16.sf")
     for (p ← sf; if p.name == "age") {
