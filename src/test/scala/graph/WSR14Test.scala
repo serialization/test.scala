@@ -7,13 +7,11 @@ import scala.util.Random
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-import graph.api._
 import scala.collection.mutable.HashSet
-import de.ust.skill.common.scala.api.Read
-import de.ust.skill.common.scala.api.Append
-import de.ust.skill.common.scala.api.Write
-import de.ust.skill.common.scala.api.ReadOnly
-import de.ust.skill.common.scala.api.Create
+import ogss.common.scala.api.Write
+import ogss.common.scala.api.Read
+import ogss.common.scala.api.ReadOnly
+import ogss.common.scala.api.Create
 
 /**
  * This test is used to produce results for the WSR'14 paper.
@@ -24,7 +22,7 @@ import de.ust.skill.common.scala.api.Create
 @RunWith(classOf[JUnitRunner])
 class WSR14Test extends FunSuite {
 
-  @inline final def tmpFile(s: String) = {
+  @inline final def tmpFile(s : String) = {
     val r = File.createTempFile(s, ".sf")
     //    r.deleteOnExit
     r.toPath
@@ -39,7 +37,7 @@ class WSR14Test extends FunSuite {
   // set to 10 for wsr results; reduced for tests
   val repetitions = 2;
 
-  @inline def averageTime(test: Int ⇒ Long) = counts.map { n ⇒
+  @inline def averageTime(test : Int ⇒ Long) = counts.map { n ⇒
     Random.setSeed(31337)
     var total = 0.0
     for (count ← 0 until repetitions) {
@@ -60,19 +58,19 @@ class WSR14Test extends FunSuite {
     total
   }
 
-  @inline def averageSize(implicit test: Int ⇒ Long) = counts.map { n ⇒
+  @inline def averageSize(implicit test : Int ⇒ Long) = counts.map { n ⇒
     Random.setSeed(31337)
 
     val size = test(n)
 
-    println(size+" Bytes")
+    println(size + " Bytes")
     size
   }
 
   /**
    * produces nice latex output; first size, then speed to get rid of JIT effects
    */
-  @inline def eval(name: String, test: Int ⇒ Long) = {
+  @inline def eval(name : String, test : Int ⇒ Long) = {
     println(name)
     (averageSize(test), averageTime(test))
   }
@@ -85,9 +83,6 @@ class WSR14Test extends FunSuite {
     System.gc
     System.runFinalization
     val re = read
-    System.gc
-    System.runFinalization
-    val ap = append
 
     // first plot: absolute time spend for each phase
     locally {
@@ -96,7 +91,7 @@ class WSR14Test extends FunSuite {
  \begin{tikzpicture}
   \begin{loglogaxis}""")
 
-      val results = Array(cr._2, wr._2, re._2, ap._2)
+      val results = Array(cr._2, wr._2, re._2)
 
       for (r ← results)
         println(
@@ -122,7 +117,7 @@ class WSR14Test extends FunSuite {
  \begin{tikzpicture}
   \begin{semilogxaxis}""")
 
-      val results = Array(wr, re, ap)
+      val results = Array(wr, re)
 
       for (r ← results)
         println(
@@ -145,13 +140,13 @@ class WSR14Test extends FunSuite {
   def create = {
     val f = tmpFile("wsr.create");
 
-    @inline def t(n: Int): Long = {
-      val σ = SkillFile.open(f, Create, ReadOnly);
+    @inline def t(n : Int) : Long = {
+      val σ = OGFile.open(f, Create, ReadOnly);
       for (i ← 0 until n)
-        σ.Node.make("black", new HashSet[Node])
+        σ.Node.build.color("black").edges(new HashSet[Node]).make
 
       // create random colors
-      for (n ← σ.Node.all)
+      for (n ← σ.Node)
         n.color = Random.nextInt(4) match {
           case 0 ⇒ "black"
           case 1 ⇒ "red"
@@ -160,8 +155,8 @@ class WSR14Test extends FunSuite {
         }
 
       // add edges 100 tries
-      val nodes = σ.Node.all.toArray
-      for (node ← σ.Node.all; j ← 0 until 100)
+      val nodes = σ.Node.toArray
+      for (node ← σ.Node; j ← 0 until 100)
         node.edges.add(nodes(Random.nextInt(nodes.length)));
 
       0L
@@ -173,13 +168,13 @@ class WSR14Test extends FunSuite {
   def write = {
     val f = tmpFile("wsr.write");
 
-    @inline def t(n: Int): Long = {
-      val σ = SkillFile.open(f, Create, Write);
+    @inline def t(n : Int) : Long = {
+      val σ = OGFile.open(f, Create, Write);
       for (i ← 0 until n)
-        σ.Node.make("black", new HashSet[Node])
+        σ.Node.build.color("black").edges(new HashSet[Node]).make
 
       // create random colors
-      for (n ← σ.Node.all)
+      for (n ← σ.Node)
         n.color = Random.nextInt(4) match {
           case 0 ⇒ "black"
           case 1 ⇒ "red"
@@ -188,8 +183,8 @@ class WSR14Test extends FunSuite {
         }
 
       // add edges 100 tries
-      val nodes = σ.Node.all.toArray
-      for (node ← σ.Node.all; j ← 0 until 100)
+      val nodes = σ.Node.toArray
+      for (node ← σ.Node; j ← 0 until 100)
         node.edges.add(nodes(Random.nextInt(nodes.length)));
 
       σ.close
@@ -202,14 +197,14 @@ class WSR14Test extends FunSuite {
   def read = {
     val f = tmpFile("wsr.read");
 
-    @inline def t(n: Int): Long = {
+    @inline def t(n : Int) : Long = {
       locally {
-        val σ = SkillFile.open(f, Create, Write)
+        val σ = OGFile.open(f, Create, Write)
         for (i ← 0 until n)
-          σ.Node.make("black", new HashSet[Node])
+        σ.Node.build.color("black").edges(new HashSet[Node]).make
 
         // create random colors
-        for (n ← σ.Node.all)
+        for (n ← σ.Node)
           n.color = Random.nextInt(4) match {
             case 0 ⇒ "black"
             case 1 ⇒ "red"
@@ -218,65 +213,19 @@ class WSR14Test extends FunSuite {
           }
 
         // add edges 100 tries
-        val nodes = σ.Node.all.toArray
-        for (node ← σ.Node.all; j ← 0 until 100)
+        val nodes = σ.Node.toArray
+        for (node ← σ.Node; j ← 0 until 100)
           node.edges.add(nodes(Random.nextInt(nodes.length)));
 
         σ.close
       }
 
       locally {
-        val σ = SkillFile.open(f, Read, ReadOnly);
+        val σ = OGFile.open(f, Read, ReadOnly);
         Files.size(f)
       }
     }
 
     eval("\\ +read", t)
-  }
-
-  def append = {
-    val f = tmpFile("wsr.append");
-
-    @inline def t(n: Int): Long = {
-      locally {
-        val σ = SkillFile.open(f, Create, Write);
-        for (i ← 0 until n)
-          σ.Node.make("black", new HashSet[Node])
-
-        // create random colors
-        for (n ← σ.Node.all)
-          n.color = Random.nextInt(4) match {
-            case 0 ⇒ "black"
-            case 1 ⇒ "red"
-            case 2 ⇒ "blue"
-            case 3 ⇒ "green"
-          }
-
-        // add edges 100 tries
-        val nodes = σ.Node.all.toArray
-        for (node ← σ.Node.all; j ← 0 until 100)
-          node.edges.add(nodes(Random.nextInt(nodes.length)));
-
-        σ.close
-      }
-
-      locally {
-        val σ = SkillFile.open(f, Read, Append);
-        // add 100% orange nodes
-        // fix, because pool access is not yet an indexed seq or something like that
-        val nodes = σ.Node.all.toArray
-        for (i ← 0 until n) {
-          val n = σ.Node.make("orange", new HashSet[Node])
-          for (j ← 0 until 100)
-            n.edges.add(nodes(Random.nextInt(nodes.length)));
-        }
-
-        σ.close
-
-        Files.size(f)
-      }
-    }
-
-    eval("\\ +append", t)
   }
 }

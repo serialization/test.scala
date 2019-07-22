@@ -1,25 +1,22 @@
 package subtypes
 
 import common.CommonTest
-import subtypes.api._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import de.ust.skill.common.scala.api.Write
-import de.ust.skill.common.scala.api.Create
-import de.ust.skill.common.scala.api.ReadOnly
-import de.ust.skill.common.scala.api.Read
-import de.ust.skill.common.scala.internal.TypeHierarchyIterator
-import de.ust.skill.common.scala.internal.StoragePool
-import de.ust.skill.common.scala.api.SkillObject
+import ogss.common.scala.api.Read
+import ogss.common.scala.api.ReadOnly
+import ogss.common.scala.internal.TypeHierarchyIterator
+import ogss.common.scala.internal.Pool
+import ogss.common.scala.internal.Obj
 
 @RunWith(classOf[JUnitRunner])
 class IteratorTest extends CommonTest {
-  @inline def read = SkillFile.open("src/test/resources/localBasePoolOffset.sf", Read, ReadOnly)
+  @inline def read = OGFile.open("src/test/resources/localBasePoolOffset.sf", Read, ReadOnly)
 
   test("type hierarchy iterator") {
     val σ = read
-    for (t ← σ)
-      println(new TypeHierarchyIterator(t.asInstanceOf[StoragePool[SkillObject, SkillObject]]).map(_.name).mkString)
+    for (t ← σ.allTypes)
+      println(new TypeHierarchyIterator(t.asInstanceOf[Pool[_ <: Obj]]).map(_.name).mkString)
   }
 
   test("dynamic data iterator") {
@@ -28,25 +25,25 @@ class IteratorTest extends CommonTest {
     // A
     locally {
       val ts = "aaabbbbbdddcc"
-      assert(ts === σ.A.allInTypeOrder.map(_.getTypeName.charAt(0)).mkString)
+      assert(ts === σ.A.inTypeOrder.map(σ.pool(_).name.toLowerCase.charAt(0)).mkString)
     }
 
     // B
     locally {
       val ts = "bbbbbddd"
-      assert(ts === σ.B.allInTypeOrder.map(_.getTypeName.charAt(0)).mkString)
+      assert(ts === σ.B.inTypeOrder.map(σ.pool(_).name.toLowerCase.charAt(0)).mkString)
     }
 
     // C
     locally {
       val ts = "cc"
-      assert(ts === σ.C.allInTypeOrder.map(_.getTypeName.charAt(0)).mkString)
+      assert(ts === σ.C.inTypeOrder.map(σ.pool(_).name.toLowerCase.charAt(0)).mkString)
     }
 
     // D
     locally {
       val ts = "ddd"
-      assert(ts === σ.D.allInTypeOrder.map(_.getTypeName.charAt(0)).mkString)
+      assert(ts === σ.D.inTypeOrder.map(σ.pool(_).name.toLowerCase.charAt(0)).mkString)
     }
   }
 
@@ -56,25 +53,25 @@ class IteratorTest extends CommonTest {
     // A
     locally {
       val ts = "aaa"
-      assert(ts === σ.A.staticInstances.map(_.getTypeName.charAt(0)).mkString)
+      assert(ts === σ.A.staticInstances.map(σ.pool(_).name.toLowerCase.charAt(0)).mkString)
     }
 
     // B
     locally {
       val ts = "bbbbb"
-      assert(ts === σ.B.staticInstances.map(_.getTypeName.charAt(0)).mkString)
+      assert(ts === σ.B.staticInstances.map(σ.pool(_).name.toLowerCase.charAt(0)).mkString)
     }
 
     // C
     locally {
       val ts = "cc"
-      assert(ts === σ.C.staticInstances.map(_.getTypeName.charAt(0)).mkString)
+      assert(ts === σ.C.staticInstances.map(σ.pool(_).name.toLowerCase.charAt(0)).mkString)
     }
 
     // D
     locally {
       val ts = "ddd"
-      assert(ts === σ.D.staticInstances.map(_.getTypeName.charAt(0)).mkString)
+      assert(ts === σ.D.staticInstances.map(σ.pool(_).name.toLowerCase.charAt(0)).mkString)
     }
   }
 }

@@ -1,6 +1,6 @@
 import java.lang.Runtime
 
-name := "skillScalaTestsuite"
+name := "ogss.test.scala"
 
 version := "0.5"
 

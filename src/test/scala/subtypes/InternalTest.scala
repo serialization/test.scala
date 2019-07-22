@@ -1,14 +1,13 @@
 package subtypes
 
 import common.CommonTest
-import subtypes.api.SkillFile
 import java.io.File
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import de.ust.skill.common.scala.api.Append
-import de.ust.skill.common.scala.api.Create
-import de.ust.skill.common.scala.api.Read
-import de.ust.skill.common.scala.api.ReadOnly
+import ogss.common.scala.api.Write
+import ogss.common.scala.api.Read
+import ogss.common.scala.api.ReadOnly
+import ogss.common.scala.api.Create
 
 /**
  * @author Timm Felden
@@ -16,7 +15,7 @@ import de.ust.skill.common.scala.api.ReadOnly
  */
 @RunWith(classOf[JUnitRunner])
 class InternalTest extends CommonTest {
-  @inline def read(s : String) = SkillFile.open("src/test/resources/"+s)
+  @inline def read(s : String) = OGFile.open("src/test/resources/" + s)
 
   test("subtypes read foreign") {
     val state = read("annotationTest.sf")
@@ -36,47 +35,47 @@ class InternalTest extends CommonTest {
     assert(actualTypes === types)
 
     // check fields (all fields are self-references)
-    for (a ← state.A.all)
+    for (a ← state.A)
       assert(a.a === a)
-    for (b ← state.B.all)
+    for (b ← state.B)
       assert(b.b === b)
-    for (c ← state.C.all)
+    for (c ← state.C)
       assert(c.c === c)
-    for (d ← state.D.all)
+    for (d ← state.D)
       assert(d.d === d)
   }
 
   test("subtypes create") {
     val path = tmpFile("lbpsi.create")
 
-    val sf = SkillFile.open(path, Create, Append)
+    val sf = OGFile.open(path, Create, Write)
 
     val blocks = Seq("aabbbc", "bbdd", "acd")
     for (b ← blocks) {
       for (c ← b) {
         c match {
           case 'a' ⇒
-            val i = sf.A.make(null);
+            val i = sf.A.make
             i.a = i;
           case 'b' ⇒
-            val i = sf.B.make(null, null);
+            val i = sf.B.make
             i.a = i;
             i.b = i;
           case 'c' ⇒
-            val i = sf.C.make(null, null);
+            val i = sf.C.make
             i.a = i;
             i.c = i;
           case 'd' ⇒
-            val i = sf.D.make(null, null, null);
+            val i = sf.D.make
             i.a = i;
             i.b = i;
             i.d = i;
         }
       }
-      sf.flush();
+      sf.flush
     }
 
-    assert("aabbbcbbddadc" === SkillFile.open(sf.path, Read, ReadOnly).A.map(_.getTypeName).mkString)
+    assert("aabbbcbbddadc" === OGFile.open(sf.currentPath, Read, ReadOnly).A.map(sf.pool(_).name.toLowerCase).mkString)
   }
 
   test("subtypes write") {
@@ -85,23 +84,23 @@ class InternalTest extends CommonTest {
     val state = read("localBasePoolOffset.sf")
 
     // check self references
-    for ((instance, index) ← state.A.all.zipWithIndex) {
-      assert(instance.a.getSkillID === index + 1L, "index missmatch")
+    for ((instance, index) ← state.A.zipWithIndex) {
+      assert(instance.a.ID === index + 1, "index missmatch")
       assert(instance.a === instance, "self reference corrupted")
     }
 
     state.changePath(path)
-    state.flush()
+    state.flush
 
     // check self references again (write might not have restored them)
-    for ((instance, index) ← state.A.all.zipWithIndex) {
-      assert(instance.a.getSkillID === index + 1L, "index missmatch after write")
+    for ((instance, index) ← state.A.zipWithIndex) {
+      assert(instance.a.ID === index + 1, "index missmatch after write")
       assert(instance.a === instance, "self reference corrupted after write")
     }
 
-    val state2 = SkillFile.open(path, Read, ReadOnly)
+    val state2 = OGFile.open(path, Read, ReadOnly)
 
     // check type of deserialized instances
-    assert(state.A.allInTypeOrder.map(_.getClass.getSimpleName).sameElements(state2.A.allInTypeOrder.map(_.getClass.getSimpleName)))
+    assert(state.A.inTypeOrder.map(_.getClass.getSimpleName).sameElements(state2.A.inTypeOrder.map(_.getClass.getSimpleName)))
   }
 }

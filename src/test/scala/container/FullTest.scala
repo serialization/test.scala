@@ -8,32 +8,31 @@ import common.CommonTest
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import java.io.File
-import container.api.SkillFile
-import de.ust.skill.common.scala.internal.SkillState
-import de.ust.skill.common.scala.api.Write
-import de.ust.skill.common.scala.api.Create
-import de.ust.skill.common.scala.api.Read
-import de.ust.skill.common.scala.api.ReadOnly
+import ogss.common.scala.api.Write
+import ogss.common.scala.api.Read
+import ogss.common.scala.api.ReadOnly
+import ogss.common.scala.api.Create
+import ogss.common.scala.internal.Obj
 
 @RunWith(classOf[JUnitRunner])
 class FullTest extends CommonTest {
 
   @inline final def read(s : String) = {
     println(s)
-    SkillFile.open("src/test/resources/"+s)
+    OGFile.open("src/test/resources/" + s)
   }
-  @inline final def dump(state : SkillFile) {
-    for (t ← state) {
+  @inline final def dump(state : OGFile) {
+    for (t ← state.allTypes) {
       println(s"Pool[${t.name}${
-        if (t.superName.isDefined)
-          " <: "+t.superName.get
+        if (t.superType != null)
+          " <: " + t.superType.name
         else
           ""
       }]")
-      for (i ← t.all) {
+      for ((i : Obj) ← t) {
         println(s"  $i = ${
           t.allFields.map {
-            f ⇒ s"${f.name}: ${i.get(f)}"
+            f ⇒ s"${f.name}: ${f.get(i)}"
           }.mkString("[", ", ", "]")
         }")
       }
@@ -59,24 +58,25 @@ class FullTest extends CommonTest {
     val p = tmpFile("container.create")
 
     locally {
-      val state = SkillFile.open(p, Create, Write)
-      state.Container.make(
-        arr = ArrayBuffer(0, 0, 0),
-        varr = ArrayBuffer(1, 2, 3),
-        l = ListBuffer(),
-        s = Set().to,
-        f = HashMap("f" -> HashMap(0L -> 0L)),
-        someSet = Set().to
-      )
-      for (c ← state.Container.all)
+      val state = OGFile.open(p, Create, Write)
+      state.Container.build
+        .arr(ArrayBuffer(0, 0, 0))
+        .varr(ArrayBuffer(1, 2, 3))
+        .l(ListBuffer())
+        .s(Set().to)
+        .f(HashMap("f" -> HashMap(0L -> 0L)))
+        .someSet(Set().to)
+        .make
+
+      for (c ← state.Container)
         c.s = c.arr.toSet.to
 
       state.close
     }
 
     locally {
-      val state = SkillFile.open(p, Read, ReadOnly)
-      val c = state.Container.all.next
+      val state = OGFile.open(p, Read, ReadOnly)
+      val c = state.Container.iterator.next
       assert(c.arr.size === 3)
       assert(c.varr.sameElements(1 to 3))
       assert(c.l.isEmpty)

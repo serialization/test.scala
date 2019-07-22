@@ -5,16 +5,10 @@ import java.nio.file.Path
 
 import org.junit.Assert
 
-import de.ust.skill.common.scala.api.Access
-import de.ust.skill.common.scala.api.Create
-import de.ust.skill.common.scala.api.SkillException
-import de.ust.skill.common.scala.api.Read
-import de.ust.skill.common.scala.api.ReadOnly
-import de.ust.skill.common.scala.api.Write
-
-import graphInterface.api.SkillFile
 import common.CommonTest
 import scala.collection.mutable.HashSet
+import ogss.common.scala.api.Write
+import ogss.common.scala.api.Create
 
 /**
  * Tests interface API.
@@ -22,28 +16,28 @@ import scala.collection.mutable.HashSet
 class BasicTest extends CommonTest {
   test("create simple graph") {
     val path = tmpFile("graph");
-    val sf = SkillFile.open(path, Create, Write)
+    val sf = OGFile.open(path, Create, Write)
 
-    val n = sf.Node.make(color = "red", edges = new HashSet())
+    val n = sf.Node.build.color("red").edges(new HashSet()).make
 
-    val c = sf.ColorHolder.make(n, n)
+    val c = sf.ColorHolder.build.anAbstractNode(n).anAnnotation(n).make
 
     assert("red" === c.anAnnotation.color)
 
-    assert(1 === sf.Marker.all.map(_.prettyString).foldLeft(0) { case (i, v) ⇒ i + 1 })
+    assert(1 === sf.Marker.map(_.prettyString(sf)).count(_ ⇒ true))
 
     sf.close
   }
 
   test("access headless interface") {
     val path = tmpFile("graph");
-    val sf = SkillFile.open(path, Create, Write)
+    val sf = OGFile.open(path, Create, Write)
 
-    val n = sf.Node.make(color = "red", edges = new HashSet())
+    val n = sf.Node.build.color("red").edges(new HashSet()).make
 
-    val c = sf.ColorHolder.make(n, n)
+    val c = sf.ColorHolder.build.anAbstractNode(n).anAnnotation(n).make
 
-    sf.Marker.map(_.prettyString).foreach(println)
+    sf.Marker.map(_.prettyString(sf)).foreach(println)
 
     sf.close
   }

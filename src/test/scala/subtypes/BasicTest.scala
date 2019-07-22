@@ -1,11 +1,10 @@
 package subtypes
 
 import common.CommonTest
-import subtypes.api._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import de.ust.skill.common.scala.api.Write
-import de.ust.skill.common.scala.api.Create
+import ogss.common.scala.api.Write
+import ogss.common.scala.api.Create
 
 @RunWith(classOf[JUnitRunner])
 class BasicTest extends CommonTest {
@@ -13,17 +12,17 @@ class BasicTest extends CommonTest {
   test("create and write") {
     val p = tmpFile("createAndWrite")
 
-    val state = SkillFile.open(p, Create, Write)
-    val c = state.C.make(null, null)
+    val state = OGFile.open(p, Create, Write)
+    val c = state.C.make
     c.a = c
     c.c = c
     state.close
   }
 
   test("insert a and b") {
-    val σ = SkillFile.open(tmpFile("insertAB"), Create, Write)
+    val σ = OGFile.open(tmpFile("insertAB"), Create, Write)
 
-    σ.A.make(σ.B.make(null, null))
+    σ.A.build.a(σ.B.make).make
 
     val b = σ.B.head
     b.a = b
