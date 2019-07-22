@@ -11,13 +11,13 @@ import ogss.common.scala.api.FieldAccess
 
 @RunWith(classOf[JUnitRunner])
 class FullTest extends CommonTest {
-  @inline def read(s : String) = OGFile.open("src/test/resources/" + s)
+  @inline def read = OGFile.open("../../src/test/resources/binarygen/[[empty]]/accept/poly.sg", Read, ReadOnly)
 
   /**
    * not fully implemented
    */
   test("delete and write") {
-    val sf = read("localBasePoolOffset.sf")
+    val sf = read
     for (d ← sf.D)
       sf.delete(d)
 
@@ -29,7 +29,7 @@ class FullTest extends CommonTest {
   }
 
   test("delete and write -- hard") {
-    val sf = read("localBasePoolOffset.sf")
+    val sf = read
 
     // remember size
     val sizes = sf.allTypes.map(p ⇒ p.name -> p.size).toMap
@@ -45,14 +45,14 @@ class FullTest extends CommonTest {
     sf.close
 
     val σ = OGFile.open(path, Read, ReadOnly)
-    assert(sizes("a") - sizes("c") - (sizes("b") - sizes("d")) === σ.A.size)
-    assert(sizes("d") === σ.B.size)
+    assert(sizes("A") - sizes("C") - (sizes("B") - sizes("D")) === σ.A.size)
+    assert(sizes("D") === σ.B.size)
     assert(0 === σ.C.size)
-    assert(sizes("d") === σ.D.size)
+    assert(sizes("D") === σ.D.size)
   }
 
   test("delete -- marked") {
-    val σ = read("localBasePoolOffset.sf")
+    val σ = read
     for (d ← σ.D)
       σ.delete(d)
 
@@ -60,7 +60,7 @@ class FullTest extends CommonTest {
   }
 
   test("delete -- write twice") {
-    val σ = read("localBasePoolOffset.sf")
+    val σ = read
     σ.changePath(tmpFile("writeTwice"))
     for (d ← σ.D)
       σ.delete(d)
@@ -72,7 +72,7 @@ class FullTest extends CommonTest {
   }
 
   test("delete -- write compress twice") {
-    val σ = read("localBasePoolOffset.sf")
+    val σ = read
     σ.changePath(tmpFile("writeTwice"))
     for (d ← σ.D)
       σ.delete(d)
@@ -84,7 +84,7 @@ class FullTest extends CommonTest {
   }
 
   test("delete -- write compress") {
-    val σ = read("localBasePoolOffset.sf")
+    val σ = read
     σ.changePath(tmpFile("writeTwice"))
     for (d ← σ.D)
       σ.delete(d)
@@ -93,15 +93,6 @@ class FullTest extends CommonTest {
     σ.flush
 
     assert(σ.D.forall(_.isDeleted), "some D is not marked for deletion?!")
-  }
-
-  test("reflective count ages") {
-    val sf = OGFile.open("age16.sf")
-    for (p ← sf.allTypes; if p.name == "Age") {
-      val f = p.allFields.find(_.name == "Age").get.asInstanceOf[FieldAccess[Long]];
-
-      assert(53725 === p.count(f.get(_) == 0))
-    }
   }
 
   test("change tolerant append") {
