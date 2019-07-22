@@ -38,7 +38,7 @@ import ogss.common.scala.api.FieldAccess
 @RunWith(classOf[JUnitRunner])
 class CommonTest extends FunSuite {
   @inline final def tmpFile(s : String) = {
-    val r = File.createTempFile(s, ".sf")
+    val r = File.createTempFile(s, ".sg")
     r.deleteOnExit
     r.toPath
   }
@@ -48,7 +48,7 @@ class CommonTest extends FunSuite {
     if (!dir.exists()) {
       dir.mkdirs();
     }
-    val file = new File("src/test/resources/serializedTestfiles/" + packagePath + name + ".sf");
+    val file = new File("src/test/resources/serializedTestfiles/" + packagePath + name + ".sg");
     if (file.exists()) {
       file.delete();
     }

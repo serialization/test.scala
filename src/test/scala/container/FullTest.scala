@@ -40,19 +40,6 @@ class FullTest extends CommonTest {
     }
   }
 
-  // reflective read
-  test("read reflective: nodes") { dump(read("node.sf")) }
-  test("read reflective: two node blocks") { dump(read("twoNodeBlocks.sf")) }
-  test("read reflective: colored nodes") { dump(read("coloredNodes.sf")) }
-  test("read reflective: four colored nodes") { dump(read("fourColoredNodes.sf")) }
-  test("read reflective: empty blocks") { dump(read("emptyBlocks.sf")) }
-  test("read reflective: two types") { dump(read("twoTypes.sf")) }
-  test("read reflective: trivial type definition") { dump(read("trivialType.sf")) }
-  test("read reflective: subtypes") { dump(read("localBasePoolOffset.sf")) }
-  test("read reflective: container") { dump(read("container.sf")) }
-  test("read reflective: commutativity path 1") { dump(read("commutativityPath1.sf")) }
-  test("read reflective: commutativity path 2") { dump(read("commutativityPath2.sf")) }
-
   // compound types
   test("create container instances") {
     val p = tmpFile("container.create")
