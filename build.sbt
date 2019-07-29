@@ -18,5 +18,7 @@ libraryDependencies ++= Seq(
 )
 
 (testOptions in Test) += Tests.Argument(TestFrameworks.ScalaTest, "-u", "target/tests")
+(testOptions in Test) += Tests.Argument(TestFrameworks.ScalaTest, "-oD")
+(testOptions in Test) += Tests.Argument(TestFrameworks.ScalaTest, "-W", "120", "60")
 
 libraryDependencies += "commons-lang" % "commons-lang" % "2.6"
