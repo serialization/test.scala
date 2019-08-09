@@ -4,36 +4,40 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.security.MessageDigest
+
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.HashMap
 import scala.collection.mutable.HashSet
 import scala.collection.mutable.ListBuffer
 import scala.language.implicitConversions
 import scala.util.Random
+
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-import ogss.common.scala.internal.State
-import ogss.common.scala.internal.Field
-import ogss.common.scala.internal.Obj
-import ogss.common.scala.internal.FieldType
+
+import ogss.common.scala.api.FieldAccess
 import ogss.common.scala.internal.AnyRefType
+import ogss.common.scala.internal.Field
+import ogss.common.scala.internal.FieldType
+import ogss.common.scala.internal.Obj
+import ogss.common.scala.internal.Pool
+import ogss.common.scala.internal.SingletonPool
+import ogss.common.scala.internal.State
 import ogss.common.scala.internal.StringPool
+import ogss.common.scala.internal.fieldTypes.ArrayType
 import ogss.common.scala.internal.fieldTypes.Bool
-import ogss.common.scala.internal.fieldTypes.I8
+import ogss.common.scala.internal.fieldTypes.ContainerType
+import ogss.common.scala.internal.fieldTypes.F32
+import ogss.common.scala.internal.fieldTypes.F64
 import ogss.common.scala.internal.fieldTypes.I16
 import ogss.common.scala.internal.fieldTypes.I32
 import ogss.common.scala.internal.fieldTypes.I64
-import ogss.common.scala.internal.fieldTypes.V64
-import ogss.common.scala.internal.fieldTypes.F32
-import ogss.common.scala.internal.fieldTypes.F64
-import ogss.common.scala.internal.fieldTypes.ArrayType
-import ogss.common.scala.internal.fieldTypes.SetType
-import ogss.common.scala.internal.fieldTypes.MapType
+import ogss.common.scala.internal.fieldTypes.I8
 import ogss.common.scala.internal.fieldTypes.ListType
-import ogss.common.scala.internal.fieldTypes.ContainerType
-import ogss.common.scala.internal.Pool
-import ogss.common.scala.api.FieldAccess
+import ogss.common.scala.internal.fieldTypes.MapType
+import ogss.common.scala.internal.fieldTypes.SetType
+import ogss.common.scala.internal.fieldTypes.V64
 
 @RunWith(classOf[JUnitRunner])
 class CommonTest extends FunSuite {
@@ -72,8 +76,12 @@ class CommonTest extends FunSuite {
    */
   final def reflectiveInit(sf : State) {
     // create instances
-    for (t ← sf.allTypes.toSeq.par; i ← 0 until 100) try {
-      t.make
+    for (t ← sf.allTypes.toSeq.par) try {
+      t match {
+        case t : SingletonPool[_] ⇒ t.get
+        case _                    ⇒ for (i ← 0 until 100) t.make
+      }
+
     } catch {
       case e : Exception ⇒ // can not be instantiated
     }
