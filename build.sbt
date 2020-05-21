@@ -4,7 +4,7 @@ name := "ogss.test.scala"
 
 version := "0.5"
 
-scalaVersion := "2.12.4"
+scalaVersion := "2.12.11"
 
 javacOptions ++= Seq("-encoding", "UTF-8")
 
